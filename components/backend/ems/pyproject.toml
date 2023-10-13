@@ -1,0 +1,6 @@
+[tool.isort]
+profile = "black"
+known_first_party = ["ems_libs"]
+known_local_folder = ["ems"]
+sections=["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+line_length = 100
