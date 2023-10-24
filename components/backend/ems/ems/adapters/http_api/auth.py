@@ -1,9 +1,9 @@
-from fastapi import HTTPException, Request, status
+from fastapi import HTTPException, status, Request
 
-from ems_libs.security import jwt_strategy
+from ems_libs.security import jwt
 
 
-async def verify_jwt(
+async def get_auth_payload(
         request: Request
 ) -> dict | None:
     credentials_exception = HTTPException(
@@ -11,7 +11,8 @@ async def verify_jwt(
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    decode_token = jwt_strategy.verify_token(request.cookies.get('token', ''))
-    if decode_token is None:
+    claims = jwt.decode_token(request.cookies.get('token', ''))
+    if claims is None:
         raise credentials_exception
-    return decode_token
+    return claims
+

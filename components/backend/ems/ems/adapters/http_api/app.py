@@ -17,5 +17,6 @@ def create_app(
         docs_url='/docs' if swagger_on else None,
         redoc_url='/redoc' if swagger_on else None,
     )
-    # include_router...
+    app.include_router(controllers.event_router)
+    app.include_router(controllers.auth_router)
     return app

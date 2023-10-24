@@ -47,7 +47,7 @@ mapper.map_imperatively(
             backref=backref('created_events', lazy='select'),
             lazy='select',
         ),
-        'event_type': relationship(
+        'type': relationship(
             entities.EventType,
             foreign_keys=[tables.events.c.type_id],
             lazy='select',

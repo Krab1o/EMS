@@ -104,6 +104,12 @@ users = Table(
         nullable=False,
         comment='Адрес электронной почты'
     ),
+    Column(
+        'password',
+        String(512),
+        nullable=False,
+        comment='Пароль',
+    ),
     comment='Пользователи',
 )
 
