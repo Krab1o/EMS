@@ -1,7 +1,7 @@
 from typing import Annotated, Any
 
 from annotated_types import Gt
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Response, Body
 
 from ems.adapters.http_api.auth import get_auth_payload
 from ems.adapters.http_api.dependencies import get_event_service
@@ -21,7 +21,7 @@ router = APIRouter(
     path='',
     response_model=dto.EventListResponse,
     responses={
-        200: {'description': 'Список событий.'},
+        200: {'description': 'Список мероприятий.'},
         403: {'description': 'Недостаточно прав для действия.'}
     }
 )
@@ -43,9 +43,9 @@ async def get_list(
     path='/{event_id}',
     response_model=dto.EventResponse,
     responses={
-        200: {'description': 'Информация о событии.'},
+        200: {'description': 'Информация о мероприятии.'},
         403: {'description': 'Недостаточно прав для действия.'},
-        404: {'description': 'Событие с таким ID не найдено.'},
+        404: {'description': 'Мероприятие с таким ID не найдено.'},
     }
 )
 async def get_one(
@@ -64,3 +64,21 @@ async def get_one(
         response.status_code = 404
         return response
     return event
+
+
+@router.post(
+    path='/{event_id}',
+    status_code=201,
+    response_model=dto.EventResponse,
+    responses={
+        201: {'description': 'Информация о вновь созданном мероприятии.'},
+        400: {'description': 'Формат некоторых полей неверный или тип события не найден.'}
+    }
+)
+async def add_one(
+        response: Response,
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_claims: dict[str, Any] = Depends(get_auth_payload),
+        event_data: dto.EventCreateRequest = Body(),
+):
+    pass
