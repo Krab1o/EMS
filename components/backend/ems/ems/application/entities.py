@@ -30,6 +30,7 @@ class User:
     vk: Optional[str] = None
     phone_number: Optional[str] = None
     email: str = None
+    password: str = None
     liked_events: list['Event'] = list()
     enrolled_in_events: list['Event'] = list()
     created_events: list['Event'] = list()

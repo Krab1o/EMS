@@ -2,7 +2,13 @@ from ems.application import services
 
 
 class Services:
-    pass
+    event: services.EventService
+    auth: services.AuthService
 
 
-# service factories...
+def get_event_service():
+    return Services.event
+
+
+def get_auth_service():
+    return Services.auth

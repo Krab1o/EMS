@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from ems_libs.security import jwt_strategy
+from ems_libs.security import jwt
 
 from ems.adapters import database, http_api, log
 from ems.adapters.database import repositories
@@ -21,22 +21,29 @@ class Logger:
 class DB:
     engine = create_async_engine(Settings.db.DATABASE_URL, echo=Settings.db.DATABASE_DEBUG)
     async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
-    # repositories...
+    event_repository = repositories.EventRepository(async_session_maker=async_session_maker)
+    user_repository = repositories.UserRepository(async_session_maker=async_session_maker)
+    institution_repository = repositories.InstitutionRepository(async_session_maker=async_session_maker)
 
 
 class Application:
-    # create services...
-    pass
+    event_service = services.EventService(
+        event_repository=DB.event_repository
+    )
+    auth_service = services.AuthService(
+        user_repository=DB.user_repository,
+        institution_repository=DB.institution_repository,
+    )
 
 
 def init_security():
-    jwt_strategy.set_secret_key(Settings.http_api.APP_SECRET_KEY)
-    jwt_strategy.set_access_token_expires_minutes(Settings.http_api.APP_TOKEN_EXPIRE_MINUTES)
+    jwt.set_secret_key(Settings.http_api.APP_SECRET_KEY)
+    jwt.set_access_token_expires_minutes(Settings.http_api.APP_TOKEN_EXPIRE_MINUTES)
 
 
 def init_services():
-    # put services in framework layer
-    pass
+    Services.event = Application.event_service
+    Services.auth = Application.auth_service
 
 
 def initial_app():
