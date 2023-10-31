@@ -1,0 +1,484 @@
+components:
+  schemas:
+    EventCreateRequest:
+      properties:
+        cover:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: URI обложки мероприятия
+          title: Cover
+        datetime:
+          description: Дата и время проведения
+          format: date-time
+          title: Datetime
+          type: string
+        description:
+          anyOf:
+          - minLength: 1
+            type: string
+          - type: 'null'
+          description: Описание мероприятия
+          title: Description
+        place:
+          description: Место проведения
+          title: Place
+          type: string
+        title:
+          description: Название
+          minLength: 3
+          title: Title
+          type: string
+        type_id:
+          description: Идентификатор типа мероприятия
+          exclusiveMinimum: 0.0
+          title: Type Id
+          type: integer
+      required:
+      - title
+      - place
+      - datetime
+      - type_id
+      title: EventCreateRequest
+      type: object
+    EventListElement:
+      properties:
+        cover:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: URI обложки мероприятия
+          title: Cover
+        datetime:
+          description: Дата и время проведения
+          format: date-time
+          title: Datetime
+          type: string
+        id:
+          description: Уникальный идентификатор
+          exclusiveMinimum: 0.0
+          title: Id
+          type: integer
+        place:
+          description: Место проведения
+          title: Place
+          type: string
+        status:
+          description: Статус
+          title: Status
+          type: string
+        title:
+          description: Название
+          title: Title
+          type: string
+        version:
+          description: Версия записи в базе данных
+          title: Version
+          type: integer
+        voted_no:
+          description: Количество пользователей, проголосовавших ПРОТИВ
+          minimum: 0.0
+          title: Voted No
+          type: integer
+        voted_yes:
+          description: Количество пользователей, проголосовавших ЗА
+          minimum: 0.0
+          title: Voted Yes
+          type: integer
+      required:
+      - id
+      - title
+      - status
+      - place
+      - datetime
+      - voted_yes
+      - voted_no
+      - version
+      title: EventListElement
+      type: object
+    EventListResponse:
+      items:
+        $ref: '#/components/schemas/EventListElement'
+      title: EventListResponse
+      type: array
+    EventResponse:
+      properties:
+        cover:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: URI обложки мероприятия
+          title: Cover
+        creator:
+          allOf:
+          - $ref: '#/components/schemas/UserListElement'
+          description: Информация о пользователе, создавшем мероприятие
+        datetime:
+          description: Дата и время проведения
+          format: date-time
+          title: Datetime
+          type: string
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Описание
+          title: Description
+        id:
+          description: Уникальный идентификатор
+          exclusiveMinimum: 0.0
+          title: Id
+          type: integer
+        place:
+          description: Место проведения
+          title: Place
+          type: string
+        status:
+          description: Статус
+          title: Status
+          type: string
+        title:
+          description: Название
+          title: Title
+          type: string
+        type:
+          allOf:
+          - $ref: '#/components/schemas/EventTypeResponse'
+          description: Тип мероприятия
+        version:
+          description: Версия записи в базе данных
+          title: Version
+          type: integer
+        voted_no:
+          description: Количество пользователей, проголосовавших ПРОТИВ
+          minimum: 0.0
+          title: Voted No
+          type: integer
+        voted_yes:
+          description: Количество пользователей, проголосовавших ЗА
+          minimum: 0.0
+          title: Voted Yes
+          type: integer
+      required:
+      - id
+      - title
+      - status
+      - place
+      - datetime
+      - creator
+      - voted_yes
+      - voted_no
+      - type
+      - version
+      title: EventResponse
+      type: object
+    EventStatus:
+      enum:
+      - on_review
+      - rejected
+      - on_poll
+      - planned
+      - cancelled
+      - ended
+      title: EventStatus
+      type: string
+    EventTypeResponse:
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Описание типа мероприятия
+          title: Description
+        id:
+          description: Уникальный идентификатор
+          exclusiveMinimum: 0.0
+          title: Id
+          type: integer
+        title:
+          description: Название типа мероприятия
+          title: Title
+          type: string
+        version:
+          description: Версия записи в базе данных
+          title: Version
+          type: integer
+      required:
+      - id
+      - title
+      - version
+      title: EventTypeResponse
+      type: object
+    EventUpdateRequest:
+      properties:
+        cover:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: URI обложки мероприятия
+          title: Cover
+        datetime:
+          description: Дата и время проведения
+          format: date-time
+          title: Datetime
+          type: string
+        description:
+          anyOf:
+          - minLength: 1
+            type: string
+          - type: 'null'
+          description: Описание мероприятия
+          title: Description
+        id:
+          description: Уникальный идентификатор
+          exclusiveMinimum: 0.0
+          title: Id
+          type: integer
+        place:
+          description: Место проведения
+          title: Place
+          type: string
+        title:
+          description: Название
+          minLength: 3
+          title: Title
+          type: string
+        version:
+          description: Версия обновленной записи (на 1 больше предыдущей версии)
+          minimum: 0.0
+          title: Version
+          type: integer
+      required:
+      - id
+      - title
+      - place
+      - datetime
+      - version
+      title: EventUpdateRequest
+      type: object
+    InstitutionResponse:
+      properties:
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Описание института (факультета)
+          title: Description
+        id:
+          description: Уникальный идентификатор
+          exclusiveMinimum: 0.0
+          title: Id
+          type: integer
+        title:
+          description: Название института (факультета)
+          title: Title
+          type: string
+        version:
+          description: Версия записи в базе данных
+          title: Version
+          type: integer
+      required:
+      - id
+      - title
+      - version
+      title: InstitutionResponse
+      type: object
+    UserListElement:
+      properties:
+        course:
+          anyOf:
+          - exclusiveMinimum: 0.0
+            type: integer
+          - type: 'null'
+          description: Курс (только для студентов)
+          title: Course
+        first_name:
+          description: Имя
+          title: First Name
+          type: string
+        group:
+          anyOf:
+          - exclusiveMinimum: 0.0
+            type: integer
+          - type: 'null'
+          description: Номер учебной группы (только для студентов)
+          title: Group
+        id:
+          description: Уникальный идентификатор
+          exclusiveMinimum: 0.0
+          title: Id
+          type: integer
+        institution:
+          allOf:
+          - $ref: '#/components/schemas/InstitutionResponse'
+          description: Институт (факультет)
+        last_name:
+          description: Фамилия
+          title: Last Name
+          type: string
+        middle_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Отчество
+          title: Middle Name
+        role:
+          allOf:
+          - $ref: '#/components/schemas/UserRole'
+          description: Роль пользователя
+        version:
+          description: Версия записи в базе данных
+          title: Version
+          type: integer
+      required:
+      - id
+      - last_name
+      - first_name
+      - institution
+      - role
+      - version
+      title: UserListElement
+      type: object
+    UserRole:
+      enum:
+      - user
+      - admin
+      title: UserRole
+      type: string
+info:
+  title: EMS
+  version: 0.0.1
+openapi: 3.1.0
+paths:
+  /events:
+    get:
+      operationId: get_list_events_get
+      parameters:
+      - in: query
+        name: event_type
+        required: false
+        schema:
+          items:
+            type: integer
+          title: Event Type
+          type: array
+      - in: query
+        name: event_status
+        required: false
+        schema:
+          items:
+            $ref: '#/components/schemas/EventStatus'
+          title: Event Status
+          type: array
+      - in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          title: Page
+          type: integer
+      - in: query
+        name: size
+        required: false
+        schema:
+          default: 20
+          title: Size
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventListResponse'
+          description: Список мероприятий.
+      summary: Get List
+      tags:
+      - Мероприятия
+
+    post:
+      operationId: add_one_events_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventCreateRequest'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: {}
+          description: Мероприятие создано успешно.
+        '400':
+          description: Тип события не найден.
+        '403':
+          description: Недостаточно прав для действия.
+      summary: Add One
+      tags:
+      - Мероприятия
+
+    put:
+      operationId: update_one_events_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EventUpdateRequest'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Мероприятие обновлено успешно.
+        '403':
+          description: Недостаточно прав для выполнения действия.
+        '409':
+          description: При обновлении произошел конфликт версий.
+      summary: Update One
+      tags:
+      - Мероприятия
+
+  /events/{event_id}:
+    delete:
+      operationId: delete_one_events__event_id__delete
+      parameters:
+      - in: path
+        name: event_id
+        required: true
+        schema:
+          title: Event Id
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: {}
+          description: Мероприятие удалено успешно.
+        '403':
+          description: Недостаточно прав для выполнения действия.
+      summary: Delete One
+      tags:
+      - Мероприятия
+
+    get:
+      operationId: get_one_events__event_id__get
+      parameters:
+      - in: path
+        name: event_id
+        required: true
+        schema:
+          title: Event Id
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+          description: Информация о мероприятии.
+        '404':
+          description: Мероприятие с таким ID не найдено.
+      summary: Get One
+      tags:
+      - Мероприятия
