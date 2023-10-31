@@ -19,5 +19,9 @@ class IEventRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def add_one(self, creator_id: int, event_data: dto.EventCreateRequest) -> Optional[int]:
+    async def add_one(self, event_data: dto.EventCreateRequest, creator_id: int) -> Optional[int]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_one(self, data: dto.EventUpdateRequest) -> Optional[int]:
         raise NotImplementedError

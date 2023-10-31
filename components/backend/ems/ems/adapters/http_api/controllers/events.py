@@ -17,7 +17,7 @@ from ems.adapters.http_api.dependencies import get_event_service
 from ems.application import dto
 from ems.application.enum import UserRole, EventStatus
 from ems.application.services import EventService
-from ems.application.services.event_service import EventCreateStatus
+from ems.application.services.event_service import EventCreateStatus, EventUpdateStatus
 
 router = APIRouter(
     prefix='/events',
@@ -117,7 +117,7 @@ async def add_one(
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         event_data: Annotated[dto.EventCreateRequest, Body()],
 ):
-    match await event_service.add_one(auth_claims.get('user_id'), event_data):
+    match await event_service.add_one(event_data, creator_id=auth_claims.get('user_id')):
         case None, EventCreateStatus.EVENT_TYPE_NOT_FOUND:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -134,4 +134,45 @@ async def add_one(
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='Unexpected error',
+            )
+
+
+@router.put(
+    path='',
+    responses={
+        200: {'description': 'Мероприятие обновлено успешно.'},
+        403: {'description': 'Недостаточно прав для выполнения действия.'},
+        409: {'description': 'При обновлении произошел конфликт версий.'},
+    }
+)
+async def update_one(
+        response: Response,
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        data: Annotated[dto.EventUpdateRequest, Body()],
+):
+    role = auth_claims.get('role', None)
+    user_id = auth_claims.get('user_id', None)
+    match await event_service.update_one(data, user_id=user_id, user_role=role):
+        case EventUpdateStatus.NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='No event with such id',
+            )
+        case EventUpdateStatus.FORBIDDEN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail='Regular users are only able to update their own events. Administrators may update any.'
+            )
+        case EventUpdateStatus.CONFLICT:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='The resource was updated by a third-party. Try re-fetching the data and repeat the operation.'
+            )
+        case EventUpdateStatus.OK:
+            response.headers['Location'] = f'/events/{data.id}'
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Unexpected error'
             )

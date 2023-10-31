@@ -4,7 +4,7 @@ from enum import IntEnum, auto
 from attr import dataclass
 
 from ems.application import dto, entities
-from ems.application.enum import EventStatus
+from ems.application.enum import EventStatus, UserRole
 from ems.application.interfaces import IEventRepository, IEventTypeRepository
 
 
@@ -12,6 +12,14 @@ class EventCreateStatus(IntEnum):
     OK = auto()
     EVENT_TYPE_NOT_FOUND = auto()
     UNEXPECTED_ERROR = auto()
+
+
+class EventUpdateStatus(IntEnum):
+    OK = auto()
+    NOT_FOUND = auto()
+    FORBIDDEN = auto()
+    UNEXPECTED_ERROR = auto()
+    CONFLICT = auto()
 
 
 @dataclass
@@ -37,8 +45,8 @@ class EventService:
 
     async def add_one(
             self,
+            event_data: dto.EventCreateRequest,
             creator_id: int,
-            event_data: dto.EventCreateRequest
     ) -> tuple[Optional[int], EventCreateStatus]:
         event_type = await self.event_type_repository.get_by_id(event_data.type_id)
         if event_type is None:
@@ -49,3 +57,31 @@ class EventService:
             return None, EventCreateStatus.UNEXPECTED_ERROR
 
         return event_id, EventCreateStatus.OK
+
+    async def update_one(
+            self,
+            data: dto.EventUpdateRequest,
+            user_id: int,
+            user_role: UserRole,
+    ) -> EventUpdateStatus:
+        match user_role:
+            case UserRole.ADMIN:
+                db_event = await self.event_repository.get_by_id(data.id, include_rejected=True)
+            case UserRole.USER:
+                db_event = await self.event_repository.get_by_id(data.id, include_rejected=False)
+            case _:
+                return EventUpdateStatus.UNEXPECTED_ERROR
+
+        if db_event is None:
+            return EventUpdateStatus.NOT_FOUND
+
+        if user_role != UserRole.ADMIN and db_event.creator_id != user_id:
+            return EventUpdateStatus.FORBIDDEN
+
+        if data.version - db_event.version != 1:
+            return EventUpdateStatus.CONFLICT
+
+        event_id = await self.event_repository.update_one(data)
+        if event_id is None:
+            return EventUpdateStatus.UNEXPECTED_ERROR
+        return EventUpdateStatus.OK
