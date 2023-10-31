@@ -22,6 +22,13 @@ class EventUpdateStatus(IntEnum):
     CONFLICT = auto()
 
 
+class EventDeleteStatus(IntEnum):
+    OK = auto()
+    NOT_FOUND = auto()
+    FORBIDDEN = auto()
+    UNEXPECTED_ERROR = auto()
+
+
 @dataclass
 class EventService:
     event_repository: IEventRepository
@@ -40,8 +47,17 @@ class EventService:
             status=status,
         )
 
-    async def get_by_id(self, event_id: int, include_rejected: bool = False):
-        return await self.event_repository.get_by_id(event_id, include_rejected)
+    async def get_by_id(
+            self,
+            event_id: int,
+            include_rejected: bool = False,
+            include_on_review: bool = False,
+    ) -> Optional[entities.Event]:
+        return await self.event_repository.get_by_id(
+            event_id,
+            include_rejected=include_rejected,
+            include_on_review=include_on_review,
+        )
 
     async def add_one(
             self,
@@ -52,7 +68,7 @@ class EventService:
         if event_type is None:
             return None, EventCreateStatus.EVENT_TYPE_NOT_FOUND
 
-        event_id = await self.event_repository.add_one(creator_id, event_data)
+        event_id = await self.event_repository.add_one(event_data, creator_id=creator_id)
         if not event_id:
             return None, EventCreateStatus.UNEXPECTED_ERROR
 
@@ -66,9 +82,9 @@ class EventService:
     ) -> EventUpdateStatus:
         match user_role:
             case UserRole.ADMIN:
-                db_event = await self.event_repository.get_by_id(data.id, include_rejected=True)
+                db_event = await self.event_repository.get_by_id(data.id, include_rejected=True, include_on_review=True)
             case UserRole.USER:
-                db_event = await self.event_repository.get_by_id(data.id, include_rejected=False)
+                db_event = await self.event_repository.get_by_id(data.id, include_on_review=True)
             case _:
                 return EventUpdateStatus.UNEXPECTED_ERROR
 
@@ -85,3 +101,21 @@ class EventService:
         if event_id is None:
             return EventUpdateStatus.UNEXPECTED_ERROR
         return EventUpdateStatus.OK
+
+    async def delete_one(self, event_id: int, user_id: int, user_role: UserRole) -> EventDeleteStatus:
+        match user_role:
+            case UserRole.ADMIN:
+                db_event = await self.event_repository.get_by_id(event_id, include_rejected=True, include_on_review=True)
+            case UserRole.USER:
+                db_event = await self.event_repository.get_by_id(event_id, include_on_review=True)
+            case _:
+                return EventDeleteStatus.UNEXPECTED_ERROR
+
+        if db_event is None:
+            return EventDeleteStatus.NOT_FOUND
+
+        if user_role != UserRole.ADMIN and db_event.creator_id != user_id:
+            return EventDeleteStatus.FORBIDDEN
+
+        await self.event_repository.delete_one(event_id)
+        return EventDeleteStatus.OK

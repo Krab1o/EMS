@@ -17,7 +17,7 @@ from ems.adapters.http_api.dependencies import get_event_service
 from ems.application import dto
 from ems.application.enum import UserRole, EventStatus
 from ems.application.services import EventService
-from ems.application.services.event_service import EventCreateStatus, EventUpdateStatus
+from ems.application.services.event_service import EventCreateStatus, EventUpdateStatus, EventDeleteStatus
 
 router = APIRouter(
     prefix='/events',
@@ -171,6 +171,40 @@ async def update_one(
             )
         case EventUpdateStatus.OK:
             response.headers['Location'] = f'/events/{data.id}'
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Unexpected error'
+            )
+
+
+@router.delete(
+    path='/{event_id}',
+    responses={
+        200: {'description': 'Мероприятие удалено успешно.'},
+        403: {'description': 'Недостаточно прав для выполнения действия.'},
+    }
+)
+async def delete_one(
+        event_id: Annotated[int, Gt(0)],
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+):
+    role = auth_claims.get('role', None)
+    user_id = auth_claims.get('user_id', None)
+    match await event_service.delete_one(event_id=event_id, user_id=user_id, user_role=role):
+        case EventDeleteStatus.NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='No event with such id',
+            )
+        case EventDeleteStatus.FORBIDDEN:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail='Regular users are only able to update their own events. Administrators may update any.'
+            )
+        case EventDeleteStatus.OK:
+            pass
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
