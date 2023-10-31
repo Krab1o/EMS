@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 from .auth import LoginRequest
 from .user import UserCreateRequest
-from .event import EventCreateRequest
+from .event import EventCreateRequest, EventUpdateRequest
 
 
 class PaginationParams(BaseModel):

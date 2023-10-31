@@ -15,6 +15,7 @@ class EventCreateRequest(BaseModel):
         description='Описание мероприятия',
     )
     cover: Optional[str] = Field(
+        default=None,
         description='URI обложки мероприятия',
     )
     place: str = Field(
@@ -26,4 +27,34 @@ class EventCreateRequest(BaseModel):
     type_id: int = Field(
         gt=0,
         description='Идентификатор типа мероприятия',
+    )
+
+
+class EventUpdateRequest(BaseModel):
+    id: int = Field(
+        gt=0,
+        description='Уникальный идентификатор',
+    )
+    title: str = Field(
+        min_length=3,
+        description='Название',
+    )
+    description: Optional[str] = Field(
+        default=None,
+        min_length=1,
+        description='Описание мероприятия',
+    )
+    cover: Optional[str] = Field(
+        default=None,
+        description='URI обложки мероприятия',
+    )
+    place: str = Field(
+        description='Место проведения',
+    )
+    datetime: dt = Field(
+        description='Дата и время проведения',
+    )
+    version: int = Field(
+        ge=0,
+        description='Версия обновленной записи (на 1 больше предыдущей версии)'
     )
