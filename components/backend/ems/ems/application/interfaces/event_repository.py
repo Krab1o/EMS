@@ -15,7 +15,12 @@ class IEventRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, event_id: int, include_rejected: bool = False) -> Optional[entities.Event]:
+    async def get_by_id(
+            self,
+            event_id: int,
+            include_rejected: bool = False,
+            include_on_review: bool = False,
+    ) -> Optional[entities.Event]:
         raise NotImplementedError
 
     @abstractmethod
@@ -24,4 +29,8 @@ class IEventRepository(ABC):
 
     @abstractmethod
     async def update_one(self, data: dto.EventUpdateRequest) -> Optional[int]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete_one(self, event_id: int):
         raise NotImplementedError

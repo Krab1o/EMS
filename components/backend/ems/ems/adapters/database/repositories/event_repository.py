@@ -2,7 +2,7 @@ from typing import Optional
 
 from attr import dataclass
 
-from sqlalchemy import select, insert, update
+from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
@@ -32,10 +32,18 @@ class EventRepository(IEventRepository):
             res = await session.execute(query)
         return res.scalars().all()
 
-    async def get_by_id(self, event_id: int, include_rejected: bool = False) -> Optional[entities.Event]:
+    async def get_by_id(
+            self,
+            event_id: int,
+            include_rejected: bool = False,
+            include_on_review: bool = False,
+    ) -> Optional[entities.Event]:
         query = select(entities.Event).where(entities.Event.id == event_id)
         if not include_rejected:
             query = query.where(entities.Event.status != EventStatus.REJECTED)
+        if not include_on_review:
+            query = query.where(entities.Event.status != EventStatus.ON_REVIEW)
+
         query = query\
             .options(joinedload(entities.Event.type))\
             .options(
@@ -68,3 +76,9 @@ class EventRepository(IEventRepository):
             event_id = await session.scalar(query)
             await session.commit()
         return event_id
+
+    async def delete_one(self, event_id: int):
+        query = delete(entities.Event).where(entities.Event.id == event_id)
+        async with self.async_session_maker() as session:
+            await session.execute(query)
+            await session.commit()
