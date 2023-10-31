@@ -4,6 +4,7 @@ from enum import IntEnum, auto
 from attr import dataclass
 
 from ems.application import dto, entities
+from ems.application.enum import EventStatus
 from ems.application.interfaces import IEventRepository, IEventTypeRepository
 
 
@@ -18,11 +19,21 @@ class EventService:
     event_repository: IEventRepository
     event_type_repository: IEventTypeRepository
 
-    async def get_list(self, params: dto.PaginationParams) -> list[entities.Event]:
-        return await self.event_repository.get_list(params.page, params.size)
+    async def get_list(
+            self,
+            params: dto.PaginationParams,
+            event_type: Optional[list[int]] = None,
+            status: Optional[list[EventStatus]] = None,
+    ) -> list[entities.Event]:
+        return await self.event_repository.get_list(
+            page=params.page,
+            size=params.size,
+            event_type=event_type,
+            status=status,
+        )
 
-    async def get_one(self, event_id: int) -> Optional[entities.Event]:
-        return await self.event_repository.get_one(event_id)
+    async def get_by_id(self, event_id: int, include_rejected: bool = False):
+        return await self.event_repository.get_by_id(event_id, include_rejected)
 
     async def add_one(
             self,

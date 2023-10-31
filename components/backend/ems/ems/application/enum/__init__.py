@@ -7,8 +7,9 @@ class UserRole(StrEnum):
 
 
 class EventStatus(StrEnum):
-    ON_POLL = auto()
-    CANCELLED = auto()
     ON_REVIEW = auto()
+    REJECTED = auto()
+    ON_POLL = auto()
     PLANNED = auto()
+    CANCELLED = auto()
     ENDED = auto()

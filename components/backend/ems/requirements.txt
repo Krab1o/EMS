@@ -2,8 +2,8 @@ alembic==1.11.1
 asyncio==3.4.3
 asyncpg==0.28.0
 attrs==23.1.0
-fastapi==0.100.0
-pydantic==2.1.0
+fastapi==0.104.1
+pydantic==2.4.2
 pydantic-settings==2.0.2
 python-dateutil==2.8.2
 python-jose==3.3.0
