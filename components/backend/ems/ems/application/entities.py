@@ -13,6 +13,7 @@ class Institution:
     id: int = None
     title: str = None
     description: Optional[str] = None
+    version: int = None
 
 
 @dataclass
@@ -34,6 +35,7 @@ class User:
     liked_events: list['Event'] = list()
     enrolled_in_events: list['Event'] = list()
     created_events: list['Event'] = list()
+    version: int = None
 
 
 @dataclass
@@ -41,6 +43,7 @@ class EventType:
     id: int = None
     title: str = None
     description: Optional[str] = None
+    version: int = None
 
 
 @dataclass
@@ -58,6 +61,7 @@ class Event:
     voted_no: int = None
     type_id: int = None
     type: EventType = None
+    version: int = None
 
 
 @dataclass
@@ -66,3 +70,4 @@ class Club:
     title: str = None
     description: Optional[str] = None
     place: str = None
+    version: int = None

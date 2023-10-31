@@ -2,11 +2,12 @@ from typing import Optional
 
 from attr import dataclass
 
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
-from ems.application import entities
+from ems.application import entities, dto
+from ems.application.enum import EventStatus
 from ems.application.interfaces import IEventRepository
 
 
@@ -31,3 +32,15 @@ class EventRepository(IEventRepository):
         async with self.async_session_maker() as session:
             res = await session.execute(query)
         return res.scalar()
+
+    async def add_one(self, creator_id: int, event_data: dto.EventCreateRequest) -> Optional[int]:
+        async with self.async_session_maker() as session:
+            to_insert = {
+                **event_data.model_dump(),
+                'status': EventStatus.ON_REVIEW,
+                'creator_id': creator_id,
+            }
+            insert_query = insert(entities.Event).values(to_insert).returning(entities.Event.id)
+            new_id = await session.scalar(insert_query)
+            await session.commit()
+        return new_id

@@ -15,3 +15,6 @@ class EventTypeResponse(BaseModel):
         default=None,
         description='Описание типа мероприятия'
     )
+    version: int = Field(
+        description='Версия записи в базе данных'
+    )

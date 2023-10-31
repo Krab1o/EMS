@@ -24,11 +24,13 @@ class DB:
     event_repository = repositories.EventRepository(async_session_maker=async_session_maker)
     user_repository = repositories.UserRepository(async_session_maker=async_session_maker)
     institution_repository = repositories.InstitutionRepository(async_session_maker=async_session_maker)
+    event_type_repository = repositories.EventTypeRepository(async_session_maker=async_session_maker)
 
 
 class Application:
     event_service = services.EventService(
-        event_repository=DB.event_repository
+        event_repository=DB.event_repository,
+        event_type_repository=DB.event_type_repository,
     )
     auth_service = services.AuthService(
         user_repository=DB.user_repository,

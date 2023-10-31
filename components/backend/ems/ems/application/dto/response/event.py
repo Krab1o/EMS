@@ -37,6 +37,9 @@ class EventListElement(BaseModel):
         ge=0,
         description='Количество пользователей, проголосовавших ПРОТИВ'
     )
+    version: int = Field(
+        description='Версия записи в базе данных'
+    )
 
 
 class EventListResponse(RootModel[list[EventListElement]]):
@@ -81,4 +84,7 @@ class EventResponse(BaseModel):
     )
     type: EventTypeResponse = Field(
         description='Тип мероприятия'
+    )
+    version: int = Field(
+        description='Версия записи в базе данных'
     )

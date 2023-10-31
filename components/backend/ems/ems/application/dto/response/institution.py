@@ -15,3 +15,6 @@ class InstitutionResponse(BaseModel):
         default=None,
         description='Описание института (факультета)'
     )
+    version: int = Field(
+        description='Версия записи в базе данных'
+    )

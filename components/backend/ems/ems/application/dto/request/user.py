@@ -5,12 +5,15 @@ from pydantic import Field, BaseModel
 
 class UserCreateRequest(BaseModel):
     last_name: str = Field(
+        min_length=1,
         description='Фамилия',
     )
     first_name: str = Field(
+        min_length=1,
         description='Имя',
     )
     middle_name: Optional[str] = Field(
+        min_length=1,
         default=None,
         description='Отчество',
     )
