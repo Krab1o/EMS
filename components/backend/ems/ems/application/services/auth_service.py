@@ -19,10 +19,11 @@ class LoginResult(IntEnum):
     WRONG_PASSWORD = auto()
 
 
-class RegistrationResult(IntEnum):
+class RegistrationStatus(IntEnum):
     OK = auto()
     EMAIL_TAKEN = auto()
     BAD_REQUEST = auto()
+    UNEXPECTED_ERROR = auto()
     INSTITUTION_NOT_FOUND = auto()
 
 
@@ -45,23 +46,27 @@ class AuthService:
     async def register_student(
             self,
             body: dto.UserCreateRequest
-    ) -> tuple[Optional[entities.User], RegistrationResult]:
+    ) -> tuple[Optional[entities.User], RegistrationStatus]:
         if await self.user_repository.is_email_taken(body.email):
-            return None, RegistrationResult.EMAIL_TAKEN
+            return None, RegistrationStatus.EMAIL_TAKEN
 
         if not AuthService.check_password(body.password)\
            or not AuthService.check_email(body.email)\
-           or not AuthService.check_telegram(body.telegram)\
-           or not AuthService.check_vk(body.vk)\
-           or not AuthService.check_phone(body.phone_number):
-            return None, RegistrationResult.BAD_REQUEST
+           or body.telegram is not None and not AuthService.check_telegram(body.telegram)\
+           or body.vk is not None and not AuthService.check_vk(body.vk)\
+           or body.phone_number is not None and not AuthService.check_phone(body.phone_number):
+            return None, RegistrationStatus.BAD_REQUEST
 
         institution = await self.institution_repository.get_by_id(body.institution_id)
         if institution is None:
-            return None, RegistrationResult.INSTITUTION_NOT_FOUND
+            return None, RegistrationStatus.INSTITUTION_NOT_FOUND
 
-        db_user = await self.user_repository.add_one(body)
-        return db_user, RegistrationResult.OK
+        user_id = await self.user_repository.add_one(body)
+        if user_id is None:
+            return None, RegistrationStatus.UNEXPECTED_ERROR
+
+        db_user = await self.user_repository.get_by_id(user_id)
+        return db_user, RegistrationStatus.OK
 
     @staticmethod
     def check_password(password: str) -> bool:
@@ -78,7 +83,7 @@ class AuthService:
 
     @staticmethod
     def check_vk(vk: str) -> bool:
-        return re.match(r'[a-z0-9_]{5,32}', vk) is not None
+        return re.match(r'^[a-z0-9_]{5,32}$', vk) is not None
 
     @staticmethod
     def check_phone(phone: str) -> bool:

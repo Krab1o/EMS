@@ -37,6 +37,9 @@ class UserListElement(BaseModel):
     role: UserRole = Field(
         description='Роль пользователя'
     )
+    version: int = Field(
+        description='Версия записи в базе данных'
+    )
 
 
 class UserListResponse(RootModel[list[UserListElement]]):

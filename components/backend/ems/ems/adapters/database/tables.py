@@ -11,6 +11,8 @@ from sqlalchemy import (
     Text,
 )
 
+from datetime import datetime
+
 naming_convention = {
     'ix': 'ix_%(column_0_label)s',
     'uq': 'uq_%(table_name)s_%(column_0_name)s',
@@ -101,6 +103,7 @@ users = Table(
     Column(
         'email',
         String(128),
+        index=True,
         nullable=False,
         comment='Адрес электронной почты'
     ),
@@ -109,6 +112,13 @@ users = Table(
         String(512),
         nullable=False,
         comment='Пароль',
+    ),
+    Column(
+        'version',
+        Integer,
+        default=0,
+        nullable=False,
+        comment='Версия записи об объекте',
     ),
     comment='Пользователи',
 )
@@ -198,6 +208,7 @@ events = Table(
     Column(
         'datetime',
         DateTime,
+        index=True,
         nullable=False,
         comment='Дата и время проведения'
     ),
@@ -211,12 +222,14 @@ events = Table(
         'voted_yes',
         Integer,
         nullable=False,
+        default=0,
         comment='Количество пользователей, проголосовавших ЗА'
     ),
     Column(
         'voted_no',
         Integer,
         nullable=False,
+        default=0,
         comment='Количество пользователей, проголосовавших ПРОТИВ'
     ),
     Column(
@@ -224,6 +237,20 @@ events = Table(
         ForeignKey('event_types.id', ondelete='CASCADE'),
         nullable=False,
         comment='Идентификатор типа мероприятия'
+    ),
+    Column(
+        'created_at',
+        DateTime,
+        nullable=False,
+        default=datetime.now(),
+        comment='Дата и время, когда была создана запись'
+    ),
+    Column(
+        'version',
+        Integer,
+        default=0,
+        nullable=False,
+        comment='Версия записи об объекте',
     ),
     comment='Мероприятия',
 )
@@ -250,6 +277,13 @@ event_types = Table(
         default=None,
         comment='Описание'
     ),
+    Column(
+        'version',
+        Integer,
+        default=0,
+        nullable=False,
+        comment='Версия записи об объекте',
+    ),
     comment='Типы мероприятий',
 )
 
@@ -274,6 +308,13 @@ institutions = Table(
         nullable=True,
         default=None,
         comment='Описание'
+    ),
+    Column(
+        'version',
+        Integer,
+        default=0,
+        nullable=False,
+        comment='Версия записи об объекте',
     ),
     comment='Организации (факультеты и институты)',
 )
@@ -305,6 +346,13 @@ clubs = Table(
         String(512),
         nullable=False,
         comment='Место проведения'
+    ),
+    Column(
+        'version',
+        Integer,
+        default=0,
+        nullable=False,
+        comment='Версия записи об объекте',
     ),
     comment='Секции (кружки)',
 )

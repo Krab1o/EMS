@@ -33,23 +33,26 @@ class UserRepository(IUserRepository):
             db_user = await session.scalar(query)
         return db_user
 
-    async def add_one(self, data: dto.UserCreateRequest) -> entities.User:
-        to_insert = data.model_dump(exclude={'password'})
-        to_insert['password'] = Hasher.get_hash(data.password)
-        to_insert['role'] = UserRole.USER
-        print(to_insert)
+    async def get_by_id(self, id_: int) -> Optional[entities.User]:
+        query = select(entities.User)\
+            .where(entities.User.id == id_)\
+            .options(joinedload(entities.User.institution))\
+            .options(joinedload(entities.User.liked_events))\
+            .options(joinedload(entities.User.enrolled_in_events))\
+            .options(joinedload(entities.User.created_events))
+        async with self.async_session_maker() as session:
+            db_user = await session.scalar(query)
+        return db_user
+
+    async def add_one(self, data: dto.UserCreateRequest) -> Optional[int]:
+        to_insert = {
+            **data.model_dump(exclude={'password'}),
+            'password': Hasher.get_hash(data.password),
+            'role': UserRole.USER,
+        }
         insert_query = insert(entities.User).values(to_insert).returning(entities.User.id)
 
         async with self.async_session_maker() as session:
             new_id = await session.scalar(insert_query)
             await session.commit()
-
-            fetch_query = select(entities.User) \
-                .where(entities.User.id == new_id) \
-                .options(joinedload(entities.User.institution)) \
-                .options(joinedload(entities.User.liked_events)) \
-                .options(joinedload(entities.User.enrolled_in_events)) \
-                .options(joinedload(entities.User.created_events))
-            db_user = await session.scalar(fetch_query)
-
-        return db_user
+        return new_id

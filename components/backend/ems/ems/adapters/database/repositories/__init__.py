@@ -1,3 +1,4 @@
 from .event_repository import EventRepository
 from .institution_repository import InstitutionRepository
 from .user_repository import UserRepository
+from .event_type_repository import EventTypeRepository

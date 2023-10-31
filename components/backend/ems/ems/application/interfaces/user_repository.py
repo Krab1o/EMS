@@ -10,9 +10,13 @@ class IUserRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_by_id(self, id_: int) -> Optional[entities.User]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def is_email_taken(self, email: str) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    async def add_one(self, data: dto.UserCreateRequest) -> entities.User:
+    async def add_one(self, data: dto.UserCreateRequest) -> Optional[int]:
         raise NotImplementedError
