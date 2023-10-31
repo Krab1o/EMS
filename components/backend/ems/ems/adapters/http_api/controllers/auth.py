@@ -8,6 +8,7 @@ from ems.application.services import AuthService
 from ems.application.services.auth_service import LoginResult, RegistrationStatus
 from ems_libs.security import jwt
 
+
 router = APIRouter(
     prefix='/auth',
     tags=['Авторизация']
@@ -22,9 +23,9 @@ router = APIRouter(
     },
 )
 async def login(
-        security_service: Annotated[AuthService, Depends(get_auth_service)],
         response: Response,
-        body: dto.LoginRequest = Body(),
+        security_service: Annotated[AuthService, Depends(get_auth_service)],
+        body: Annotated[dto.LoginRequest, Body()],
 ):
     match await security_service.login(body):
         case None, LoginResult.NOT_FOUND | LoginResult.WRONG_PASSWORD:
@@ -38,6 +39,11 @@ async def login(
                 'role': user.role,
             })
             response.set_cookie(key='token', value=token)
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Unexpected error',
+            )
 
 
 @router.post(
@@ -50,9 +56,9 @@ async def login(
     },
 )
 async def register(
-        security_service: Annotated[AuthService, Depends(get_auth_service)],
         response: Response,
-        body: dto.UserCreateRequest = Body()
+        security_service: Annotated[AuthService, Depends(get_auth_service)],
+        body: Annotated[dto.UserCreateRequest, Body()],
 ):
     match await security_service.register_student(body):
         case None, RegistrationStatus.BAD_REQUEST | RegistrationStatus.INSTITUTION_NOT_FOUND:
@@ -77,3 +83,8 @@ async def register(
             })
             response.set_cookie(key='token', value=token)
             response.headers.append('Location', f'/users/{user.id}')
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Unexpected error',
+            )

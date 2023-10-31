@@ -6,11 +6,16 @@ from ems.application import entities, dto
 
 class IEventRepository(ABC):
     @abstractmethod
-    async def get_list(self, page: int, size: int) -> list[entities.Event]:
+    async def get_list(
+            self,
+            page: int, size: int,
+            event_type: Optional[list[int]] = None,
+            status: Optional[list[int]] = None,
+    ) -> list[entities.Event]:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_one(self, event_id: int) -> Optional[entities.Event]:
+    async def get_by_id(self, event_id: int, include_rejected: bool = False) -> Optional[entities.Event]:
         raise NotImplementedError
 
     @abstractmethod
