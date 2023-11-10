@@ -3,8 +3,9 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    APP_IS_DEV: bool = False
     APP_IS_DEBUG: bool = False
-    APP_VERSION: str = '0.0.1'
+    APP_VERSION: str = '0.0.2'
     APP_SWAGGER_ON: bool = False
     APP_TITLE: str = 'EMS'
     APP_LOGGING_LEVEL: str = 'INFO'
