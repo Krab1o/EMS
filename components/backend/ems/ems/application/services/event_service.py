@@ -68,7 +68,7 @@ class EventService:
         if event_type is None:
             return None, EventCreateStatus.EVENT_TYPE_NOT_FOUND
 
-        event_id = await self.event_repository.add_one(event_data, creator_id=creator_id)
+        event_id = await self.event_repository.add_one(event_data=event_data, creator_id=creator_id)
         if not event_id:
             return None, EventCreateStatus.UNEXPECTED_ERROR
 
