@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  ems:
+    build: ../../ems
+    ports:
+      - 3000:3000
+    depends_on:
+      ems-postgres:
+        condition: service_healthy
+    environment:
+      APP_SWAGGER_ON: True
+      APP_IS_DEV: True
+      DATABASE_NAME: dev_ems
+      DATABASE_HOST: ems-postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASS: postgres
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python -m ems.composites.alembic_runner upgrade head &&\
+        gunicorn ems.composites.http_api:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:3000
+
+  ems-postgres:
+    image: postgres:16.0
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dev_ems
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
