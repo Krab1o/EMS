@@ -55,6 +55,7 @@ def initial_app():
     
 initial_app()
 app = create_app(
+    is_dev=Settings.http_api.APP_IS_DEV,
     is_debug=Settings.http_api.APP_IS_DEBUG,
     version=Settings.http_api.APP_VERSION,
     swagger_on=Settings.http_api.APP_SWAGGER_ON,
