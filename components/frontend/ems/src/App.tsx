@@ -13,9 +13,6 @@ function App() {
       <main>
         <Router />
       </main>
-      <footer>
-        © {new Date().getFullYear()} ООО «Говна кусок». Все права защищены.
-      </footer>
     </div>
   );
 }
