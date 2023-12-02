@@ -24,9 +24,9 @@ mapper.map_imperatively(
             foreign_keys=[tables.users.c.institution_id],
             lazy='select'
         ),
-        'liked_events': relationship(
+        'voted_events': relationship(
             entities.Event,
-            secondary=tables.users_liked_events,
+            secondary=tables.users_voted_events,
             lazy='select'
         ),
         'enrolled_in_events': relationship(
@@ -58,4 +58,9 @@ mapper.map_imperatively(
 mapper.map_imperatively(
     entities.Club,
     tables.clubs,
+)
+
+mapper.map_imperatively(
+    entities.UserVotedEvent,
+    tables.users_voted_events,
 )

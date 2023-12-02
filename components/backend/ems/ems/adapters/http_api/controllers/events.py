@@ -17,7 +17,8 @@ from ems.adapters.http_api.dependencies import get_event_service
 from ems.application import dto
 from ems.application.enum import UserRole, EventStatus
 from ems.application.services import EventService
-from ems.application.services.event_service import EventCreateStatus, EventUpdateStatus, EventDeleteStatus
+from ems.application.services.event_service import EventCreateStatus, EventUpdateStatus, EventDeleteStatus, \
+    EventVoteStatus
 
 router = APIRouter(
     prefix='/events',
@@ -204,6 +205,45 @@ async def delete_one(
                 detail='Regular users are only able to update their own events. Administrators may update any.'
             )
         case EventDeleteStatus.OK:
+            pass
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail='Unexpected error'
+            )
+
+
+@router.post(
+    path='/{event_id}/vote',
+    responses={
+        200: {'description': 'Голос записан.'},
+        404: {'description': 'Мероприятие или пользователь не найден.'},
+    }
+)
+async def vote(
+        event_id: Annotated[int, Gt(0)],
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        vote_data: Annotated[dto.EventVoteRequest, Body()],
+):
+    user_id = auth_claims.get('user_id', None)
+    match await event_service.vote(data=vote_data, event_id=event_id, user_id=user_id):
+        case EventVoteStatus.EVENT_NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='No event with such id',
+            )
+        case EventVoteStatus.USER_NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='No user with such id',
+            )
+        case EventVoteStatus.NOT_ON_POLL:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='This event is not on poll',
+            )
+        case EventVoteStatus.OK:
             pass
         case _:
             raise HTTPException(

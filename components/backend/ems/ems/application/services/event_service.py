@@ -5,7 +5,11 @@ from attr import dataclass
 
 from ems.application import dto, entities
 from ems.application.enum import EventStatus, UserRole
-from ems.application.interfaces import IEventRepository, IEventTypeRepository
+from ems.application.interfaces import (
+    IEventRepository,
+    IEventTypeRepository,
+    IUserVotedEventRepository, IUserRepository,
+)
 
 
 class EventCreateStatus(IntEnum):
@@ -29,10 +33,20 @@ class EventDeleteStatus(IntEnum):
     UNEXPECTED_ERROR = auto()
 
 
+class EventVoteStatus(IntEnum):
+    OK = auto()
+    EVENT_NOT_FOUND = auto()
+    USER_NOT_FOUND = auto()
+    NOT_ON_POLL = auto()
+    UNEXPECTED_ERROR = auto()
+
+
 @dataclass
 class EventService:
     event_repository: IEventRepository
     event_type_repository: IEventTypeRepository
+    user_voted_event_repository: IUserVotedEventRepository
+    user_repository: IUserRepository
 
     async def get_list(
             self,
@@ -119,3 +133,31 @@ class EventService:
 
         await self.event_repository.delete_one(event_id)
         return EventDeleteStatus.OK
+
+    async def vote(self, data: dto.EventVoteRequest, event_id: int, user_id: int) -> EventVoteStatus:
+        db_event = await self.event_repository.get_by_id(event_id)
+
+        if db_event is None:
+            return EventVoteStatus.EVENT_NOT_FOUND
+        if db_event.status != EventStatus.ON_POLL:
+            return EventVoteStatus.NOT_ON_POLL
+
+        db_user = await self.user_repository.get_by_id(user_id)
+        if db_user is None:
+            return EventVoteStatus.USER_NOT_FOUND
+
+        # TODO: Возможны гонки данных. Вообще нужно реализовать
+        #  механизм защиты от них, но для MVP пойдет.
+
+        user_voted_event = await self.user_voted_event_repository.get_one(user_id, event_id)
+        if user_voted_event is not None:
+            await self.user_voted_event_repository.delete_one(user_id, event_id)
+
+        await self.user_voted_event_repository.add_one(user_id, event_id, data.like)
+
+        if data.like:
+            await self.event_repository.update_vote_yes(event_id, db_event.voted_yes + 1)
+        else:
+            await self.event_repository.update_vote_no(event_id, db_event.voted_no + 1)
+
+        return EventVoteStatus.OK
