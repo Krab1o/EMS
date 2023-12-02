@@ -9,7 +9,7 @@ from jose import JWTError, jwt
 @dataclass
 class JWT:
     _secret_key: str = token_hex(256)
-    _access_token_expires_minutes: int = 30
+    _access_token_expires_minutes: int = 99999
     _algorithm: str = 'HS256'
 
     def set_secret_key(self, secret_key: str) -> None:

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 
 
 class EventTypeResponse(BaseModel):
@@ -18,3 +18,7 @@ class EventTypeResponse(BaseModel):
     version: int = Field(
         description='Версия записи в базе данных'
     )
+
+
+class EventListResponse(RootModel[list[EventTypeResponse]]):
+    root: list[EventTypeResponse]
