@@ -16,6 +16,10 @@ class EventListElement(BaseModel):
     title: str = Field(
         description='Название'
     )
+    description: Optional[str] = Field(
+        default=None,
+        description='Описание'
+    )
     cover: Optional[str] = Field(
         default=None,
         description='URI обложки мероприятия'
