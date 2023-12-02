@@ -82,3 +82,23 @@ class EventRepository(IEventRepository):
         async with self.async_session_maker() as session:
             await session.execute(query)
             await session.commit()
+
+    async def update_vote_yes(self, event_id: int, new_value: int) -> Optional[int]:
+        query = update(entities.Event)\
+            .where(entities.Event.id == event_id)\
+            .values({'voted_yes': new_value})\
+            .returning(entities.Event.id)
+        async with self.async_session_maker() as session:
+            event_id = await session.scalar(query)
+            await session.commit()
+        return event_id
+
+    async def update_vote_no(self, event_id: int, new_value: int) -> Optional[int]:
+        query = update(entities.Event) \
+            .where(entities.Event.id == event_id) \
+            .values({'voted_no': new_value}) \
+            .returning(entities.Event.id)
+        async with self.async_session_maker() as session:
+            event_id = await session.scalar(query)
+            await session.commit()
+        return event_id

@@ -32,7 +32,7 @@ class User:
     phone_number: Optional[str] = None
     email: str = None
     password: str = None
-    liked_events: list['Event'] = list()
+    voted_events: list['Event'] = list()
     enrolled_in_events: list['Event'] = list()
     created_events: list['Event'] = list()
     version: int = None
@@ -71,3 +71,11 @@ class Club:
     description: Optional[str] = None
     place: str = None
     version: int = None
+
+
+@dataclass
+class UserVotedEvent:
+    user_id: int = None
+    event_id: int = None
+    vote: bool = None
+    created_at: dt = None
