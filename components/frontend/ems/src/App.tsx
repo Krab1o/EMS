@@ -1,25 +1,21 @@
 import { StrictMode } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
+import Router from 'routes';
+import AppHeaderContainer from 'containers/AppHeaderContainer';
 import store from 'store';
-import routes from 'routes';
+import styles from './App.module.scss';
 
 function App() {
   return (
-    <div>
-      <header>Хедер</header>
+    <div className={styles.app}>
+      <AppHeaderContainer />
       <main>
-        <Routes>
-          <Route path="*" element={<Navigate to={routes.EVENTS} replace />} />
-          <Route path="/" element={<Navigate to={routes.EVENTS} replace />} />
-          <Route
-            path="/login"
-            element={<Navigate to={routes.EVENTS} replace />}
-          />
-          <Route path={routes.EVENTS} element={<>Мероприятия</>} />
-          <Route path={routes.SECTIONS} element={<>Секции</>} />
-        </Routes>
+        <Router />
       </main>
+      <footer>
+        © {new Date().getFullYear()} ООО «Говна кусок». Все права защищены.
+      </footer>
     </div>
   );
 }
