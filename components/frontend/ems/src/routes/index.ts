@@ -1,3 +1,5 @@
 import * as routes from './routes';
+import Router from './Router';
 
-export default routes;
+export default Router;
+export { routes };
