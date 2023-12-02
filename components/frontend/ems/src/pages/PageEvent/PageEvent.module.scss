@@ -1,0 +1,24 @@
+.event_photo_block {
+  padding: 0 10px;
+  position: relative;
+  .image {
+    width: calc(100vw - 30px);
+    height: 790px;
+  }
+  .text {
+    position: absolute;
+    font-weight: 900;
+    color: white;
+    bottom: 120px;
+    left: 40px;
+    font-size: 90px;
+    width: 500px;
+    line-height: 80px;
+  }
+}
+
+.event_text_block {
+  padding: 60px 100px;
+  line-height: 30px;
+  font-size: 20px;
+}
