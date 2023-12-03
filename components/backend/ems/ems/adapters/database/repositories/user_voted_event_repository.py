@@ -1,7 +1,6 @@
-from select import select
 from typing import Optional
 
-from sqlalchemy import insert, delete
+from sqlalchemy import insert, delete, select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from attr import dataclass
@@ -31,7 +30,7 @@ class UserVotedEventRepository(IUserVotedEventRepository):
         return new_id
 
     async def delete_one(self, user_id: int, event_id: int):
-        query = delete(entities.UserVotedEvent) \
+        query = delete(entities.UserVotedEvent)\
             .where(
                 entities.UserVotedEvent.user_id == user_id,
                 entities.UserVotedEvent.event_id == event_id,
@@ -41,7 +40,7 @@ class UserVotedEventRepository(IUserVotedEventRepository):
             await session.commit()
 
     async def get_one(self, user_id: int, event_id: int) -> Optional[entities.UserVotedEvent]:
-        query = select(entities.UserVotedEvent) \
+        query = select(entities.UserVotedEvent)\
             .where(
                 entities.UserVotedEvent.user_id == user_id,
                 entities.UserVotedEvent.event_id == event_id,
