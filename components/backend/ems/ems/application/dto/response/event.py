@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, RootModel
 from datetime import datetime as dt
 
 from ems.application.dto.response import (
-    UserListElement,
+    UserResponse,
     EventTypeResponse,
 )
 
@@ -41,6 +41,10 @@ class EventListElement(BaseModel):
         ge=0,
         description='Количество пользователей, проголосовавших ПРОТИВ'
     )
+    user_vote: Optional[bool] = Field(
+        default=None,
+        description='Оценка, которую текущий пользователь поставил мероприятию'
+    )
     version: int = Field(
         description='Версия записи в базе данных'
     )
@@ -75,7 +79,7 @@ class EventResponse(BaseModel):
     datetime: dt = Field(
         description='Дата и время проведения'
     )
-    creator: UserListElement = Field(
+    creator: UserResponse = Field(
         description='Информация о пользователе, создавшем мероприятие'
     )
     voted_yes: int = Field(
@@ -88,6 +92,14 @@ class EventResponse(BaseModel):
     )
     type: EventTypeResponse = Field(
         description='Тип мероприятия'
+    )
+    users_voted: list[UserResponse] = Field(
+        default_factory=list,
+        description='Люди, голосовавшие за мероприятие'
+    )
+    user_vote: Optional[bool] = Field(
+        default=None,
+        description='Оценка, которую текущий пользователь поставил мероприятию'
     )
     version: int = Field(
         description='Версия записи в базе данных'

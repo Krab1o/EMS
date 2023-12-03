@@ -12,7 +12,7 @@ mapper.map_imperatively(
 
 mapper.map_imperatively(
     entities.EventType,
-    tables.event_types
+    tables.event_types,
 )
 
 mapper.map_imperatively(
@@ -22,17 +22,12 @@ mapper.map_imperatively(
         'institution': relationship(
             entities.Institution,
             foreign_keys=[tables.users.c.institution_id],
-            lazy='select'
-        ),
-        'liked_events': relationship(
-            entities.Event,
-            secondary=tables.users_liked_events,
-            lazy='select'
+            lazy='select',
         ),
         'enrolled_in_events': relationship(
             entities.Event,
             secondary=tables.users_enrolled_in_events,
-            lazy='select'
+            lazy='select',
         ),
     }
 )
@@ -51,11 +46,21 @@ mapper.map_imperatively(
             entities.EventType,
             foreign_keys=[tables.events.c.type_id],
             lazy='select',
-        )
+        ),
+        'users_voted': relationship(
+            entities.User,
+            secondary=tables.users_voted_events,
+            lazy='select',
+        ),
     }
 )
 
 mapper.map_imperatively(
     entities.Club,
     tables.clubs,
+)
+
+mapper.map_imperatively(
+    entities.UserVotedEvent,
+    tables.users_voted_events,
 )

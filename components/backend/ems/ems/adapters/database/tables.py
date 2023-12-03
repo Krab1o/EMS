@@ -123,8 +123,8 @@ users = Table(
     comment='Пользователи',
 )
 
-users_liked_events = Table(
-    'users_liked_events',
+users_voted_events = Table(
+    'users_voted_events',
     metadata,
     Column(
         'user_id',
@@ -140,7 +140,19 @@ users_liked_events = Table(
         nullable=False,
         comment='Идентификатор события'
     ),
-    comment='Лайкнутые пользователями события (ассоциативная таблица)'
+    Column(
+        'vote',
+        Boolean,
+        nullable=False,
+        comment='Голос пользователя',
+    ),
+    Column(
+        'created_at',
+        DateTime,
+        nullable=False,
+        comment='Время создания записи',
+    ),
+    comment='Оцененные пользователями события (ассоциативная таблица)',
 )
 
 users_enrolled_in_events = Table(

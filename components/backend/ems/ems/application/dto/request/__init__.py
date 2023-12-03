@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 from .auth import LoginRequest
 from .user import UserCreateRequest
-from .event import EventCreateRequest, EventUpdateRequest
+from .event import EventCreateRequest, EventUpdateRequest, EventVoteRequest
 from .event_type import EventTypeCreateRequest, EventTypeUpdateRequest
 
 

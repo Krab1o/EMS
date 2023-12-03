@@ -58,3 +58,9 @@ class EventUpdateRequest(BaseModel):
         ge=0,
         description='Версия обновленной записи (на 1 больше предыдущей версии)'
     )
+
+
+class EventVoteRequest(BaseModel):
+    like: bool = Field(
+        description='Голос (да/нет)'
+    )
