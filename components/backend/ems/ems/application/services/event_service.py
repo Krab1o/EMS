@@ -152,9 +152,14 @@ class EventService:
         user_voted_event = await self.user_voted_event_repository.get_one(user_id, event_id)
         if user_voted_event is not None:
             await self.user_voted_event_repository.delete_one(user_id, event_id)
+            if user_voted_event.vote:
+                db_event.voted_yes -= 1
+                await self.event_repository.update_vote_yes(event_id, db_event.voted_yes)
+            else:
+                db_event.voted_no -= 1
+                await self.event_repository.update_vote_no(event_id, db_event.voted_no)
 
         await self.user_voted_event_repository.add_one(user_id, event_id, data.like)
-
         if data.like:
             await self.event_repository.update_vote_yes(event_id, db_event.voted_yes + 1)
         else:
