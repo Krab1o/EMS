@@ -32,7 +32,6 @@ class User:
     phone_number: Optional[str] = None
     email: str = None
     password: str = None
-    voted_events: list['Event'] = list()
     enrolled_in_events: list['Event'] = list()
     created_events: list['Event'] = list()
     version: int = None
@@ -62,6 +61,8 @@ class Event:
     type_id: int = None
     type: EventType = None
     version: int = None
+    users_voted: list[User] = None
+    user_vote: Optional[bool] = None
 
 
 @dataclass

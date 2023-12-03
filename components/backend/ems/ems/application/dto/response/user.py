@@ -6,7 +6,7 @@ from ems.application.dto.response import InstitutionResponse
 from ems.application.enum import UserRole
 
 
-class UserListElement(BaseModel):
+class UserResponse(BaseModel):
     id: int = Field(
         gt=0,
         description='Уникальный идентификатор',
@@ -42,5 +42,5 @@ class UserListElement(BaseModel):
     )
 
 
-class UserListResponse(RootModel[list[UserListElement]]):
-    root: list[UserListElement]
+class UserListResponse(RootModel[list[UserResponse]]):
+    root: list[UserResponse]
