@@ -49,6 +49,10 @@ class EventRepository(IEventRepository):
             .options(
                 joinedload(entities.Event.creator)
                 .options(joinedload(entities.User.institution))
+            )\
+            .options(
+                joinedload(entities.Event.users_voted)
+                .options(joinedload(entities.User.institution))
             )
 
         async with self.async_session_maker() as session:

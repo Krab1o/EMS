@@ -51,27 +51,50 @@ class EventService:
     async def get_list(
             self,
             params: dto.PaginationParams,
+            user_id: int,
             event_type: Optional[list[int]] = None,
             status: Optional[list[EventStatus]] = None,
     ) -> list[entities.Event]:
-        return await self.event_repository.get_list(
+        db_events = await self.event_repository.get_list(
             page=params.page,
             size=params.size,
             event_type=event_type,
             status=status,
         )
 
+        for db_event in db_events:
+            db_vote_record = await self.user_voted_event_repository.get_one(
+                user_id=user_id,
+                event_id=db_event.id,
+            )
+            if db_vote_record is not None:
+                db_event.user_vote = db_vote_record.vote
+
+        return db_events
+
     async def get_by_id(
             self,
             event_id: int,
+            user_id: int,
             include_rejected: bool = False,
             include_on_review: bool = False,
     ) -> Optional[entities.Event]:
-        return await self.event_repository.get_by_id(
+        db_event = await self.event_repository.get_by_id(
             event_id,
             include_rejected=include_rejected,
             include_on_review=include_on_review,
         )
+        if db_event is None:
+            return None
+
+        db_vote_record = await self.user_voted_event_repository.get_one(
+            user_id=user_id,
+            event_id=db_event.id,
+        )
+        if db_vote_record is not None:
+            db_event.user_vote = db_vote_record.vote
+
+        return db_event
 
     async def add_one(
             self,
@@ -82,7 +105,10 @@ class EventService:
         if event_type is None:
             return None, EventCreateStatus.EVENT_TYPE_NOT_FOUND
 
-        event_id = await self.event_repository.add_one(event_data=event_data, creator_id=creator_id)
+        event_id = await self.event_repository.add_one(
+            event_data=event_data,
+            creator_id=creator_id,
+        )
         if not event_id:
             return None, EventCreateStatus.UNEXPECTED_ERROR
 
@@ -96,9 +122,16 @@ class EventService:
     ) -> EventUpdateStatus:
         match user_role:
             case UserRole.ADMIN:
-                db_event = await self.event_repository.get_by_id(data.id, include_rejected=True, include_on_review=True)
+                db_event = await self.event_repository.get_by_id(
+                    event_id=data.id,
+                    include_rejected=True,
+                    include_on_review=True,
+                )
             case UserRole.USER:
-                db_event = await self.event_repository.get_by_id(data.id, include_on_review=True)
+                db_event = await self.event_repository.get_by_id(
+                    event_id=data.id,
+                    include_on_review=True,
+                )
             case _:
                 return EventUpdateStatus.UNEXPECTED_ERROR
 
@@ -119,9 +152,16 @@ class EventService:
     async def delete_one(self, event_id: int, user_id: int, user_role: UserRole) -> EventDeleteStatus:
         match user_role:
             case UserRole.ADMIN:
-                db_event = await self.event_repository.get_by_id(event_id, include_rejected=True, include_on_review=True)
+                db_event = await self.event_repository.get_by_id(
+                    event_id=event_id,
+                    include_rejected=True,
+                    include_on_review=True,
+                )
             case UserRole.USER:
-                db_event = await self.event_repository.get_by_id(event_id, include_on_review=True)
+                db_event = await self.event_repository.get_by_id(
+                    event_id=event_id,
+                    include_on_review=True,
+                )
             case _:
                 return EventDeleteStatus.UNEXPECTED_ERROR
 

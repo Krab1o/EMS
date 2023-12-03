@@ -26,7 +26,6 @@ class UserRepository(IUserRepository):
         query = select(entities.User)\
             .where(entities.User.email == email)\
             .options(joinedload(entities.User.institution))\
-            .options(joinedload(entities.User.voted_events))\
             .options(joinedload(entities.User.enrolled_in_events))\
             .options(joinedload(entities.User.created_events))
         async with self.async_session_maker() as session:
@@ -37,7 +36,6 @@ class UserRepository(IUserRepository):
         query = select(entities.User)\
             .where(entities.User.id == id_)\
             .options(joinedload(entities.User.institution))\
-            .options(joinedload(entities.User.voted_events))\
             .options(joinedload(entities.User.enrolled_in_events))\
             .options(joinedload(entities.User.created_events))
         async with self.async_session_maker() as session:
