@@ -1,11 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
+import eventsSlice from './events';
 
 type RootState = ReturnType<typeof store.getState>;
 type AppDispatch = typeof store.dispatch;
 
 const store = configureStore({
-  reducer: {},
+  reducer: {
+    events: eventsSlice.reducer,
+  },
   devTools: process.env.REACT_APP_ENV === 'dev',
 });
 
