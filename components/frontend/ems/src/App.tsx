@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { StrictMode } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
@@ -14,21 +13,10 @@ function App() {
       <main>
         <Router />
       </main>
-=======
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        hello
-      </header>
->>>>>>> 396cac0 (init frontend app)
     </div>
   );
 }
 
-<<<<<<< HEAD
 function AppContainer() {
   return (
     <StrictMode>
@@ -41,6 +29,3 @@ function AppContainer() {
   );
 }
 export default AppContainer;
-=======
-export default App;
->>>>>>> 396cac0 (init frontend app)
