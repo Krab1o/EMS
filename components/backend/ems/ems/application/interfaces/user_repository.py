@@ -10,7 +10,7 @@ class IUserRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, id_: int) -> Optional[entities.User]:
+    async def get_by_id(self, user_id: int) -> Optional[entities.User]:
         raise NotImplementedError
 
     @abstractmethod

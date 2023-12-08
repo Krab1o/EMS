@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from ems_libs.security import jwt
 
-from ems.adapters import database, http_api, log
+from ems.adapters import database, http_api, log, storage
 from ems.adapters.database import repositories
 from ems.adapters.http_api import create_app
 from ems.adapters.http_api.dependencies import Services
@@ -12,7 +12,8 @@ from ems.application import services
 class Settings:
     http_api = http_api.Settings()
     db = database.Settings()
-    
+    storage = storage.Settings()
+
     
 class Logger: 
     log.configure(Settings.http_api.LOGGING_CONFIG, Settings.db.LOGGING_CONFIG)
@@ -26,6 +27,11 @@ class DB:
     institution_repository = repositories.InstitutionRepository(async_session_maker=async_session_maker)
     event_type_repository = repositories.EventTypeRepository(async_session_maker=async_session_maker)
     user_voted_event_repository = repositories.UserVotedEventRepository(async_session_maker=async_session_maker)
+    cover_repository = repositories.CoverRepository(async_session_maker=async_session_maker)
+
+
+class Storage:
+    image_store = storage.ImageStore(config=Settings.storage)
 
 
 class Application:
@@ -34,6 +40,8 @@ class Application:
         event_type_repository=DB.event_type_repository,
         user_voted_event_repository=DB.user_voted_event_repository,
         user_repository=DB.user_repository,
+        cover_repository=DB.cover_repository,
+        image_store=Storage.image_store,
     )
     auth_service = services.AuthService(
         user_repository=DB.user_repository,

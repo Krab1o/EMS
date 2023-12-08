@@ -1,14 +1,17 @@
+aiofiles==23.2.1
 alembic==1.11.1
 asyncio==3.4.3
 asyncpg==0.28.0
 attrs==23.1.0
 fastapi==0.104.1
 gunicorn==21.2.0
+Pillow==10.1.0
 pydantic==2.4.2
 pydantic-settings==2.0.2
 python-dateutil==2.8.2
 python-jose==3.3.0
 python-json-logger==2.0.7
+python_multipart==0.0.6
 PyYAML==6.0.1
 SQLAlchemy==2.0.19
 uvicorn==0.23.1
