@@ -19,3 +19,12 @@ export enum EventStatusEnum {
   Cancelled = 'cancelled',
   Ended = 'ended',
 }
+
+export interface IPostEvent {
+  title: string;
+  description: string;
+  cover_id: number | null;
+  place: string;
+  datetime: string;
+  type_id: number;
+}
