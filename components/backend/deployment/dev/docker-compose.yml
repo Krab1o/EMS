@@ -9,13 +9,13 @@ services:
       ems-postgres:
         condition: service_healthy
     environment:
-      APP_SWAGGER_ON: True
-      APP_IS_DEV: True
-      DATABASE_NAME: dev_ems
-      DATABASE_HOST: ems-postgres
-      DATABASE_PORT: 5432
-      DATABASE_USER: postgres
-      DATABASE_PASS: postgres
+      APP_SWAGGER_ON: ${APP_SWAGGER_ON:-True}
+      APP_IS_DEV: ${APP_IS_DEV:-True}
+      DATABASE_NAME: ${DATABASE_NAME:-dev_ems}
+      DATABASE_HOST: ${DATABASE_HOST:-ems-postgres}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASS: ${DATABASE_PASS:-postgres}
     command:
       - /bin/sh
       - -c
@@ -29,9 +29,9 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: dev_ems
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASS:-postgres}
+      POSTGRES_DB: ${DATABASE_NAME:-dev_ems}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
