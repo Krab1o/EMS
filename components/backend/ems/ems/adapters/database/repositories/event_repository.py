@@ -46,6 +46,7 @@ class EventRepository(IEventRepository):
 
         query = query\
             .options(joinedload(entities.Event.type))\
+            .options(joinedload(entities.Event.cover))\
             .options(
                 joinedload(entities.Event.creator)
                 .options(joinedload(entities.User.institution))
@@ -101,6 +102,16 @@ class EventRepository(IEventRepository):
         query = update(entities.Event) \
             .where(entities.Event.id == event_id) \
             .values({'voted_no': new_value}) \
+            .returning(entities.Event.id)
+        async with self.async_session_maker() as session:
+            event_id = await session.scalar(query)
+            await session.commit()
+        return event_id
+
+    async def update_cover(self, event_id: int, cover_id: int) -> Optional[int]:
+        query = update(entities.Event) \
+            .where(entities.Event.id == event_id) \
+            .values({'cover_id': cover_id}) \
             .returning(entities.Event.id)
         async with self.async_session_maker() as session:
             event_id = await session.scalar(query)

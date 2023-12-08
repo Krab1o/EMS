@@ -50,7 +50,8 @@ class Event:
     id: int = None
     title: str = None
     description: Optional[str] = None
-    cover: Optional[str] = None
+    cover_id: Optional[int] = None
+    cover: Optional['Cover'] = None
     status: EventStatus = None
     place: str = None
     datetime: dt = None
@@ -80,3 +81,11 @@ class UserVotedEvent:
     event_id: int = None
     vote: bool = None
     created_at: dt = None
+
+
+@dataclass
+class Cover:
+    id: int = None
+    filename: str = None
+    path: str = None
+    uploader_id: int = None

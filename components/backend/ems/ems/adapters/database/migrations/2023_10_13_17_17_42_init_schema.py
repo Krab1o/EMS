@@ -68,7 +68,7 @@ def upgrade():
         sa.Column('cover', sa.String(length=256), nullable=True, comment='URI обложки мероприятия'),
         sa.Column('status', sa.String(length=64), nullable=False, comment='Статус'),
         sa.Column('place', sa.String(length=1024), nullable=False, comment='Место проведения'),
-        sa.Column('datetime', sa.DateTime(), nullable=False, comment='Дата и время проведения'),
+        sa.Column('datetime', sa.DateTime(timezone=True), nullable=False, comment='Дата и время проведения'),
         sa.Column('creator_id', sa.Integer(), nullable=False, comment='Идентификатор пользователя, создавшего мероприятие'),
         sa.Column('voted_yes', sa.Integer(), nullable=False, comment='Количество пользователей, проголосовавших ЗА'),
         sa.Column('voted_no', sa.Integer(), nullable=False, comment='Количество пользователей, проголосовавших ПРОТИВ'),

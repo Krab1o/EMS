@@ -19,7 +19,7 @@ depends_on = None
 def upgrade():
     op.add_column('clubs', sa.Column('version', sa.Integer(), nullable=False, comment='Версия записи об объекте'))
     op.add_column('event_types', sa.Column('version', sa.Integer(), nullable=False, comment='Версия записи об объекте'))
-    op.add_column('events', sa.Column('created_at', sa.DateTime(), nullable=False, comment='Дата и время, когда была создана запись'))
+    op.add_column('events', sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='Дата и время, когда была создана запись'))
     op.add_column('events', sa.Column('version', sa.Integer(), nullable=False, comment='Версия записи об объекте'))
     op.create_index(op.f('ix_events_datetime'), 'events', ['datetime'], unique=False)
     op.add_column('institutions', sa.Column('version', sa.Integer(), nullable=False, comment='Версия записи об объекте'))

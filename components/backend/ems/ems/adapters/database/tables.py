@@ -148,7 +148,7 @@ users_voted_events = Table(
     ),
     Column(
         'created_at',
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         comment='Время создания записи',
     ),
@@ -199,11 +199,11 @@ events = Table(
         comment='Описание мероприятия'
     ),
     Column(
-        'cover',
-        String(256),
+        'cover_id',
+        ForeignKey('covers.id', ondelete='SET NULL'),
         nullable=True,
         default=None,
-        comment='URI обложки мероприятия'
+        comment='Идентификатор обложки мероприятия'
     ),
     Column(
         'status',
@@ -219,7 +219,7 @@ events = Table(
     ),
     Column(
         'datetime',
-        DateTime,
+        DateTime(timezone=True),
         index=True,
         nullable=False,
         comment='Дата и время проведения'
@@ -252,7 +252,7 @@ events = Table(
     ),
     Column(
         'created_at',
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
         default=datetime.now(),
         comment='Дата и время, когда была создана запись'
@@ -367,4 +367,33 @@ clubs = Table(
         comment='Версия записи об объекте',
     ),
     comment='Секции (кружки)',
+)
+
+covers = Table(
+    'covers',
+    metadata,
+    Column(
+        'id',
+        Integer,
+        primary_key=True,
+        comment='Уникальный идентификатор',
+    ),
+    Column(
+        'filename',
+        String(128),
+        nullable=False,
+        comment='Имя файла',
+    ),
+    Column(
+        'path',
+        String(512),
+        nullable=False,
+        comment='Путь к файлу на диске',
+    ),
+    Column(
+        'uploader_id',
+        ForeignKey('users.id', ondelete='SET NULL'),
+        nullable=True,
+        comment='Идентификатор пользователя, загрузившего обложку'
+    ),
 )

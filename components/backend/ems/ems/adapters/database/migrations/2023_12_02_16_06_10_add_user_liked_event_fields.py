@@ -21,7 +21,7 @@ def upgrade():
         sa.Column('user_id', sa.Integer(), nullable=False, comment='Идентификатор пользователя'),
         sa.Column('event_id', sa.Integer(), nullable=False, comment='Идентификатор события'),
         sa.Column('vote', sa.Boolean(), nullable=False, comment='Голос пользователя'),
-        sa.Column('created_at', sa.DateTime(), nullable=False, comment='Время создания записи'),
+        sa.Column('created_at', sa.DateTime(timezone=True), nullable=False, comment='Время создания записи'),
         sa.ForeignKeyConstraint(['event_id'], ['events.id'], name=op.f('fk_users_voted_events_event_id_events'), ondelete='CASCADE'),
         sa.ForeignKeyConstraint(['user_id'], ['users.id'], name=op.f('fk_users_voted_events_user_id_users'), ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('user_id', 'event_id', name=op.f('pk_users_voted_events')),

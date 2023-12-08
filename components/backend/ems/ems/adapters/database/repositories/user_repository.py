@@ -32,9 +32,9 @@ class UserRepository(IUserRepository):
             db_user = await session.scalar(query)
         return db_user
 
-    async def get_by_id(self, id_: int) -> Optional[entities.User]:
+    async def get_by_id(self, user_id: int) -> Optional[entities.User]:
         query = select(entities.User)\
-            .where(entities.User.id == id_)\
+            .where(entities.User.id == user_id)\
             .options(joinedload(entities.User.institution))\
             .options(joinedload(entities.User.enrolled_in_events))\
             .options(joinedload(entities.User.created_events))
