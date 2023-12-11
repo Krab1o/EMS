@@ -20,5 +20,5 @@ class EventTypeResponse(BaseModel):
     )
 
 
-class EventListResponse(RootModel[list[EventTypeResponse]]):
+class EventTypeListResponse(RootModel[list[EventTypeResponse]]):
     root: list[EventTypeResponse]
