@@ -38,7 +38,10 @@ async def login(
                 'user_id': user.id,
                 'role': user.role,
             })
-            response.set_cookie(key='token', value=token)
+
+            return {
+                'token': token
+            }
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
