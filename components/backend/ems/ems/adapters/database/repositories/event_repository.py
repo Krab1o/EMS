@@ -26,7 +26,10 @@ class EventRepository(IEventRepository):
             query = query.where(entities.Event.type_id.in_(event_type))
         if status is not None:
             query = query.where(entities.Event.status.in_(status))
-        query = query.offset(page * size).limit(size)
+        query = query\
+            .offset(page * size)\
+            .limit(size)\
+            .options(joinedload(entities.Event.cover))
 
         async with self.async_session_maker() as session:
             res = await session.execute(query)

@@ -25,6 +25,10 @@ class EventListElement(BaseModel):
         default=None,
         description='Идентификатор обложки мероприятия'
     )
+    cover: Optional[CoverResponse] = Field(
+        default=None,
+        description='Обложка мероприятия'
+    )
     status: str = Field(
         description='Статус'
     )
