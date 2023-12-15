@@ -9,6 +9,7 @@ export interface IEvent {
   voted_no: number;
   version: number;
   description: string;
+  user_vote: boolean;
 }
 
 export enum EventStatusEnum {
@@ -27,4 +28,9 @@ export interface IPostEvent {
   place: string;
   datetime: string;
   type_id: number;
+}
+
+export interface IVoteEvent {
+  eventId: number;
+  like: boolean;
 }
