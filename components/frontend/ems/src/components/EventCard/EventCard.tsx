@@ -22,14 +22,7 @@ export function EventCard({
     <Card
       hoverable={true}
       style={{ width: '20vw' }}
-      cover={
-        <img
-          src={
-            'https://kartinkof.club/uploads/posts/2022-03/1648368993_15-kartinkof-club-p-memi-s-kotami-bez-nadpisei-16.jpg'
-          }
-          alt={'cover'}
-        />
-      }
+      cover={<img src={initialData.cover} alt={'cover'} />}
       onClick={onCardClick}
       actions={[
         <Button
