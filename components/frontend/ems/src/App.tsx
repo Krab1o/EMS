@@ -1,12 +1,14 @@
-import { StrictMode } from 'react';
+import React, { StrictMode } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import Router from 'routes';
 import AppHeaderContainer from 'containers/AppHeaderContainer';
 import store from 'store';
 import styles from './App.module.scss';
+import PageLogin from './pages/PageLogin';
 
 function App() {
+  return <PageLogin />;
   return (
     <div className={styles.app}>
       <AppHeaderContainer />
