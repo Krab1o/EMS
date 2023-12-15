@@ -5,6 +5,7 @@ from datetime import datetime as dt
 from ems.application.dto.response import (
     UserResponse,
     EventTypeResponse,
+    CoverResponse,
 )
 
 
@@ -20,9 +21,13 @@ class EventListElement(BaseModel):
         default=None,
         description='Описание'
     )
-    cover: Optional[str] = Field(
+    cover_id: Optional[int] = Field(
         default=None,
-        description='URI обложки мероприятия'
+        description='Идентификатор обложки мероприятия'
+    )
+    cover: Optional[CoverResponse] = Field(
+        default=None,
+        description='Обложка мероприятия'
     )
     status: str = Field(
         description='Статус'
@@ -66,9 +71,9 @@ class EventResponse(BaseModel):
         default=None,
         description='Описание'
     )
-    cover: Optional[str] = Field(
+    cover: Optional[CoverResponse] = Field(
         default=None,
-        description='URI обложки мероприятия'
+        description='Обложка мероприятия'
     )
     status: str = Field(
         description='Статус'

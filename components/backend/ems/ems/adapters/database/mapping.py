@@ -52,6 +52,11 @@ mapper.map_imperatively(
             secondary=tables.users_voted_events,
             lazy='select',
         ),
+        'cover': relationship(
+            entities.Cover,
+            foreign_keys=[tables.events.c.cover_id],
+            lazy='select',
+        ),
     }
 )
 
@@ -63,4 +68,9 @@ mapper.map_imperatively(
 mapper.map_imperatively(
     entities.UserVotedEvent,
     tables.users_voted_events,
+)
+
+mapper.map_imperatively(
+    entities.Cover,
+    tables.covers,
 )

@@ -41,7 +41,7 @@ class EventTypeService:
     async def get_by_id(
             self,
             event_type_id: int,
-    ) -> Optional[entities.Event]:
+    ) -> Optional[entities.EventType]:
         return await self.event_type_repository.get_by_id(event_type_id)
 
     async def add_one(
