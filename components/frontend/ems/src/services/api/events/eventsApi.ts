@@ -1,5 +1,9 @@
-import { getClient } from './axios';
-import { IEvent, IPostEvent, IVoteEvent } from './api.type';
+import { getClient } from 'services/api/axios';
+import type {
+  IEvent,
+  IPostEvent,
+  IVoteEvent,
+} from 'services/api/events/eventsApi.type';
 
 export const EventsApi = {
   async getAllEvents() {

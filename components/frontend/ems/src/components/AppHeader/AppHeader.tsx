@@ -2,16 +2,31 @@ import cn from 'classnames';
 import { ReactComponent as OrangeAVMIcon } from 'assets/icons/orangeAVM.svg';
 import ToggleButton from 'components/ToggleButton';
 import ToggleButtonGroup from 'components/ToggleButtonGroup';
-import { Button } from 'antd';
+import { Button, Popover } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import {
+  LOGOUT_APPROVE,
+  LOGOUT_TEXT,
+  MENU_CONSTANTS,
+} from './AppHeader.constants';
 import type { AppHeaderProps } from './AppHeader.type';
-import { MENU_CONSTANTS } from './AppHeader.constants';
 
 import styles from './AppHeader.module.scss';
+
+export function renderLogout(logout: () => void) {
+  return (
+    <div data-testid={'popoverLogout'}>
+      <Button onClick={logout} data-testid={'logoutButton'}>
+        {LOGOUT_APPROVE}
+      </Button>
+    </div>
+  );
+}
 
 export default function AppHeader({
   activeMenuItem,
   historyPush,
+  logout,
 }: AppHeaderProps) {
   return (
     <header className={styles.app_header}>
@@ -39,9 +54,15 @@ export default function AppHeader({
           </Button>
         </div>
         <div className={cn(styles.user, styles.user__logout)}>
-          <Button data-testid={'logoutPopoverButton'} type={'text'}>
-            <LogoutOutlined />
-          </Button>
+          <Popover
+            content={() => renderLogout(logout)}
+            title={LOGOUT_TEXT}
+            trigger="click"
+          >
+            <Button data-testid={'logoutPopoverButton'} type={'text'}>
+              <LogoutOutlined />
+            </Button>
+          </Popover>
         </div>
       </div>
     </header>

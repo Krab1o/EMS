@@ -12,9 +12,7 @@ export const getClient = () => {
 
   client.interceptors.request.use(function (config) {
     const token = localStorage.getItem('token');
-    config.headers.Authorization = token
-      ? `Bearer ${token}`
-      : 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJyb2xlIjoiYWRtaW4iLCJleHAiOjE3MDIxMzg3Mjl9.cMTJy6ELq8Qf-ADR-yQspvWQQAriTk-y3FTUDxKZFFs';
+    config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   });
   return client;

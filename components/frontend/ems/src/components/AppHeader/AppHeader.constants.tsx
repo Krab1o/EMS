@@ -12,3 +12,6 @@ export const MENU_CONSTANTS = [
     value: 'users',
   },
 ];
+
+export const LOGOUT_TEXT = 'Вы уверены, что хотите выйти?';
+export const LOGOUT_APPROVE = 'Да';
