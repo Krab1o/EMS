@@ -1,0 +1,66 @@
+@import 'src/styles/colors';
+
+.login {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 480px;
+  //gap: 20px;
+  width: 400px;
+  margin-top: 20px;
+
+  .error {
+    color: $red;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 260px;
+
+    &__item {
+      position: relative;
+    }
+
+    &__checkbox {
+      position: relative;
+      left: 45px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    input {
+      border-radius: 3px;
+      background: #ffffff;
+      height: 38px;
+      border: 2px solid #555555;
+    }
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: inset 0 0 0 50px #d7d7d7;
+      -webkit-text-fill-color: #000;
+    }
+
+    label {
+      position: absolute;
+      left: 15px;
+      top: -10px;
+      z-index: 1;
+      font-weight: 700;
+      background: #ffffff;
+      padding: 0 3px;
+      font-size: 13px;
+    }
+
+    button {
+      background-color: rgba(24, 144, 255, 0.8);
+      width: 260px;
+      height: 38px;
+      border-radius: 3px;
+      color: $white1;
+    }
+  }
+}
