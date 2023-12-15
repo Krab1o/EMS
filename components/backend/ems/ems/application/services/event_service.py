@@ -1,4 +1,4 @@
-from uuid import uuid4
+from uuid import uuid4, UUID
 from typing import Optional, Final
 from enum import IntEnum, auto
 
@@ -21,7 +21,7 @@ from ems.application.interfaces import (
 class EventCreateStatus(IntEnum):
     OK = auto()
     EVENT_TYPE_NOT_FOUND = auto()
-    COVER_NOT_FOUND = auto()
+    COVER_TOO_BIG = auto()
     UNEXPECTED_ERROR = auto()
 
 
@@ -49,19 +49,9 @@ class EventVoteStatus(IntEnum):
     UNEXPECTED_ERROR = auto()
 
 
-class CoverUploadStatus(IntEnum):
-    OK = auto()
-    FILE_TOO_BIG = auto()
-    EVENT_NOT_FOUND = auto()
-    USER_NOT_FOUND = auto()
-    FORBIDDEN = auto()
-
-
 class CoverDownloadStatus(IntEnum):
     OK = auto()
-    EVENT_NOT_FOUND = auto()
-    USER_NOT_FOUND = auto()
-    COVER_NOT_FOUND = auto()
+    NOT_FOUND = auto()
 
 
 @dataclass
@@ -129,15 +119,16 @@ class EventService:
             self,
             event_data: dto.EventCreateRequest,
             creator_id: int,
+            cover: Optional[UploadFile],
     ) -> tuple[Optional[int], EventCreateStatus]:
         event_type = await self.event_type_repository.get_by_id(event_data.type_id)
         if event_type is None:
             return None, EventCreateStatus.EVENT_TYPE_NOT_FOUND
 
-        if event_data.cover_id is not None:
-            cover = await self.cover_repository.get_by_id(event_data.cover_id)
-            if cover is None:
-                return None, EventCreateStatus.COVER_NOT_FOUND
+        db_user = await self.user_repository.get_by_id(user_id=creator_id)
+
+        if cover is not None and cover.size > self.MAX_COVER_SIZE:
+            return None, EventCreateStatus.COVER_TOO_BIG
 
         event_id = await self.event_repository.add_one(
             event_data=event_data,
@@ -145,6 +136,16 @@ class EventService:
         )
         if not event_id:
             return None, EventCreateStatus.UNEXPECTED_ERROR
+
+        db_event = await self.event_repository.get_by_id(event_id=event_id, include_on_review=True)
+
+        if cover is not None:
+            contents = await cover.read()
+            await self.upload_cover(
+                cover_bytes=contents,
+                db_event=db_event,
+                db_user=db_user,
+            )
 
         return event_id, EventCreateStatus.OK
 
@@ -211,6 +212,7 @@ class EventService:
             return EventDeleteStatus.FORBIDDEN
 
         await self.event_repository.delete_one(event_id)
+        # TODO: delete cover
         return EventDeleteStatus.OK
 
     async def vote(self, data: dto.EventVoteRequest, event_id: int, user_id: int) -> EventVoteStatus:
@@ -248,58 +250,26 @@ class EventService:
 
     async def upload_cover(
             self,
-            cover: UploadFile,
-            event_id: int,
-            user_id: int,
-    ) -> CoverUploadStatus:
-        db_event = await self.event_repository.get_by_id(event_id=event_id, include_on_review=True)
-        if db_event is None:
-            return CoverUploadStatus.EVENT_NOT_FOUND
-
-        db_user = await self.user_repository.get_by_id(user_id)
-        if db_user is None:
-            return CoverUploadStatus.USER_NOT_FOUND
-
-        if db_event.creator_id != db_user.id and db_user.role != UserRole.ADMIN:
-            return CoverUploadStatus.FORBIDDEN
-
-        if cover.size > self.MAX_COVER_SIZE:
-            return CoverUploadStatus.FILE_TOO_BIG
-
-        contents = await cover.read()
+            cover_bytes: bytes,
+            db_event: entities.Event,
+            db_user: entities.User,
+    ):
         image_id = uuid4()
-        image = await self.image_store.save(contents, subdir='covers')
+        image = await self.image_store.save(cover_bytes, subdir='covers')
 
         db_cover = Cover(
             filename=f'{image_id}.jpeg',
             path=image.path,
-            uploader_id=user_id,
+            uploader_id=db_user.id,
         )
 
         cover_id = await self.cover_repository.add_one(db_cover)
         await self.event_repository.update_cover(db_event.id, cover_id)
 
-        return CoverUploadStatus.OK
-
-    async def download_cover(
-            self,
-            event_id: int,
-            user_id: int
-    ) -> tuple[Optional[bytes], CoverDownloadStatus]:
-        db_event = await self.event_repository.get_by_id(event_id=event_id, include_on_review=True)
-        if db_event is None:
-            return None, CoverDownloadStatus.EVENT_NOT_FOUND
-
-        db_user = await self.user_repository.get_by_id(user_id)
-        if db_user is None:
-            return None, CoverDownloadStatus.USER_NOT_FOUND
-
-        if db_event.status == EventStatus.ON_REVIEW and db_user.id != db_event.id:
-            return None, CoverDownloadStatus.EVENT_NOT_FOUND
-
-        db_cover = await self.cover_repository.get_by_id(db_event.cover_id)
+    async def download_cover(self, cover_id: int) -> tuple[Optional[bytes], CoverDownloadStatus]:
+        db_cover = await self.cover_repository.get_by_id(cover_id=cover_id)
         if db_cover is None:
-            return None, CoverDownloadStatus.COVER_NOT_FOUND
+            return None, CoverDownloadStatus.NOT_FOUND
 
         async with aiofiles.open(db_cover.path, 'rb') as img:
             res = await img.read()
