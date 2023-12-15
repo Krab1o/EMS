@@ -11,4 +11,5 @@ export type EventType = {
   votedNo: number;
   version: number;
   description: string;
+  userVote: boolean;
 };
