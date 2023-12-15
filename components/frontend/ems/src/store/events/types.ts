@@ -1,4 +1,4 @@
-import { EventStatusEnum } from 'services/api/api.type';
+import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 export type EventType = {
   id: number;
