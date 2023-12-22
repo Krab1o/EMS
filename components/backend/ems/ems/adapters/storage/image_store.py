@@ -47,9 +47,9 @@ class ImageStore(IImageStore):
 
         path = f'{self.__config.PUBLIC_DIR_PATH}/images'
         if subdir is not None:
-            path += f'/{subdir}/{image_id}'
+            path += f'/{subdir}/{image_id}.jpeg'
         else:
-            path += f'/{image_id}'
+            path += f'/{image_id}.jpeg'
         async with aiofiles.open(path, 'w+b') as output:
             await output.write(converted)
 
