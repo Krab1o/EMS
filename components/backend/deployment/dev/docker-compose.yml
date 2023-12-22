@@ -16,12 +16,15 @@ services:
       DATABASE_PORT: ${DATABASE_PORT:-5432}
       DATABASE_USER: ${DATABASE_USER:-postgres}
       DATABASE_PASS: ${DATABASE_PASS:-postgres}
+      PUBLIC_DIR_PATH: ${PUBLIC_DIR_PATH:-/var/www/ems/public}
     command:
       - /bin/sh
       - -c
       - |
         python -m ems.composites.alembic_runner upgrade head &&\
         gunicorn ems.composites.http_api:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:3000
+    volumes:
+      - /var/www/ems/public:${PUBLIC_DIR_PATH:-/var/www/ems/public}
 
   ems-postgres:
     image: postgres:16.0
