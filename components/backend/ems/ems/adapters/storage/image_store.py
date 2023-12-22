@@ -40,7 +40,7 @@ class ImageStore(IImageStore):
         rgb_image.save(converted, 'JPEG')
         return converted.getvalue()
 
-    async def save(self, data: bytes, image_id: UUID = uuid4(), subdir: Optional[str] = None) -> Image:
+    async def save(self, data: bytes, image_id: UUID, subdir: Optional[str] = None) -> Image:
         loop = asyncio.get_running_loop()
         image = await loop.run_in_executor(None, self._load_from_bytes, data)
         converted = await loop.run_in_executor(None, self._convert, image)
