@@ -12,6 +12,12 @@ export interface IEvent {
   user_vote: boolean;
 }
 
+export interface IEventType {
+  id: number;
+  title: string;
+  description: string;
+}
+
 export enum EventStatusEnum {
   OnReview = 'on_review',
   Rejected = 'rejected',
@@ -24,7 +30,7 @@ export enum EventStatusEnum {
 export interface IPostEvent {
   title: string;
   description: string;
-  cover_id: number | null;
+  cover: File;
   place: string;
   datetime: string;
   type_id: number;

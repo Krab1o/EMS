@@ -1,11 +1,16 @@
-import { Button, DatePicker, Drawer, Form, Input } from 'antd';
 import { useAppDispatch } from 'store';
+import { EventsApi } from 'services/api/events/eventsApi';
 import { postEvent } from 'store/events';
+
+import { Button, DatePicker, Drawer, Form, Input, Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import TextArea from 'antd/es/input/TextArea';
+import AsyncSelect from 'components/AsyncSelect';
+
 import type {
   CreateEventModalContainerProps,
   ICreateEventField,
 } from './CreateEventModalContainer.type';
-import TextArea from 'antd/es/input/TextArea';
 
 export function CreateEventModalContainer({
   open,
@@ -15,7 +20,7 @@ export function CreateEventModalContainer({
   const submitEvent = (data: ICreateEventField) => {
     dispatch(
       postEvent({
-        cover_id: null,
+        cover: data.cover,
         datetime: data.datetime.toISOString(),
         title: data.title,
         place: data.place,
@@ -24,6 +29,10 @@ export function CreateEventModalContainer({
       }),
     );
   };
+  const getFile = (e: { fileList: Array<{ originFileObj: File }> }) => {
+    return e && e.fileList.length !== 0 && e.fileList[0].originFileObj;
+  };
+
   return (
     <Drawer
       title="Создание мероприятия"
@@ -56,10 +65,13 @@ export function CreateEventModalContainer({
 
           <Form.Item<ICreateEventField>
             label="Фото"
-            name="coverId"
+            name="cover"
             rules={[{ required: true }]}
+            getValueFromEvent={getFile}
           >
-            <Input />
+            <Upload>
+              <Button icon={<UploadOutlined />}>Кликните для загрузки</Button>
+            </Upload>
           </Form.Item>
 
           <Form.Item<ICreateEventField>
@@ -95,7 +107,7 @@ export function CreateEventModalContainer({
             name="typeId"
             rules={[{ required: true }]}
           >
-            <Input />
+            <AsyncSelect allowClear fetchOptions={EventsApi.getEventTypes} />
           </Form.Item>
 
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
