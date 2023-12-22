@@ -143,7 +143,7 @@ async def update_one(
         case UserRole.ADMIN:
             match await event_type_service.update_one(data):
                 case EventTypeUpdateStatus.OK:
-                    response.headers['Location'] = f'/event-types/{event_id}'
+                    pass
                 case EventTypeUpdateStatus.NOT_FOUND:
                     raise HTTPException(
                         status_code=status.HTTP_404_NOT_FOUND,
