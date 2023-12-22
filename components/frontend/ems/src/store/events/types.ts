@@ -3,7 +3,10 @@ import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 export type EventType = {
   id: number;
   title: string;
-  cover: string;
+  cover: {
+    id: number;
+    uri: string;
+  };
   status: EventStatusEnum;
   place: string;
   date: Date;

@@ -15,7 +15,7 @@ export function AsyncSelect({
   const [currentPage, setCurrentPage] = useState(1);
 
   const loadOptions = useCallback(
-    (offset = 1) => {
+    (offset = 0) => {
       fetchOptions({
         pagination: {
           page: offset,

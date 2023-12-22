@@ -27,4 +27,12 @@ const voteEvent = createAsyncThunk(
   },
 );
 
-export { getAllEvents, postEvent, voteEvent };
+const deleteEvent = createAsyncThunk(
+  'events/deleteEvent',
+  async (id: number, { dispatch }) => {
+    await EventsApi.deleteEvent(id);
+    dispatch(getAllEvents());
+  },
+);
+
+export { getAllEvents, postEvent, voteEvent, deleteEvent };

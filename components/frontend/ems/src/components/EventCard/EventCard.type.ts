@@ -3,6 +3,8 @@ import { ActionsEnum } from 'containers/EventCardContainer/EventCardContainer.ty
 
 export type EventCardProps = {
   initialData: EventType;
+  image: string;
   onCardClick: () => void;
   onActionsClick: (type: ActionsEnum) => void;
+  onDelete: () => void;
 };
