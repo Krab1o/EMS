@@ -50,7 +50,7 @@ class ImageStore(IImageStore):
             path += f'/{subdir}/{image_id}'
         else:
             path += f'/{image_id}'
-        async with aiofiles.open(path, 'wb') as output:
+        async with aiofiles.open(path, 'w+b') as output:
             await output.write(converted)
 
         stored = Image(self.__config, image_id, image.size, path)
