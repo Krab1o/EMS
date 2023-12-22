@@ -85,7 +85,7 @@ async def get_list(
     for e in events:
         json_event = jsonable_encoder(e)
         if e.cover_id is not None:
-            json_event['cover']['uri'] = f'/cover/{e.cover_id}'
+            json_event['cover']['uri'] = f'/covers/{e.cover_id}'
         json_events.append(json_event)
     return json_events
 
@@ -132,7 +132,7 @@ async def get_one(
 
     json_event = jsonable_encoder(event)
     if event.cover_id is not None:
-        json_event['cover']['uri'] = f'/cover/{event.cover_id}'
+        json_event['cover']['uri'] = f'/covers/{event.cover_id}'
     return json_event
 
 
