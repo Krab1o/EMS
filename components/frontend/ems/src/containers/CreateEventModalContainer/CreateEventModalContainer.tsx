@@ -24,7 +24,7 @@ export function CreateEventModalContainer({
         datetime: data.datetime.toISOString(),
         title: data.title,
         place: data.place,
-        type_id: data.typeId,
+        type_id: Number(data.typeId.value),
         description: data.description,
       }),
     );

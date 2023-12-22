@@ -40,4 +40,14 @@ export const EventsApi = {
     });
     return response.data;
   },
+
+  async deleteEvent(id: number) {
+    const response = await getClient().delete(`/events/${id}`);
+    return response.data;
+  },
+
+  async getEventImage(uri: string) {
+    const response = await getClient().get(uri, { responseType: 'blob' });
+    return response.data;
+  },
 };

@@ -1,5 +1,9 @@
 import { Button, Card, Typography } from 'antd';
-import { DislikeOutlined, LikeOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  DislikeOutlined,
+  LikeOutlined,
+} from '@ant-design/icons';
 import Meta from 'antd/es/card/Meta';
 import { validateLenght } from 'shared/utils/validateLength';
 import { EventCardProps } from './EventCard.type';
@@ -15,14 +19,16 @@ function convertDate(date: Date) {
 
 export function EventCard({
   initialData,
+  image,
   onCardClick,
   onActionsClick,
+  onDelete,
 }: EventCardProps) {
   return (
     <Card
       hoverable={true}
       style={{ width: '20vw' }}
-      cover={<img src={initialData.cover} alt={'cover'} />}
+      cover={<img src={image} alt={'cover'} />}
       onClick={onCardClick}
       actions={[
         <Button
@@ -41,7 +47,15 @@ export function EventCard({
         >
           {String(initialData.votedNo)}
         </Button>,
-
+        <Button
+          shape={'round'}
+          icon={<DeleteOutlined />}
+          style={{ border: 'none' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+        />,
         <Button
           shape={'round'}
           icon={<LikeOutlined />}

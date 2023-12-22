@@ -1,7 +1,10 @@
 export interface IEvent {
   id: number;
   title: string;
-  cover: string;
+  cover: {
+    id: number;
+    uri: string;
+  };
   status: EventStatusEnum;
   place: string;
   datetime: string;
