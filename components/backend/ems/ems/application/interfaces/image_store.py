@@ -11,5 +11,5 @@ class IImage:
 
 class IImageStore(ABC):
     @abstractmethod
-    async def save(self, data: bytes, image_id: UUID = uuid4(), subdir: Optional[str] = None) -> IImage:
+    async def save(self, data: bytes, image_id: UUID, subdir: Optional[str] = None) -> IImage:
         raise NotImplementedError

@@ -255,7 +255,7 @@ class EventService:
             db_user: entities.User,
     ):
         image_id = uuid4()
-        image = await self.image_store.save(cover_bytes, subdir='covers')
+        image = await self.image_store.save(cover_bytes, subdir='covers', image_id=image_id)
 
         db_cover = Cover(
             filename=f'{image_id}.jpeg',
