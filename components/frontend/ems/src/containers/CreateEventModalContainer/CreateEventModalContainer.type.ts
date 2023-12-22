@@ -6,7 +6,7 @@ export type CreateEventModalContainerProps = {
 export interface ICreateEventField {
   title: string;
   description: string;
-  coverId: number | null;
+  cover: File;
   place: string;
   datetime: Date;
   typeId: number;
