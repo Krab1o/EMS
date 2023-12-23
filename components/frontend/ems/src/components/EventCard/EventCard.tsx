@@ -8,6 +8,7 @@ import Meta from 'antd/es/card/Meta';
 import { validateLenght } from 'shared/utils/validateLength';
 import { EventCardProps } from './EventCard.type';
 import { ActionsEnum } from 'containers/EventCardContainer/EventCardContainer.type';
+import styles from './EventCard.module.scss';
 
 function convertDate(date: Date) {
   return date.toLocaleDateString('ru-RU', {
@@ -28,7 +29,7 @@ export function EventCard({
     <Card
       hoverable={true}
       style={{ width: '20vw' }}
-      cover={<img src={image} alt={'cover'} />}
+      cover={<img className={styles.image} src={image} alt={'cover'} />}
       onClick={onCardClick}
       actions={[
         <Button
