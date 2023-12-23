@@ -9,5 +9,6 @@ COPY ems_libs ./ems_libs
 COPY pyproject.toml .
 COPY README.MD .
 COPY requirements.txt .
-
 RUN pip3 install --no-cache-dir -r requirements.txt
+RUN mkdir -p /var/www/ems/public/images/covers
+
