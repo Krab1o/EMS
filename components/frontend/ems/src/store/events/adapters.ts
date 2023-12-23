@@ -1,5 +1,5 @@
-import { IEvent } from 'services/api/api.type';
-import { EventType } from './types';
+import type { EventType } from './types';
+import type { IEvent } from 'services/api/events/eventsApi.type';
 
 function getEventsAdapter(data: Array<IEvent>): Array<EventType> {
   return data.map((event) => {
@@ -14,6 +14,7 @@ function getEventsAdapter(data: Array<IEvent>): Array<EventType> {
       votedNo: event.voted_no,
       version: event.version,
       description: event.description,
+      userVote: event.user_vote,
     };
   }) as Array<EventType>;
 }

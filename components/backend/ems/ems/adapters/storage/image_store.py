@@ -40,17 +40,17 @@ class ImageStore(IImageStore):
         rgb_image.save(converted, 'JPEG')
         return converted.getvalue()
 
-    async def save(self, data: bytes, image_id: UUID = uuid4(), subdir: Optional[str] = None) -> Image:
+    async def save(self, data: bytes, image_id: UUID, subdir: Optional[str] = None) -> Image:
         loop = asyncio.get_running_loop()
         image = await loop.run_in_executor(None, self._load_from_bytes, data)
         converted = await loop.run_in_executor(None, self._convert, image)
 
         path = f'{self.__config.PUBLIC_DIR_PATH}/images'
         if subdir is not None:
-            path += f'/{subdir}/{image_id}'
+            path += f'/{subdir}/{image_id}.jpeg'
         else:
-            path += f'/{image_id}'
-        async with aiofiles.open(path, 'wb') as output:
+            path += f'/{image_id}.jpeg'
+        async with aiofiles.open(path, 'w+b') as output:
             await output.write(converted)
 
         stored = Image(self.__config, image_id, image.size, path)

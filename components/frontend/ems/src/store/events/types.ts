@@ -1,9 +1,12 @@
-import { EventStatusEnum } from 'services/api/api.type';
+import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 export type EventType = {
   id: number;
   title: string;
-  cover: string;
+  cover: {
+    id: number;
+    uri: string;
+  };
   status: EventStatusEnum;
   place: string;
   date: Date;
@@ -11,4 +14,5 @@ export type EventType = {
   votedNo: number;
   version: number;
   description: string;
+  userVote: boolean;
 };

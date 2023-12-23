@@ -1,7 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { EventsApi } from 'services/api/eventsApi';
+import { EventsApi } from 'services/api/events/eventsApi';
 import { getEventsAdapter } from './adapters';
-import { IPostEvent } from 'services/api/api.type';
+import type {
+  IPostEvent,
+  IVoteEvent,
+} from 'services/api/events/eventsApi.type';
 
 const getAllEvents = createAsyncThunk('events/getAllEvents', async () => {
   const response = await EventsApi.getAllEvents();
@@ -16,4 +19,20 @@ const postEvent = createAsyncThunk(
   },
 );
 
-export { getAllEvents, postEvent };
+const voteEvent = createAsyncThunk(
+  'events/voteEvent',
+  async (data: IVoteEvent, { dispatch }) => {
+    await EventsApi.voteEvent(data);
+    dispatch(getAllEvents());
+  },
+);
+
+const deleteEvent = createAsyncThunk(
+  'events/deleteEvent',
+  async (id: number, { dispatch }) => {
+    await EventsApi.deleteEvent(id);
+    dispatch(getAllEvents());
+  },
+);
+
+export { getAllEvents, postEvent, voteEvent, deleteEvent };

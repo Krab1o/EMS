@@ -1,8 +1,13 @@
-import { Card, Typography } from 'antd';
-import { DislikeOutlined, LikeOutlined } from '@ant-design/icons';
+import { Button, Card, Typography } from 'antd';
+import {
+  DeleteOutlined,
+  DislikeOutlined,
+  LikeOutlined,
+} from '@ant-design/icons';
 import Meta from 'antd/es/card/Meta';
 import { validateLenght } from 'shared/utils/validateLength';
 import { EventCardProps } from './EventCard.type';
+import { ActionsEnum } from 'containers/EventCardContainer/EventCardContainer.type';
 
 function convertDate(date: Date) {
   return date.toLocaleDateString('ru-RU', {
@@ -11,18 +16,58 @@ function convertDate(date: Date) {
     month: 'short',
   });
 }
-export function EventCard({ initialData, onCardClick }: EventCardProps) {
+
+export function EventCard({
+  initialData,
+  image,
+  onCardClick,
+  onActionsClick,
+  onDelete,
+}: EventCardProps) {
   return (
     <Card
-      style={{ width: '30vw', minWidth: '400px' }}
-      cover={<img src={initialData.cover} alt={'cover'} />}
+      hoverable={true}
+      style={{ width: '20vw' }}
+      cover={<img src={image} alt={'cover'} />}
       onClick={onCardClick}
       actions={[
-        <DislikeOutlined
-          key={'dislike'}
-          onClick={(e) => e.stopPropagation()}
+        <Button
+          shape={'round'}
+          type={
+            !initialData.userVote && initialData.userVote !== null
+              ? 'primary'
+              : 'text'
+          }
+          icon={<DislikeOutlined />}
+          style={{ border: 'none' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onActionsClick(ActionsEnum.DISLIKE);
+          }}
+        >
+          {String(initialData.votedNo)}
+        </Button>,
+        <Button
+          shape={'round'}
+          icon={<DeleteOutlined />}
+          style={{ border: 'none' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
         />,
-        <LikeOutlined key={'like'} onClick={(e) => e.stopPropagation()} />,
+        <Button
+          shape={'round'}
+          icon={<LikeOutlined />}
+          style={{ border: 'none' }}
+          type={initialData.userVote ? 'primary' : 'text'}
+          onClick={(e) => {
+            e.stopPropagation();
+            onActionsClick(ActionsEnum.LIKE);
+          }}
+        >
+          {String(initialData.votedYes)}
+        </Button>,
       ]}
     >
       <Typography.Text

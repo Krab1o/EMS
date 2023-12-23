@@ -7,7 +7,11 @@ export interface IOption {
 
 export interface IPagination {
   page: number;
-  pageSize: number;
+  size: number;
+}
+
+export interface ITableParams {
+  pagination?: IPagination;
 }
 
 export interface IWithPagination<T> {

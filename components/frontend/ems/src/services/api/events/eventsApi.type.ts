@@ -1,13 +1,23 @@
 export interface IEvent {
   id: number;
   title: string;
-  cover: string;
+  cover: {
+    id: number;
+    uri: string;
+  };
   status: EventStatusEnum;
   place: string;
   datetime: string;
   voted_yes: number;
   voted_no: number;
   version: number;
+  description: string;
+  user_vote: boolean;
+}
+
+export interface IEventType {
+  id: number;
+  title: string;
   description: string;
 }
 
@@ -23,8 +33,13 @@ export enum EventStatusEnum {
 export interface IPostEvent {
   title: string;
   description: string;
-  cover_id: number | null;
+  cover: File;
   place: string;
   datetime: string;
   type_id: number;
+}
+
+export interface IVoteEvent {
+  eventId: number;
+  like: boolean;
 }

@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { ReactComponent as ESMUMLogo } from 'assets/icons/uuundulate.svg';
+import { ReactComponent as ESMUMLogo } from 'assets/icons/ESMUM_login.svg';
 import type { PageLayoutAuthProps } from 'pages/PageLayoutAuth/PageLayoutAuth.type';
 import styles from 'pages/PageLayoutAuth/PageLayoutAuth.module.scss';
 

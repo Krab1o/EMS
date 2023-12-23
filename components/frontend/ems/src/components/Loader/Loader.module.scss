@@ -1,0 +1,44 @@
+@import 'src/styles/colors';
+
+.overlay {
+  background-color: rgba($color: $mine-shaft, $alpha: 0.5);
+  bottom: 0;
+  display: grid;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 100;
+
+  &_header {
+    top: 64px;
+  }
+
+  &.hidden {
+    display: none;
+  }
+
+  .spinner {
+    animation: spin 1.8s ease infinite;
+    background-image: url(../../assets/images/spinner.png);
+    height: 49px;
+    place-self: center;
+    width: 48px;
+  }
+
+  .error {
+    color: $tango;
+    font-size: 16px;
+    font-weight: 500;
+    place-self: center;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -22,7 +22,7 @@ export function PageEvents() {
   };
 
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <EventPageSubheader openModal={openModal} />
       <CreateEventModalContainer
         open={isCreateEventModalOpen}
@@ -30,9 +30,9 @@ export function PageEvents() {
       />
       <Flex
         wrap={'wrap'}
-        gap={'small'}
+        gap={'middle'}
         justify={'center'}
-        style={{ marginTop: '10px' }}
+        style={{ marginTop: '3%', height: '100%' }}
       >
         {events && events.map((el) => <EventCardContainer initialData={el} />)}
       </Flex>

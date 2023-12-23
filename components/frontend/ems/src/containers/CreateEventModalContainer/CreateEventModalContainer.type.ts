@@ -1,3 +1,5 @@
+import { IOption } from 'shared/types/types';
+
 export type CreateEventModalContainerProps = {
   open: boolean;
   onClose: () => void;
@@ -6,8 +8,8 @@ export type CreateEventModalContainerProps = {
 export interface ICreateEventField {
   title: string;
   description: string;
-  coverId: number | null;
+  cover: File;
   place: string;
   datetime: Date;
-  typeId: number;
+  typeId: IOption;
 }
