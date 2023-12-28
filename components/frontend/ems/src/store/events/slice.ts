@@ -2,6 +2,7 @@ import eventsInitialState from './initialState';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { getAllEvents } from './requests';
 import { EventType } from './types';
+import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 const eventsSlice = createSlice({
   name: 'events',
@@ -9,6 +10,9 @@ const eventsSlice = createSlice({
   reducers: {
     setCurrentEvent: (state, action: PayloadAction<EventType>) => {
       state.currentEvent = action.payload;
+    },
+    setCurrentEventsStatus: (state, action: PayloadAction<EventStatusEnum>) => {
+      state.currentEventsStatus = action.payload;
     },
   },
   extraReducers: (builder) => {

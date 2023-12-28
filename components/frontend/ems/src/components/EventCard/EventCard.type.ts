@@ -7,4 +7,5 @@ export type EventCardProps = {
   onCardClick: () => void;
   onActionsClick: (type: ActionsEnum) => void;
   onDelete: () => void;
+  onApprove: () => void;
 };

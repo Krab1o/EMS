@@ -6,15 +6,17 @@ import { Flex } from 'antd';
 import EventCardContainer from 'containers/EventCardContainer';
 import EventPageSubheader from 'containers/EventPageSubheader';
 import CreateEventModalContainer from 'containers/CreateEventModalContainer';
+import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 export function PageEvents() {
   const dispatch = useAppDispatch();
   const events = useSelector(selectEvents);
+
   const [isCreateEventModalOpen, setIsCreateModalOpen] =
     useState<boolean>(false);
 
   useEffect(() => {
-    dispatch(getAllEvents());
+    dispatch(getAllEvents(EventStatusEnum.OnPoll));
   }, [dispatch]);
 
   const openModal = () => {
