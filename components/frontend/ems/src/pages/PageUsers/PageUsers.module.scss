@@ -1,0 +1,14 @@
+.table_block {
+  padding: 20px;
+
+  .btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 5px;
+
+    .search {
+      width: 200px;
+    }
+  }
+}
