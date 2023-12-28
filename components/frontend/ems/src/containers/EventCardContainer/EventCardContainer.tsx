@@ -2,12 +2,18 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch } from 'store';
 import { useNavigate } from 'react-router-dom';
 import { EventsApi } from 'services/api/events/eventsApi';
-import { deleteEvent, eventsActions, voteEvent } from 'store/events';
+import {
+  changeEventStatus,
+  deleteEvent,
+  eventsActions,
+  voteEvent,
+} from 'store/events';
 import EventCard from 'components/EventCard';
 import {
   ActionsEnum,
   EventCardContainerProps,
 } from './EventCardContainer.type';
+import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 export function EventCardContainer({ initialData }: EventCardContainerProps) {
   const navigate = useNavigate();
@@ -35,6 +41,15 @@ export function EventCardContainer({ initialData }: EventCardContainerProps) {
     dispatch(deleteEvent(initialData.id));
   };
 
+  const onApprove = () => {
+    dispatch(
+      changeEventStatus({
+        id: initialData.id,
+        status: EventStatusEnum.OnPoll,
+      }),
+    );
+  };
+
   return (
     <EventCard
       initialData={initialData}
@@ -42,6 +57,7 @@ export function EventCardContainer({ initialData }: EventCardContainerProps) {
       onActionsClick={onActionsClick}
       onDelete={onDelete}
       image={image}
+      onApprove={onApprove}
     />
   );
 }

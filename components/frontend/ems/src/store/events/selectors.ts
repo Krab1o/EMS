@@ -8,4 +8,8 @@ function selectCurrentEvent(state: RootState) {
   return state.events.currentEvent;
 }
 
-export { selectEvents, selectCurrentEvent };
+function selectCurrentEventsStatus(state: RootState) {
+  return state.events.currentEventsStatus;
+}
+
+export { selectEvents, selectCurrentEvent, selectCurrentEventsStatus };
