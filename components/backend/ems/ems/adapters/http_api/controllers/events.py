@@ -110,13 +110,14 @@ async def get_one(
             event = await event_service.get_by_id(
                 event_id=event_id,
                 user_id=user_id,
-                include_rejected=True
+                include_rejected=True,
+                include_on_review=True,
             )
         case UserRole.USER:
             event = await event_service.get_by_id(
                 event_id=event_id,
                 user_id=user_id,
-                include_rejected=False
+                include_rejected=False,
             )
         case _:
             raise HTTPException(
@@ -228,7 +229,7 @@ async def update_one(
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Unexpected error'
+                detail='Unexpected error',
             )
 
 
@@ -255,14 +256,14 @@ async def delete_one(
         case EventDeleteStatus.FORBIDDEN:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail='Regular users are only able to update their own events. Administrators may update any.'
+                detail='Regular users are only able to update their own events. Administrators may update any.',
             )
         case EventDeleteStatus.OK:
             pass
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Unexpected error'
+                detail='Unexpected error',
             )
 
 
@@ -302,5 +303,5 @@ async def vote(
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Unexpected error'
+                detail='Unexpected error',
             )
