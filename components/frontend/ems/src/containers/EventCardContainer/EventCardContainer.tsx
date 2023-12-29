@@ -3,9 +3,9 @@ import { useAppDispatch } from 'store';
 import { useNavigate } from 'react-router-dom';
 import { EventsApi } from 'services/api/events/eventsApi';
 import {
-  changeEventStatus,
   deleteEvent,
   eventsActions,
+  updateEvent,
   voteEvent,
 } from 'store/events';
 import EventCard from 'components/EventCard';
@@ -26,10 +26,11 @@ export function EventCardContainer({ initialData }: EventCardContainerProps) {
   };
 
   useEffect(() => {
-    EventsApi.getEventImage(initialData.cover.uri).then((res) =>
-      setImage(URL.createObjectURL(res)),
-    );
-  }, [initialData.cover.uri]);
+    if (initialData.cover)
+      EventsApi.getEventImage(initialData.cover.uri).then((res) =>
+        setImage(URL.createObjectURL(res)),
+      );
+  }, [initialData.cover]);
 
   const onActionsClick = (type: ActionsEnum) => {
     dispatch(
@@ -38,14 +39,22 @@ export function EventCardContainer({ initialData }: EventCardContainerProps) {
   };
 
   const onDelete = () => {
-    dispatch(deleteEvent(initialData.id));
+    dispatch(deleteEvent({ id: initialData.id, status: initialData.status }));
   };
-
   const onApprove = () => {
     dispatch(
-      changeEventStatus({
+      updateEvent({
         id: initialData.id,
         status: EventStatusEnum.OnPoll,
+        cover: initialData.cover,
+        datetime: initialData.date.toISOString(),
+        description: initialData.description,
+        place: initialData.place,
+        title: initialData.title,
+        user_vote: initialData.userVote,
+        version: initialData.version + 1,
+        voted_no: initialData.votedNo,
+        voted_yes: initialData.votedYes,
       }),
     );
   };

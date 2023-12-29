@@ -49,12 +49,17 @@ export const EventsApi = {
     return response.data;
   },
 
-  async changeEventStatus(id: number, status: EventStatusEnum) {
-    const response = await getClient().patch(`/events/${id}`, {
-      status,
-    });
+  async updateEvent(event: IEvent) {
+    const response = await getClient().put('/events', event);
     return response.data;
   },
+
+  // async changeEventStatus(id: number, status: EventStatusEnum) {
+  //   const response = await getClient().patch(`/events/${id}`, {
+  //     status,
+  //   });
+  //   return response.data;
+  // },
 
   async getEventImage(uri: string) {
     const response = await getClient().get(uri, { responseType: 'blob' });

@@ -10,7 +10,7 @@ export default function PageEvent() {
   const [image, setImage] = useState('');
 
   useEffect(() => {
-    if (currentEvent)
+    if (currentEvent && currentEvent.cover)
       EventsApi.getEventImage(currentEvent.cover.uri).then((res) =>
         setImage(URL.createObjectURL(res)),
       );

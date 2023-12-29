@@ -6,7 +6,7 @@ export type EventType = {
   cover: {
     id: number;
     uri: string;
-  };
+  } | null;
   status: EventStatusEnum;
   place: string;
   date: Date;
