@@ -23,6 +23,7 @@ class EventCreateStatus(IntEnum):
     EVENT_TYPE_NOT_FOUND = auto()
     COVER_TOO_BIG = auto()
     UNEXPECTED_ERROR = auto()
+    TOO_MANY_OPENED_EVENTS = auto()
 
 
 class EventUpdateStatus(IntEnum):
@@ -129,6 +130,10 @@ class EventService:
 
         if cover is not None and cover.size > self.MAX_COVER_SIZE:
             return None, EventCreateStatus.COVER_TOO_BIG
+
+        on_review_count = await self.event_repository.get_number_of_events_on_review(creator_id)
+        if on_review_count >= 2:
+            return None, EventCreateStatus.TOO_MANY_OPENED_EVENTS
 
         event_id = await self.event_repository.add_one(
             event_data=event_data,
