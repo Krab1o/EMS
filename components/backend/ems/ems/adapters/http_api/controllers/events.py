@@ -224,6 +224,11 @@ async def update_one(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail='Regular users are only able to update their own events. Administrators may update any.'
             )
+        case EventUpdateStatus.CONFLICT:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='The resource was updated by a third-party. Try re-fetching the data and repeat the operation.'
+            )
         case EventUpdateStatus.OK:
             response.headers['Location'] = f'/events/{data.id}'
         case _:

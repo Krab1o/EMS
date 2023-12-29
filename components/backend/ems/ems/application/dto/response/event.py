@@ -50,6 +50,9 @@ class EventListElement(BaseModel):
         default=None,
         description='Оценка, которую текущий пользователь поставил мероприятию'
     )
+    version: int = Field(
+        description='Версия записи в базе данных'
+    )
 
 
 class EventListResponse(RootModel[list[EventListElement]]):
@@ -103,4 +106,6 @@ class EventResponse(BaseModel):
         default=None,
         description='Оценка, которую текущий пользователь поставил мероприятию'
     )
-
+    version: int = Field(
+        description='Версия записи в базе данных'
+    )

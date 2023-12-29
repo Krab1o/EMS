@@ -50,6 +50,10 @@ class EventUpdateRequest(BaseModel):
     datetime: dt = Field(
         description='Дата и время проведения',
     )
+    version: int = Field(
+        ge=0,
+        description='Версия обновленной записи (на 1 больше предыдущей версии)'
+    )
 
 
 class EventVoteRequest(BaseModel):

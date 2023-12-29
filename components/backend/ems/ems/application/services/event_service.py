@@ -31,6 +31,7 @@ class EventUpdateStatus(IntEnum):
     COVER_NOT_FOUND = auto()
     FORBIDDEN = auto()
     UNEXPECTED_ERROR = auto()
+    CONFLICT = auto()
 
 
 class EventDeleteStatus(IntEnum):
@@ -179,6 +180,9 @@ class EventService:
 
         if user_role != UserRole.ADMIN and db_event.creator_id != user_id:
             return EventUpdateStatus.FORBIDDEN
+
+        if data.version - db_event.version != 1:
+            return EventUpdateStatus.CONFLICT
 
         event_id = await self.event_repository.update_one(data)
         if event_id is None:
