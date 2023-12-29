@@ -5,6 +5,14 @@ from ems.application import entities, dto
 
 
 class IUserRepository(ABC):
+
+    @abstractmethod
+    async def get_list(
+            self,
+            page: int, size: int,
+    ) -> list[entities.User]:
+        raise NotImplementedError
+
     @abstractmethod
     async def get_by_email(self, email: str) -> Optional[entities.User]:
         raise NotImplementedError
@@ -19,4 +27,12 @@ class IUserRepository(ABC):
 
     @abstractmethod
     async def add_one(self, data: dto.UserCreateRequest) -> Optional[int]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_one(self, data: dto.UserUpdateRequest) -> Optional[int]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete_one(self, user_id: int):
         raise NotImplementedError
