@@ -76,9 +76,14 @@ class EventRepository(IEventRepository):
         return new_id
 
     async def update_one(self, data: dto.EventUpdateRequest) -> Optional[int]:
+        to_insert = data.model_dump(exclude={'id', 'status', 'cover_id'})
+        if data.status is not None:
+            to_insert['status'] = data.status
+        if data.cover_id is not None:
+            to_insert['cover_id'] = data.cover_id
         query = update(entities.Event)\
             .where(entities.Event.id == data.id)\
-            .values(data.model_dump(exclude={'id'}))\
+            .values(to_insert)\
             .returning(entities.Event.id)
         async with self.async_session_maker() as session:
             event_id = await session.scalar(query)
