@@ -1,4 +1,4 @@
-from uuid import uuid4, UUID
+from uuid import uuid4
 from typing import Optional, Final
 from enum import IntEnum, auto
 
@@ -180,6 +180,9 @@ class EventService:
 
         if user_role != UserRole.ADMIN and db_event.creator_id != user_id:
             return EventUpdateStatus.FORBIDDEN
+
+        if user_role != UserRole.ADMIN and data.status is not None:
+            data.status = None
 
         if data.version - db_event.version != 1:
             return EventUpdateStatus.CONFLICT
