@@ -61,7 +61,6 @@ class Event:
     voted_no: int = None
     type_id: int = None
     type: EventType = None
-    version: int = None
     users_voted: list[User] = None
     user_vote: Optional[bool] = None
 
