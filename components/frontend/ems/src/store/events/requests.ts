@@ -1,8 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { EventsApi } from 'services/api/events/eventsApi';
 import { getEventsAdapter } from './adapters';
+import { eventsActions } from 'store/events/actions';
 import {
   EventStatusEnum,
+  IEvent,
   IPostEvent,
   IVoteEvent,
 } from 'services/api/events/eventsApi.type';
@@ -19,7 +21,8 @@ const postEvent = createAsyncThunk(
   'events/postEvent',
   async (data: IPostEvent, { dispatch }) => {
     await EventsApi.postEvent(data);
-    dispatch(getAllEvents());
+    dispatch(getAllEvents(EventStatusEnum.OnReview));
+    dispatch(eventsActions.setCurrentEventsStatus(EventStatusEnum.OnReview));
   },
 );
 
@@ -27,27 +30,38 @@ const voteEvent = createAsyncThunk(
   'events/voteEvent',
   async (data: IVoteEvent, { dispatch }) => {
     await EventsApi.voteEvent(data);
-    dispatch(getAllEvents());
+    dispatch(getAllEvents(EventStatusEnum.OnPoll));
   },
 );
 
 const deleteEvent = createAsyncThunk(
   'events/deleteEvent',
-  async (id: number, { dispatch }) => {
-    await EventsApi.deleteEvent(id);
-    dispatch(getAllEvents());
-  },
-);
-
-const changeEventStatus = createAsyncThunk(
-  'events/approveEvent',
   async (
     { id, status }: { id: number; status: EventStatusEnum },
     { dispatch },
   ) => {
-    await EventsApi.changeEventStatus(id, status);
+    await EventsApi.deleteEvent(id);
     dispatch(getAllEvents(status));
   },
 );
 
-export { getAllEvents, postEvent, voteEvent, deleteEvent, changeEventStatus };
+const updateEvent = createAsyncThunk(
+  'events/updateEvent',
+  async (event: IEvent, { dispatch }) => {
+    await EventsApi.updateEvent(event);
+    dispatch(getAllEvents(event.status));
+  },
+);
+
+// const changeEventStatus = createAsyncThunk(
+//   'events/approveEvent',
+//   async (
+//     { id, status }: { id: number; status: EventStatusEnum },
+//     { dispatch },
+//   ) => {
+//     await EventsApi.changeEventStatus(id, status);
+//     dispatch(getAllEvents(status));
+//   },
+// );
+
+export { getAllEvents, postEvent, voteEvent, deleteEvent, updateEvent };
