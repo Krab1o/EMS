@@ -16,12 +16,12 @@ from fastapi import (
 )
 from fastapi.encoders import jsonable_encoder
 
-from ems.adapters.http_api.auth import get_auth_payload
-from ems.adapters.http_api.dependencies import get_user_service
+from ems.adapters.http_api.auth import get_auth_payload, get_user_role
+from ems.adapters.http_api.dependencies import get_auth_service, get_user_service
 
 from ems.application import dto
 from ems.application.enum import UserRole
-from ems.application.services import UserService
+from ems.application.services import AuthService, UserService
 from ems.application.services.user_service import (
     UserCreateStatus,
     UserUpdateStatus,
@@ -42,10 +42,11 @@ router = APIRouter(
 )
 async def get_list(
         user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         pagination: Annotated[dto.PaginationParams, Depends()],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
             users = await user_service.get_list(
@@ -79,9 +80,10 @@ async def get_list(
 async def get_one(
         user_id: Annotated[int, Gt(0)],
         user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN | UserRole.USER:
             user = await user_service.get_by_id(
@@ -114,10 +116,11 @@ async def get_one(
 async def add_one(
         response: Response,
         user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         data: Annotated[dto.UserCreateRequest, Body()],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
             match await user_service.add_one(data):
@@ -161,10 +164,11 @@ async def add_one(
 async def update_one(
         response: Response,
         user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         data: Annotated[dto.UserUpdateRequest, Body()],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match await user_service.update_one(data):
         case UserUpdateStatus.USER_NOT_FOUND:
             raise HTTPException(
@@ -200,9 +204,10 @@ async def update_one(
 async def delete_one(
         user_id: Annotated[int, Gt(0)],
         user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
             match await user_service.delete_one(user_id=user_id):

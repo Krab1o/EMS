@@ -4,6 +4,7 @@ from typing import Optional
 from attr import dataclass
 
 from ems.application import dto, entities
+from ems.application.enum import UserRole
 from ems.application.interfaces import (
     IUserRepository,
     IInstitutionRepository,
@@ -67,6 +68,11 @@ class AuthService:
 
         db_user = await self.user_repository.get_by_id(user_id)
         return db_user, RegistrationStatus.OK
+
+    async def get_user_role(self, user_id: int) -> UserRole:
+        db_user = await self.user_repository.get_by_id(user_id)
+
+        return db_user.role
 
     @staticmethod
     def check_password(password: str) -> bool:
