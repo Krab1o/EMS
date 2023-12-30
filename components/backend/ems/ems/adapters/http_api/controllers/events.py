@@ -144,6 +144,7 @@ async def get_one(
         201: {'description': 'Мероприятие создано успешно.'},
         404: {'description': 'Тип мероприятия или обложка не найдены.'},
         403: {'description': 'Недостаточно прав для действия.'},
+        409: {'description': 'Слишком много событий находятся еще на рассмотрении.'}
     }
 )
 async def add_one(
@@ -175,6 +176,11 @@ async def add_one(
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail='No cover with such id',
+            )
+        case None, EventCreateStatus.TOO_MANY_OPENED_EVENTS:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='Too many events still on review',
             )
         case None, EventCreateStatus.UNEXPECTED_ERROR:
             raise HTTPException(

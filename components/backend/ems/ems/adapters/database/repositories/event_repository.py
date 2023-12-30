@@ -2,7 +2,7 @@ from typing import Optional
 
 from attr import dataclass
 
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, func
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
@@ -125,3 +125,12 @@ class EventRepository(IEventRepository):
             event_id = await session.scalar(query)
             await session.commit()
         return event_id
+
+    async def get_number_of_events_on_review(self, user_id: int) -> Optional[int]:
+        query = select(func.count()).select_from(entities.Event)\
+                 .where(entities.Event.creator_id == user_id)\
+                 .where(entities.Event.status == EventStatus.ON_REVIEW)
+
+        async with self.async_session_maker() as session:
+            res = await session.execute(query)
+        return res.scalar()
