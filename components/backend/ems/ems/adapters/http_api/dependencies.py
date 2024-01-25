@@ -5,7 +5,7 @@ class Services:
     event: services.EventService
     auth: services.AuthService
     event_type: services.EventTypeService
-
+    user: services.UserService
 
 def get_event_service():
     return Services.event
@@ -17,3 +17,7 @@ def get_auth_service():
 
 def get_event_type_service():
     return Services.event_type
+
+
+def get_user_service():
+    return Services.user

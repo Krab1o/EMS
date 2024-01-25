@@ -36,7 +36,6 @@ async def login(
         case user, LoginResult.OK:
             token = jwt.create_access_token(payload={
                 'user_id': user.id,
-                'role': user.role,
             })
 
             return {
@@ -82,7 +81,6 @@ async def register(
         case user, RegistrationStatus.OK:
             token = jwt.create_access_token(payload={
                 'user_id': user.id,
-                'role': user.role,
             })
             response.set_cookie(key='token', value=token)
             response.headers.append('Location', f'/users/{user.id}')

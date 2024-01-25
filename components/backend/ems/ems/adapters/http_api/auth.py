@@ -3,6 +3,9 @@ from typing import Annotated
 from fastapi import HTTPException, status, Request, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
+from ems.application.services import AuthService
+from ems.application.enum import UserRole
+
 from ems_libs.security import jwt
 
 jwt_scheme = HTTPBearer(scheme_name='JWT Bearer')
@@ -20,3 +23,9 @@ async def get_auth_payload(
     if claims is None:
         raise credentials_exception
     return claims
+
+async def get_user_role(
+        auth_service: AuthService,
+        user_id: int
+) -> UserRole | None:
+    return await auth_service.get_user_role(user_id)

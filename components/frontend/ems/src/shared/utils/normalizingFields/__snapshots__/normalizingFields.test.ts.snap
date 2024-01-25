@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`normalizing Валидация объекта с датой 1`] = `
+Object {
+  "date": "2013-04-02T23:34:14.000Z",
+  "value1": "23",
+  "value2": 23,
+  "value3": undefined,
+}
+`;
+
+exports[`normalizing Валидация объекта со строкой 1`] = `
+Object {
+  "date": 2013-04-02T23:34:14.000Z,
+  "value1": "23",
+  "value2": 23,
+  "value3": undefined,
+}
+`;

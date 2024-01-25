@@ -50,6 +50,10 @@ class Application:
     event_type_service = services.EventTypeService(
         event_type_repository=DB.event_type_repository,
     )
+    user_service = services.UserService(
+        user_repository=DB.user_repository,
+        institution_repository=DB.institution_repository
+    )
 
 
 def init_security():
@@ -61,6 +65,7 @@ def init_services():
     Services.event = Application.event_service
     Services.auth = Application.auth_service
     Services.event_type = Application.event_type_service
+    Services.user = Application.user_service
 
 
 def initial_app():

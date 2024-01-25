@@ -1,13 +1,17 @@
 import { Button, Card, Typography } from 'antd';
 import {
+  CheckOutlined,
   DeleteOutlined,
   DislikeOutlined,
   LikeOutlined,
 } from '@ant-design/icons';
 import Meta from 'antd/es/card/Meta';
 import { validateLenght } from 'shared/utils/validateLength';
-import { EventCardProps } from './EventCard.type';
+import type { EventCardProps } from './EventCard.type';
+import type { ReactNode } from 'react';
 import { ActionsEnum } from 'containers/EventCardContainer/EventCardContainer.type';
+import { EventStatusEnum } from 'services/api/events/eventsApi.type';
+import styles from './EventCard.module.scss';
 
 function convertDate(date: Date) {
   return date.toLocaleDateString('ru-RU', {
@@ -23,14 +27,35 @@ export function EventCard({
   onCardClick,
   onActionsClick,
   onDelete,
+  onApprove,
 }: EventCardProps) {
-  return (
-    <Card
-      hoverable={true}
-      style={{ width: '20vw' }}
-      cover={<img src={image} alt={'cover'} />}
-      onClick={onCardClick}
-      actions={[
+  let actionsButtons: Array<ReactNode> = [];
+  switch (initialData.status) {
+    case EventStatusEnum.OnReview: {
+      actionsButtons = [
+        <Button
+          shape={'round'}
+          icon={<DeleteOutlined />}
+          style={{ border: 'none' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+        />,
+        <Button
+          shape={'round'}
+          icon={<CheckOutlined />}
+          style={{ border: 'none' }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onApprove();
+          }}
+        />,
+      ];
+      break;
+    }
+    case EventStatusEnum.OnPoll: {
+      actionsButtons = [
         <Button
           shape={'round'}
           type={
@@ -68,7 +93,17 @@ export function EventCard({
         >
           {String(initialData.votedYes)}
         </Button>,
-      ]}
+      ];
+      break;
+    }
+  }
+  return (
+    <Card
+      hoverable={true}
+      style={{ width: '20vw' }}
+      cover={<img className={styles.image} src={image} alt={'cover'} />}
+      onClick={onCardClick}
+      actions={actionsButtons}
     >
       <Typography.Text
         style={{ color: '#006eff', marginBottom: '10px', display: 'block' }}

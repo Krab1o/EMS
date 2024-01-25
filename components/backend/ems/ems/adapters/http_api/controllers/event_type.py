@@ -10,12 +10,12 @@ from fastapi import (
     status
 )
 
-from ems.adapters.http_api.auth import get_auth_payload
-from ems.adapters.http_api.dependencies import get_event_type_service
+from ems.adapters.http_api.auth import get_auth_payload, get_user_role
+from ems.adapters.http_api.dependencies import get_auth_service, get_event_type_service
 
 from ems.application import dto
 from ems.application.enum import UserRole, EventStatus
-from ems.application.services import EventTypeService
+from ems.application.services import AuthService, EventTypeService
 from ems.application.services.event_type_service import (
     EventTypeCreateStatus,
     EventTypeUpdateStatus,
@@ -35,11 +35,12 @@ router = APIRouter(
     }
 )
 async def get_list(
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         pagination: Annotated[dto.PaginationParams, Depends()],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN | UserRole.USER:
             return await event_type_service.get_list(
@@ -62,10 +63,11 @@ async def get_list(
 )
 async def get_one(
         event_type_id: Annotated[int, Gt(0)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN | UserRole.USER:
             event = await event_type_service.get_by_id(
@@ -96,11 +98,12 @@ async def get_one(
 )
 async def add_one(
         response: Response,
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         event_type_data: Annotated[dto.EventTypeCreateRequest, Body()],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
             match await event_type_service.add_one(event_type_data):
@@ -134,11 +137,12 @@ async def add_one(
 )
 async def update_one(
         response: Response,
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         data: Annotated[dto.EventTypeUpdateRequest, Body()],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
             match await event_type_service.update_one(data):
@@ -180,10 +184,11 @@ async def update_one(
 )
 async def delete_one(
         event_type_id: Annotated[int, Gt(0)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
-    role = auth_claims.get('role', None)
+    role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
             match await event_type_service.delete_one(event_type_id):

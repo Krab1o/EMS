@@ -16,12 +16,12 @@ from fastapi import (
 )
 from fastapi.encoders import jsonable_encoder
 
-from ems.adapters.http_api.auth import get_auth_payload
-from ems.adapters.http_api.dependencies import get_event_service
+from ems.adapters.http_api.auth import get_user_role, get_auth_payload
+from ems.adapters.http_api.dependencies import get_auth_service, get_event_service
 
 from ems.application import dto
 from ems.application.enum import UserRole, EventStatus
-from ems.application.services import EventService
+from ems.application.services import AuthService, EventService
 from ems.application.services.event_service import (
     EventCreateStatus,
     EventUpdateStatus,
@@ -44,13 +44,14 @@ router = APIRouter(
 )
 async def get_list(
         event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         pagination: Annotated[dto.PaginationParams, Depends()],
         event_type: Annotated[list[int], Query()] = None,
         event_status: Annotated[list[EventStatus], Query()] = None,
 ):
-    role = auth_claims.get('role', None)
     user_id = auth_claims.get('user_id', None)
+    role = await get_user_role(auth_service, user_id)
     match role:
         case UserRole.ADMIN:
             events = await event_service.get_list(
@@ -101,22 +102,24 @@ async def get_list(
 async def get_one(
         event_id: Annotated[int, Gt(0)],
         event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
-    role = auth_claims.get('role', None)
     user_id = auth_claims.get('user_id', None)
+    role = await get_user_role(auth_service, user_id)
     match role:
         case UserRole.ADMIN:
             event = await event_service.get_by_id(
                 event_id=event_id,
                 user_id=user_id,
-                include_rejected=True
+                include_rejected=True,
+                include_on_review=True,
             )
         case UserRole.USER:
             event = await event_service.get_by_id(
                 event_id=event_id,
                 user_id=user_id,
-                include_rejected=False
+                include_rejected=False,
             )
         case _:
             raise HTTPException(
@@ -143,6 +146,7 @@ async def get_one(
         201: {'description': 'Мероприятие создано успешно.'},
         404: {'description': 'Тип мероприятия или обложка не найдены.'},
         403: {'description': 'Недостаточно прав для действия.'},
+        409: {'description': 'Слишком много событий находятся еще на рассмотрении.'}
     }
 )
 async def add_one(
@@ -175,6 +179,11 @@ async def add_one(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail='No cover with such id',
             )
+        case None, EventCreateStatus.TOO_MANY_OPENED_EVENTS:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail='Too many events still on review',
+            )
         case None, EventCreateStatus.UNEXPECTED_ERROR:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -201,12 +210,13 @@ async def add_one(
 async def update_one(
         response: Response,
         event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         data: Annotated[dto.EventUpdateRequest, Body()],
 ):
     # TODO: обновление обложки
-    role = auth_claims.get('role', None)
     user_id = auth_claims.get('user_id', None)
+    role = await get_user_role(auth_service, user_id)
     match await event_service.update_one(data, user_id=user_id, user_role=role):
         case EventUpdateStatus.EVENT_NOT_FOUND:
             raise HTTPException(
@@ -233,7 +243,7 @@ async def update_one(
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Unexpected error'
+                detail='Unexpected error',
             )
 
 
@@ -247,10 +257,11 @@ async def update_one(
 async def delete_one(
         event_id: Annotated[int, Gt(0)],
         event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
-    role = auth_claims.get('role', None)
     user_id = auth_claims.get('user_id', None)
+    role = await get_user_role(auth_service, user_id)
     match await event_service.delete_one(event_id=event_id, user_id=user_id, user_role=role):
         case EventDeleteStatus.NOT_FOUND:
             raise HTTPException(
@@ -260,14 +271,14 @@ async def delete_one(
         case EventDeleteStatus.FORBIDDEN:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail='Regular users are only able to update their own events. Administrators may update any.'
+                detail='Regular users are only able to update their own events. Administrators may update any.',
             )
         case EventDeleteStatus.OK:
             pass
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Unexpected error'
+                detail='Unexpected error',
             )
 
 
@@ -307,5 +318,5 @@ async def vote(
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail='Unexpected error'
+                detail='Unexpected error',
             )

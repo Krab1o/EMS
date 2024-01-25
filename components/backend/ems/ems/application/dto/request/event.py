@@ -40,6 +40,10 @@ class EventUpdateRequest(BaseModel):
         min_length=1,
         description='Описание мероприятия',
     )
+    status: Optional[str] = Field(
+        default=None,
+        description='(Для администратора) Новый статус мероприятия'
+    )
     cover_id: Optional[int] = Field(
         default=None,
         description='Идентификатор обложки мероприятия',

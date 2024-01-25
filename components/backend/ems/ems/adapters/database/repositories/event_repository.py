@@ -2,7 +2,7 @@ from typing import Optional
 
 from attr import dataclass
 
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, func
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
@@ -76,9 +76,14 @@ class EventRepository(IEventRepository):
         return new_id
 
     async def update_one(self, data: dto.EventUpdateRequest) -> Optional[int]:
+        to_insert = data.model_dump(exclude={'id', 'status', 'cover_id'})
+        if data.status is not None:
+            to_insert['status'] = data.status
+        if data.cover_id is not None:
+            to_insert['cover_id'] = data.cover_id
         query = update(entities.Event)\
             .where(entities.Event.id == data.id)\
-            .values(data.model_dump(exclude={'id'}))\
+            .values(to_insert)\
             .returning(entities.Event.id)
         async with self.async_session_maker() as session:
             event_id = await session.scalar(query)
@@ -120,3 +125,12 @@ class EventRepository(IEventRepository):
             event_id = await session.scalar(query)
             await session.commit()
         return event_id
+
+    async def get_number_of_events_on_review(self, user_id: int) -> Optional[int]:
+        query = select(func.count()).select_from(entities.Event)\
+                 .where(entities.Event.creator_id == user_id)\
+                 .where(entities.Event.status == EventStatus.ON_REVIEW)
+
+        async with self.async_session_maker() as session:
+            res = await session.execute(query)
+        return res.scalar()

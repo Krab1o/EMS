@@ -46,3 +46,7 @@ class IEventRepository(ABC):
     @abstractmethod
     async def update_cover(self, event_id: int, cover_id: int) -> Optional[int]:
         raise NotImplementedError
+
+    @abstractmethod
+    async def get_number_of_events_on_review(self, user_id: int) -> Optional[int]:
+        raise NotImplementedError

@@ -1,5 +1,6 @@
 import { getClient } from 'services/api/axios';
 import {
+  EventStatusEnum,
   IEvent,
   IEventType,
   IPostEvent,
@@ -8,8 +9,10 @@ import {
 import { ITableParams } from 'shared/types/types';
 
 export const EventsApi = {
-  async getAllEvents() {
-    const response = await getClient().get<Array<IEvent>>('/events');
+  async getAllEvents(status?: EventStatusEnum) {
+    const params = new URLSearchParams();
+    if (status) params.append('event_status', status);
+    const response = await getClient().get<Array<IEvent>>('/events?' + params);
     return response.data;
   },
   async postEvent(data: IPostEvent) {
@@ -45,6 +48,18 @@ export const EventsApi = {
     const response = await getClient().delete(`/events/${id}`);
     return response.data;
   },
+
+  async updateEvent(event: IEvent) {
+    const response = await getClient().put('/events', event);
+    return response.data;
+  },
+
+  // async changeEventStatus(id: number, status: EventStatusEnum) {
+  //   const response = await getClient().patch(`/events/${id}`, {
+  //     status,
+  //   });
+  //   return response.data;
+  // },
 
   async getEventImage(uri: string) {
     const response = await getClient().get(uri, { responseType: 'blob' });

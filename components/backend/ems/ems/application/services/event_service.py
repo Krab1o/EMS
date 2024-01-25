@@ -1,4 +1,4 @@
-from uuid import uuid4, UUID
+from uuid import uuid4
 from typing import Optional, Final
 from enum import IntEnum, auto
 
@@ -23,6 +23,7 @@ class EventCreateStatus(IntEnum):
     EVENT_TYPE_NOT_FOUND = auto()
     COVER_TOO_BIG = auto()
     UNEXPECTED_ERROR = auto()
+    TOO_MANY_OPENED_EVENTS = auto()
 
 
 class EventUpdateStatus(IntEnum):
@@ -130,6 +131,10 @@ class EventService:
         if cover is not None and cover.size > self.MAX_COVER_SIZE:
             return None, EventCreateStatus.COVER_TOO_BIG
 
+        on_review_count = await self.event_repository.get_number_of_events_on_review(creator_id)
+        if on_review_count >= 2:
+            return None, EventCreateStatus.TOO_MANY_OPENED_EVENTS
+
         event_id = await self.event_repository.add_one(
             event_data=event_data,
             creator_id=creator_id,
@@ -180,6 +185,9 @@ class EventService:
 
         if user_role != UserRole.ADMIN and db_event.creator_id != user_id:
             return EventUpdateStatus.FORBIDDEN
+
+        if user_role != UserRole.ADMIN and data.status is not None:
+            data.status = None
 
         if data.version - db_event.version != 1:
             return EventUpdateStatus.CONFLICT

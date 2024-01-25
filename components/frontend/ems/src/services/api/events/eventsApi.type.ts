@@ -4,7 +4,7 @@ export interface IEvent {
   cover: {
     id: number;
     uri: string;
-  };
+  } | null;
   status: EventStatusEnum;
   place: string;
   datetime: string;
