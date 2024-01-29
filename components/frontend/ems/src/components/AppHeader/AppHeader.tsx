@@ -1,5 +1,5 @@
 import cn from 'classnames';
-import { ReactComponent as OrangeAVMIcon } from 'assets/icons/orangeAVM.svg';
+import { ReactComponent as ESMUMLogo } from 'assets/icons/orangeAVM.svg';
 import ToggleButton from 'components/ToggleButton';
 import ToggleButtonGroup from 'components/ToggleButtonGroup';
 import { Button, Popover } from 'antd';
@@ -31,7 +31,7 @@ export default function AppHeader({
   return (
     <header className={styles.app_header}>
       <div className={styles.app_header__bar}>
-        <OrangeAVMIcon />
+        <ESMUMLogo />
         <div className={styles.app_header__navigation}>
           <ToggleButtonGroup
             onChange={historyPush}

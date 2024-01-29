@@ -53,11 +53,11 @@ export default function Login({ postLogin, fetchStatus }: LoginProps) {
         </Form.Item>
       </Form>
 
-      <Form.Item>
-        <div>
-          Ещё не с нами? <a>Зарегистрироваться</a>
-        </div>
-      </Form.Item>
+      {/*<Form.Item>*/}
+      {/*  <div>*/}
+      {/*    Ещё не с нами? <a>Зарегистрироваться</a>*/}
+      {/*  </div>*/}
+      {/*</Form.Item>*/}
     </div>
   );
 }
