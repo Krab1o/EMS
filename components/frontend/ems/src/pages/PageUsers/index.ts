@@ -1,3 +1,2 @@
-import PageUsers from 'pages/PageUsers/PageUsers';
-
+import PageUsers from './PageUsers';
 export default PageUsers;
