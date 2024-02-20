@@ -67,15 +67,6 @@ class Event:
 
 
 @dataclass
-class Club:
-    id: int = None
-    title: str = None
-    description: Optional[str] = None
-    place: str = None
-    version: int = None
-
-
-@dataclass
 class UserVotedEvent:
     user_id: int = None
     event_id: int = None
@@ -89,3 +80,15 @@ class Cover:
     filename: str = None
     path: str = None
     uploader_id: int = None
+
+
+@dataclass
+class Club:
+    id: int = None
+    title: str = None
+    description: str = None
+    telegram: Optional[str] = None
+    vk: Optional[str] = None
+    youtube: Optional[str] = None
+    rutube: Optional[str] = None
+    tiktok: Optional[str] = None
