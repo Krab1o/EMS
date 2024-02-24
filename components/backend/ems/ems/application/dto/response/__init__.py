@@ -4,3 +4,4 @@ from .user import UserListResponse
 from .cover import CoverResponse
 from .event_type import EventTypeResponse, EventTypeListResponse
 from .event import EventListResponse, EventResponse
+from .club import ClubListResponse, ClubResponse

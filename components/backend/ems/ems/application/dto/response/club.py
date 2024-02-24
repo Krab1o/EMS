@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 
 
 class ClubResponse(BaseModel):
@@ -37,3 +37,7 @@ class ClubResponse(BaseModel):
     is_favorite: bool = Field(
         default=False,
     )
+
+
+class ClubListResponse(RootModel[list[ClubResponse]]):
+    root: list[ClubResponse]
