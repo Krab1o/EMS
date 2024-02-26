@@ -24,5 +24,3 @@ class IClubRepository(ABC):
     @abstractmethod
     async def delete_one(self, club_id: int):
         raise NotImplementedError
-
-# мне кажетсячто надо писать update для каждого поля таблицы Сервисов
