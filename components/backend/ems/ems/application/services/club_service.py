@@ -16,7 +16,6 @@ class ClubUpdateStatus(IntEnum):
     OK = auto()
     NOT_FOUND = auto()
     UNEXPECTED_ERROR = auto()
-    CONFLICT = auto()
 
 
 class ClubDeleteStatus(IntEnum):
@@ -60,9 +59,6 @@ class ClubService:
         db_club = await self.club_repository.get_by_id(data.id)
         if db_club is None:
             return ClubUpdateStatus.NOT_FOUND
-        # if data.version - db_club.version != 1:
-        #     return ClubUpdateStatus.CONFLICT
-
         event_id = await self.club_repository.update_one(data)
         if event_id is None:
             return ClubUpdateStatus.UNEXPECTED_ERROR

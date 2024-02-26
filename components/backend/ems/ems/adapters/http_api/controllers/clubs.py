@@ -7,43 +7,42 @@ from fastapi import (
     Response,
     Body,
     HTTPException,
-    status
+    status,
+    Query,
+    UploadFile,
+    File,
+    Form,
 )
-
 from ems.adapters.http_api.auth import get_auth_payload, get_user_role
-from ems.adapters.http_api.dependencies import get_auth_service, get_event_type_service
-
+from ems.adapters.http_api.dependencies import get_auth_service, get_club_service
 from ems.application import dto
-from ems.application.enum import UserRole, EventStatus
-from ems.application.services import AuthService, EventTypeService
-from ems.application.services.event_type_service import (
-    EventTypeCreateStatus,
-    EventTypeUpdateStatus,
-    EventTypeDeleteStatus,
-)
+from ems.application.enum import UserRole
+from ems.application.services import AuthService, ClubService
+from ems.application.services.club_service import ClubCreateStatus, ClubUpdateStatus, ClubDeleteStatus
 
 router = APIRouter(
-    prefix='/event-types',
-    tags=['Типы мероприятий']
+    prefix='/clubs',
+    tags=['Секции']
 )
+
 
 @router.get(
     path='',
-    response_model=dto.EventTypeListResponse,
+    response_model=dto.ClubListResponse,
     responses={
-        200: {'description': 'Список типов мероприятий.'},
+        200: {'description': 'Список секций.'},
     }
 )
 async def get_list(
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
-        event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
         pagination: Annotated[dto.PaginationParams, Depends()],
 ):
     role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN | UserRole.USER:
-            return await event_type_service.get_list(
+            return await club_service.get_list(
                 params=pagination,
             )
         case _:
@@ -54,32 +53,32 @@ async def get_list(
 
 
 @router.get(
-    path='/{event_type_id}',
-    response_model=dto.EventTypeResponse,
+    path='/{club_id}',
+    response_model=dto.ClubResponse,
     responses={
-        200: {'description': 'Информация о типе мероприятия.'},
-        404: {'description': 'Тип мероприятия с таким ID не найден.'},
+        200: {'description': 'Информация о секции.'},
+        404: {'description': 'Секция с таким ID не найдена.'},
     }
 )
 async def get_one(
-        event_type_id: Annotated[int, Gt(0)],
+        club_id: Annotated[int, Gt(0)],
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-        event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
 ):
     role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN | UserRole.USER:
-            event = await event_type_service.get_by_id(
-                event_type_id=event_type_id,
+            club = await club_service.get_by_id(
+                club_id=club_id,
             )
 
-            if event is None:
+            if club is None:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail='No event type with such id',
+                    detail='No club with such id',
                 )
-            return event
+            return club
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -91,24 +90,24 @@ async def get_one(
     path='',
     status_code=201,
     responses={
-        201: {'description': 'Тип мероприятия создан успешно.'},
-        404: {'description': 'Тип мероприятия не найден.'},
+        201: {'description': 'Секция создана успешно.'},
+        404: {'description': 'Секция не найдена.'},
         403: {'description': 'Недостаточно прав для действия.'},
     }
 )
 async def add_one(
         response: Response,
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
-        event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-        event_type_data: Annotated[dto.EventTypeCreateRequest, Body()],
+        club_data: Annotated[dto.ClubCreateRequest, Body()],
 ):
     role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
-            match await event_type_service.add_one(event_type_data):
-                case event_id, EventTypeCreateStatus.OK:
-                    response.headers['Location'] = f'/event-types/{event_id}'
+            match await club_service.add_one(club_data):
+                case club_id, ClubCreateStatus.OK:
+                    response.headers['Location'] = f'/clubs/{club_id}'
                 case _:
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -129,33 +128,27 @@ async def add_one(
 @router.put(
     path='',
     responses={
-        200: {'description': 'Тип мероприятия обновлен успешно.'},
+        200: {'description': 'Секция обновлена успешно.'},
         403: {'description': 'Недостаточно прав для выполнения действия.'},
-        404: {'description': 'Тип мероприятия не найден.'},
-        409: {'description': 'При обновлении произошел конфликт версий.'},
+        404: {'description': 'Секция не найдена.'},
     }
 )
 async def update_one(
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
-        event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-        data: Annotated[dto.EventTypeUpdateRequest, Body()],
+        data: Annotated[dto.ClubUpdateRequest, Body()],
 ):
     role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
-            match await event_type_service.update_one(data):
-                case EventTypeUpdateStatus.OK:
+            match await club_service.update_one(data):
+                case ClubUpdateStatus.OK:
                     pass
-                case EventTypeUpdateStatus.NOT_FOUND:
+                case ClubUpdateStatus.NOT_FOUND:
                     raise HTTPException(
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail='No event type with such id',
-                    )
-                case EventTypeUpdateStatus.CONFLICT:
-                    raise HTTPException(
-                        status_code=status.HTTP_409_CONFLICT,
-                        detail='The resource was updated by a third-party. Try re-fetching the data and repeat the operation.'
                     )
                 case _:
                     raise HTTPException(
@@ -175,28 +168,28 @@ async def update_one(
 
 
 @router.delete(
-    path='/{event_id}',
+    path='/{club_id}',
     responses={
-        200: {'description': 'Тип мероприятия удален успешно.'},
+        200: {'description': 'Секция удалена успешно.'},
         403: {'description': 'Недостаточно прав для выполнения действия.'},
     }
 )
 async def delete_one(
-        event_type_id: Annotated[int, Gt(0)],
+        club_id: Annotated[int, Gt(0)],
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
-        event_type_service: Annotated[EventTypeService, Depends(get_event_type_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
         auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
     role = await get_user_role(auth_service, auth_claims.get('user_id', None))
     match role:
         case UserRole.ADMIN:
-            match await event_type_service.delete_one(event_type_id):
-                case EventTypeDeleteStatus.NOT_FOUND:
+            match await club_service.delete_one(club_id):
+                case ClubDeleteStatus.NOT_FOUND:
                     raise HTTPException(
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail='No event type with such id',
                     )
-                case EventTypeDeleteStatus.OK:
+                case ClubDeleteStatus.OK:
                     pass
         case UserRole.USER:
             raise HTTPException(
@@ -208,4 +201,3 @@ async def delete_one(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail='Unexpected error'
             )
-

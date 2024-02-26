@@ -28,6 +28,7 @@ class DB:
     event_type_repository = repositories.EventTypeRepository(async_session_maker=async_session_maker)
     user_voted_event_repository = repositories.UserVotedEventRepository(async_session_maker=async_session_maker)
     cover_repository = repositories.CoverRepository(async_session_maker=async_session_maker)
+    club_repository = repositories.ClubRepository(async_session_maker=async_session_maker)
 
 
 class Storage:
@@ -54,6 +55,9 @@ class Application:
         user_repository=DB.user_repository,
         institution_repository=DB.institution_repository
     )
+    club_service = services.ClubService(
+        club_repository=DB.club_repository,
+    )
 
 
 def init_security():
@@ -66,6 +70,7 @@ def init_services():
     Services.auth = Application.auth_service
     Services.event_type = Application.event_type_service
     Services.user = Application.user_service
+    Services.club = Application.club_service
 
 
 def initial_app():
