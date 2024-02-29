@@ -4,6 +4,7 @@ from .auth import LoginRequest
 from .user import UserCreateRequest, UserUpdateRequest
 from .event import EventCreateRequest, EventUpdateRequest, EventVoteRequest
 from .event_type import EventTypeCreateRequest, EventTypeUpdateRequest
+from .club import ClubCreateRequest, ClubUpdateRequest, ClubFavoriteRequest
 
 
 class PaginationParams(BaseModel):

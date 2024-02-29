@@ -4,3 +4,4 @@ from .user_repository import UserRepository
 from .event_type_repository import EventTypeRepository
 from .user_voted_event_repository import UserVotedEventRepository
 from .cover_repository import CoverRepository
+from .club_repository import ClubRepository

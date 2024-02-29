@@ -349,22 +349,43 @@ clubs = Table(
     Column(
         'description',
         Text,
-        nullable=True,
-        default=None,
+        nullable=False,
         comment='Описание'
     ),
     Column(
-        'place',
-        String(512),
-        nullable=False,
-        comment='Место проведения'
+        'telegram',
+        String(256),
+        nullable=True,
+        default=None,
+        comment='Telegram'
     ),
     Column(
-        'version',
-        Integer,
-        default=0,
-        nullable=False,
-        comment='Версия записи об объекте',
+        'vk',
+        String(256),
+        nullable=True,
+        default=None,
+        comment='VK'
+    ),
+    Column(
+        'youtube',
+        String(256),
+        nullable=True,
+        default=None,
+        comment='YouTube'
+    ),
+    Column(
+        'rutube',
+        String(256),
+        nullable=True,
+        default=None,
+        comment='Rutube'
+    ),
+    Column(
+        'tiktok',
+        String(256),
+        nullable=True,
+        default=None,
+        comment='TikTok'
     ),
     comment='Секции (кружки)',
 )
@@ -396,4 +417,24 @@ covers = Table(
         nullable=True,
         comment='Идентификатор пользователя, загрузившего обложку'
     ),
+)
+
+users_favorite_clubs = Table(
+    'users_favorite_clubs',
+    metadata,
+    Column(
+        'user_id',
+        ForeignKey('users.id', ondelete='CASCADE'),
+        primary_key=True,
+        nullable=False,
+        comment='Идентификатор пользователя'
+    ),
+    Column(
+        'club_id',
+        ForeignKey('clubs.id', ondelete='CASCADE'),
+        primary_key=True,
+        nullable=False,
+        comment='Идентификатор секции'
+    ),
+    comment='Пользователи, добавившие секцию в избранное'
 )
