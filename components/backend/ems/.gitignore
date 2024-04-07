@@ -57,9 +57,6 @@ docs/_build/
 profile_default/
 ipython_config.py
 
-# pyenv
-.python-version
-
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
 #   However, in case of collaboration, if having platform-specific dependencies or dependencies
@@ -185,7 +182,6 @@ tags
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
-components/backend/.idea/
 .idea
 .docker
 build/
@@ -198,3 +194,7 @@ app_run.py
 master
 local_db
 .directory
+
+db/data/
+requirements.lock
+requirements-dev.lock
