@@ -37,7 +37,6 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - ./backend/ems/db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./backend/ems/db/data:/var/lib/postgresql/data
   client:
     build:
