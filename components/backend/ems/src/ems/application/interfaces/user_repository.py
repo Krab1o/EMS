@@ -36,3 +36,13 @@ class IUserRepository(ABC):
     @abstractmethod
     async def delete_one(self, user_id: int):
         raise NotImplementedError
+
+    @abstractmethod
+    async def find(
+        self,
+        page: int | None = None,
+        size: int | None = None,
+        name_search: str | None = None,
+        email_search: str | None = None
+    ) -> list[entities.User]:
+        raise NotImplementedError
