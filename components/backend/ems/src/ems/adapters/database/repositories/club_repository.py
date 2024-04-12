@@ -5,22 +5,32 @@ from attr import dataclass
 from ems.application import dto, entities
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
+from sqlalchemy.orm import joinedload
 
 
 @dataclass
 class ClubRepository:
     async_session_maker: async_sessionmaker
 
-    async def get_by_id(self, id_: int) -> Optional[entities.Club]:
-        query = select(entities.Club).where(entities.Club.id == id_)
+    async def get_by_id(self, club_id: int) -> Optional[entities.Club]:
+        query = (
+            select(entities.Club)
+            .options(
+                joinedload(entities.Club.users_favorite)
+                .options(
+                    joinedload(entities.User.institution)
+                )
+            )
+            .where(entities.Club.id == club_id)
+        )
         async with self.async_session_maker() as session:
-            res = await session.scalar(query)
-        return res
+            db_club = await session.scalar(query)
+        return db_club
 
     async def get_list(self, page: int, size: int) -> list[entities.Club]:
         query = (
             select(entities.Club)
-            .order_by(entities.User.created_at)
+            .order_by(entities.Club.created_at)
             .offset(page * size)
             .limit(size)
         )

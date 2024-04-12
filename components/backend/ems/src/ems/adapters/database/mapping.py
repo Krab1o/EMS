@@ -62,6 +62,18 @@ mapper.map_imperatively(
 mapper.map_imperatively(
     entities.Club,
     tables.clubs,
+    properties={
+        "users_favorite": relationship(
+            entities.User,
+            secondary=tables.users_favorite_clubs,
+            lazy="select",
+        )
+    }
+)
+
+mapper.map_imperatively(
+    entities.UserFavoriteClub,
+    tables.users_favorite_clubs,
 )
 
 mapper.map_imperatively(

@@ -1,5 +1,6 @@
 from ems.adapters import database, http_api, log, storage
 from ems.adapters.database import repositories
+from ems.adapters.database.repositories import user_repository
 from ems.adapters.http_api import create_app
 from ems.adapters.http_api.dependencies import Services
 from ems.application import services
@@ -43,6 +44,9 @@ class DB:
     club_repository = repositories.ClubRepository(
         async_session_maker=async_session_maker
     )
+    user_favorite_club_repository = repositories.UserFavoriteClubRepository(
+        async_session_maker=async_session_maker
+    )
 
 
 class Storage:
@@ -71,6 +75,8 @@ class Application:
     )
     club_service = services.ClubService(
         club_repository=DB.club_repository,
+        user_repository=DB.user_repository,
+        user_favorite_club_repository=DB.user_favorite_club_repository,
     )
 
 

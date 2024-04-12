@@ -95,4 +95,11 @@ class Club:
     rutube: Optional[str] = None
     tiktok: Optional[str] = None
     created_at: dt = None
+    users_favorite: list[User] = None
+    is_favorite: bool = False
 
+
+@dataclass
+class UserFavoriteClub:
+    user_id: int = None
+    club_id: int = None

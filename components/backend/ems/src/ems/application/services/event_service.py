@@ -253,6 +253,7 @@ class EventService:
         user_voted_event = await self.user_voted_event_repository.get_one(
             user_id, event_id
         )
+
         if user_voted_event is not None:
             await self.user_voted_event_repository.delete_one(
                 user_id, event_id
