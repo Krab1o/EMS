@@ -2,9 +2,8 @@ version: "3.8"
 
 services:
   ems:
-    build:
-      context: ./backend/ems
-      dockerfile: Dockerfile
+    container_name: ems
+    build: ./backend/ems
     ports:
       - 3000:3000
     depends_on:
@@ -18,16 +17,13 @@ services:
       DATABASE_PORT: ${DATABASE_PORT:-5432}
       DATABASE_USER: ${DATABASE_USER:-postgres}
       DATABASE_PASS: ${DATABASE_PASS:-postgres}
-    command:
-      - /bin/sh
-      - -c
-      - |
-        python -m ems.composites.alembic_runner upgrade head &&\
-        gunicorn ems.composites.http_api:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:3000
+      PUBLIC_DIR_PATH: /app/public
+    command: ${FLAGS:-}
     volumes:
-      - /var/www/ems/public:${PUBLIC_DIR_PATH:-/var/www/ems/public}
+      - ./backend/ems/public/images/covers:/app/public/images/covers
   ems-postgres:
     image: postgres:16.0
+    container_name: ems-postgres
     restart: always
     ports:
       - 5432:5432
@@ -40,6 +36,9 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    volumes:
+      - ./backend/ems/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/ems/db/data:/var/lib/postgresql/data
   client:
     build:
       context: ./frontend/ems
