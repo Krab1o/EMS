@@ -94,3 +94,42 @@ export const columns: Array<ColumnType<IUser> & IField> = [
     },
   },
 ];
+
+export const data: Array<IUser> = [
+  {
+    key: '1',
+    username: 'Olga112',
+    firstname: 'Ольга',
+    lastname: 'Архипова',
+    surname: 'Дмитриевна',
+    role: 'Студент',
+    id: 1,
+  },
+  {
+    key: '2',
+    username: 'Hvost@229',
+    firstname: 'Олег',
+    lastname: 'Потапов',
+    surname: 'Дмитриевич',
+    role: 'Студент',
+    id: 2,
+  },
+  {
+    key: '3',
+    username: 'Olga990',
+    firstname: 'Ольга',
+    lastname: 'Архипова',
+    surname: 'Дмитриевна',
+    role: 'Студент',
+    id: 3,
+  },
+  {
+    key: '4',
+    username: 'Motilek',
+    firstname: 'Матвей',
+    lastname: 'Архипов',
+    surname: 'Дмитриевич',
+    role: 'Студент',
+    id: 4,
+  },
+];
