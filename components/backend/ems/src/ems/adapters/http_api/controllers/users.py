@@ -40,7 +40,6 @@ async def get_list(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
     pagination: Annotated[dto.PaginationParams, Depends()],
-    search: Annotated[str, Query()],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
