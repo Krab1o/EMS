@@ -19,6 +19,7 @@ from fastapi import (
     Body,
     Depends,
     HTTPException,
+    Query,
     Response,
     status,
 )
@@ -39,6 +40,7 @@ async def get_list(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
     pagination: Annotated[dto.PaginationParams, Depends()],
+    search: Annotated[str, Query()],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -59,6 +61,47 @@ async def get_list(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Unexpected error",
             )
+
+
+@router.get(
+    path="/search",
+    response_model=dto.UserListResponse,
+    responses={
+        200: {"description": "Список пользователей."},
+    },
+)
+async def search(
+    user_service: Annotated[UserService, Depends(get_user_service)],
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+    pagination: Annotated[dto.PaginationParams, Depends()],
+    name: Annotated[str, Query()] = None,
+    email: Annotated[str, Query()] = None,
+):
+    role = await get_user_role(auth_service, auth_claims.get("user_id", None))
+    match role:
+        case UserRole.ADMIN:
+            users = await user_service.find(
+                params=pagination,
+                name=name,
+                email=email,
+            )
+            json_users = []
+            for u in users:
+                json_user = jsonable_encoder(u)
+                json_users.append(json_user)
+            return json_users
+        case UserRole.USER:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Forbidden operation for regular users.",
+            )
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unexpected error",
+            )
+
 
 
 @router.get(

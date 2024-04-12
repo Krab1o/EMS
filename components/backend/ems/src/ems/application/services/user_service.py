@@ -40,6 +40,19 @@ class UserService:
             size=params.size,
         )
 
+    async def find(
+        self,
+        params: dto.PaginationParams,
+        name: str | None = None,
+        email: str | None = None,
+    ) -> list[entities.User]:
+        return await self.user_repository.find(
+            page=params.page,
+            size=params.size,
+            name_search=name,
+            email_search=email,
+        )
+    
     async def get_by_id(
         self,
         user_id: int,
@@ -77,7 +90,7 @@ class UserService:
             user_id=data.id,
         )
         if db_user is None:
-            return UserUpdateStatus.EVENT_NOT_FOUND
+            return UserUpdateStatus.USER_NOT_FOUND
 
         event_id = await self.user_repository.update_one(data)
 
