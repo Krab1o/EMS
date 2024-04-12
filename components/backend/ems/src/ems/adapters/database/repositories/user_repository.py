@@ -5,7 +5,7 @@ from ems.application import dto, entities
 from ems.application.enum import UserRole
 from ems.application.interfaces import IUserRepository
 from ems_libs.security import Hasher
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, insert, or_, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
@@ -94,3 +94,40 @@ class UserRepository(IUserRepository):
         async with self.async_session_maker() as session:
             await session.execute(query)
             await session.commit()
+
+    async def find(
+        self,
+        page: int | None = None,
+        size: int | None = None,
+        name_search: str | None = None,
+        email_search: str | None = None
+    ) -> list[entities.User]:
+        query = (
+            select(entities.User)
+                .options(joinedload(entities.User.institution))
+                .options(joinedload(entities.User.enrolled_in_events))
+                .options(joinedload(entities.User.created_events))
+        )
+        if name_search is not None:
+            query = query.where(
+                or_(
+                    entities.User.first_name.like(
+                        f"%{name_search}%"
+                    ),
+                    entities.User.last_name.like(
+                        f"%{name_search}%"
+                    ),
+                    entities.User.middle_name.like(
+                        f"%{name_search}%"
+                    )
+                )
+            )
+        if email_search is not None:
+            query = query.where(
+                entities.User.email.like(f"%{email_search}%")
+            )
+        if page is not None and size is not None:
+            query = query.offset(page * size).limit(size)
+        async with self.async_session_maker() as session:
+            res = await session.execute(query)
+        return res.unique().scalars().all()
