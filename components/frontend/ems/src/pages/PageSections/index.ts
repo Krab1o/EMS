@@ -1,3 +1,3 @@
-import PageSections from './PageSections';
+import { PageSections } from './PageSections';
 
 export default PageSections;
