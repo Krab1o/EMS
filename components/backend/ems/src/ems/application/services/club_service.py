@@ -2,8 +2,8 @@ from enum import IntEnum, auto
 from typing import Optional
 
 from attr import dataclass
+from ems.adapters.database.repositories import ClubRepository
 from ems.application import dto, entities
-from ems.application.interfaces import IClubRepository
 
 
 class ClubCreateStatus(IntEnum):
@@ -25,7 +25,7 @@ class ClubDeleteStatus(IntEnum):
 
 @dataclass
 class ClubService:
-    club_repository: IClubRepository
+    club_repository: ClubRepository
 
     async def get_list(
         self,

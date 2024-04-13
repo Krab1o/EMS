@@ -2,8 +2,11 @@ from enum import IntEnum, auto
 from typing import Optional
 
 from attr import dataclass
+from ems.adapters.database.repositories import (
+    InstitutionRepository,
+    UserRepository,
+)
 from ems.application import dto, entities
-from ems.application.interfaces import IInstitutionRepository, IUserRepository
 
 
 class UserCreateStatus(IntEnum):
@@ -28,8 +31,8 @@ class UserDeleteStatus(IntEnum):
 
 @dataclass
 class UserService:
-    user_repository: IUserRepository
-    institution_repository: IInstitutionRepository
+    user_repository: UserRepository
+    institution_repository: InstitutionRepository
 
     async def get_list(
         self,

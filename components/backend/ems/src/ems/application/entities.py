@@ -35,6 +35,7 @@ class User:
     enrolled_in_events: list["Event"] = list()
     created_events: list["Event"] = list()
     version: int = None
+    created_at: dt = None
 
 
 @dataclass
@@ -64,6 +65,7 @@ class Event:
     version: int = None
     users_voted: list[User] = None
     user_vote: Optional[bool] = None
+    created_at: dt = None
 
 
 @dataclass
@@ -92,3 +94,5 @@ class Club:
     youtube: Optional[str] = None
     rutube: Optional[str] = None
     tiktok: Optional[str] = None
+    created_at: dt = None
+

@@ -1,9 +1,9 @@
+from datetime import datetime
 from typing import Optional
 
 from attr import dataclass
 from ems.application import dto, entities
 from ems.application.enum import UserRole
-from ems.application.interfaces import IUserRepository
 from ems_libs.security import Hasher
 from sqlalchemy import delete, insert, or_, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
@@ -11,7 +11,7 @@ from sqlalchemy.orm import joinedload
 
 
 @dataclass
-class UserRepository(IUserRepository):
+class UserRepository:
     async_session_maker: async_sessionmaker
 
     async def is_email_taken(self, email: str) -> bool:
@@ -49,6 +49,7 @@ class UserRepository(IUserRepository):
             **data.model_dump(exclude={"password"}),
             "password": Hasher.get_hash(data.password),
             "role": UserRole.USER,
+            "created_at": datetime.now(),
         }
         insert_query = (
             insert(entities.User).values(to_insert).returning(entities.User.id)
@@ -66,6 +67,7 @@ class UserRepository(IUserRepository):
     ) -> list[entities.User]:
         query = (
             select(entities.User)
+            .order_by(entities.User.created_at)
             .options(joinedload(entities.User.institution))
             .options(joinedload(entities.User.enrolled_in_events))
             .options(joinedload(entities.User.created_events))

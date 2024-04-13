@@ -3,13 +3,12 @@ from typing import Optional
 
 from attr import dataclass
 from ems.application import entities
-from ems.application.interfaces import IUserVotedEventRepository
 from sqlalchemy import delete, insert, select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 
 @dataclass
-class UserVotedEventRepository(IUserVotedEventRepository):
+class UserVotedEventRepository:
     async_session_maker: async_sessionmaker
 
     async def add_one(

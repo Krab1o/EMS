@@ -4,17 +4,17 @@ from uuid import uuid4
 
 import aiofiles
 from attr import dataclass
+from ems.adapters.database.repositories import (
+    CoverRepository,
+    EventRepository,
+    EventTypeRepository,
+    UserRepository,
+    UserVotedEventRepository,
+)
+from ems.adapters.storage import ImageStore
 from ems.application import dto, entities
 from ems.application.entities import Cover
 from ems.application.enum import EventStatus, UserRole
-from ems.application.interfaces import (
-    ICoverRepository,
-    IEventRepository,
-    IEventTypeRepository,
-    IImageStore,
-    IUserRepository,
-    IUserVotedEventRepository,
-)
 from fastapi import UploadFile
 
 
@@ -57,12 +57,12 @@ class CoverDownloadStatus(IntEnum):
 
 @dataclass
 class EventService:
-    event_repository: IEventRepository
-    event_type_repository: IEventTypeRepository
-    user_voted_event_repository: IUserVotedEventRepository
-    user_repository: IUserRepository
-    cover_repository: ICoverRepository
-    image_store: IImageStore
+    event_repository: EventRepository
+    event_type_repository: EventTypeRepository
+    user_voted_event_repository: UserVotedEventRepository
+    user_repository: UserRepository
+    cover_repository: CoverRepository
+    image_store: ImageStore
 
     MAX_COVER_WIDTH: Final[int] = 1920
     MAX_COVER_HEIGHT: Final[int] = 1080

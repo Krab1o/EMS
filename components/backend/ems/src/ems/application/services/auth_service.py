@@ -3,12 +3,12 @@ from enum import IntEnum, auto
 from typing import Optional
 
 from attr import dataclass
+from ems.adapters.database.repositories import (
+    InstitutionRepository,
+    UserRepository,
+)
 from ems.application import dto, entities
 from ems.application.enum import UserRole
-from ems.application.interfaces import (
-    IInstitutionRepository,
-    IUserRepository,
-)
 from ems_libs.security import Hasher
 
 
@@ -28,8 +28,8 @@ class RegistrationStatus(IntEnum):
 
 @dataclass
 class AuthService:
-    user_repository: IUserRepository
-    institution_repository: IInstitutionRepository
+    user_repository: UserRepository
+    institution_repository: InstitutionRepository
 
     async def login(
         self, body: dto.LoginRequest

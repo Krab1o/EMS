@@ -6,34 +6,28 @@ from uuid import UUID
 import aiofiles
 import PIL.Image
 from ems.adapters.storage import Settings
-from ems.application.interfaces import IImage, IImageStore
+from PIL.Image import Image as PImage
 
 
-class Image(IImage):
-    __config: Settings
-    image_id: UUID
-    size: int
-    path: str
-
-    def __init__(self, config: Settings, image_id: UUID, size: int, path: str):
-        self.__config = config
+class Image:
+    def __init__(self, image_id: UUID, size: int, path: str):
         self.image_id = image_id
         self.size = size
         self.path = path
 
 
-class ImageStore(IImageStore):
+class ImageStore:
     __config: Settings
 
     def __init__(self, config: Settings):
         self.__config = config
 
     @staticmethod
-    def _load_from_bytes(data: bytes) -> PIL.Image:
+    def _load_from_bytes(data: bytes) -> PImage:
         return PIL.Image.open(io.BytesIO(data))
 
     @staticmethod
-    def _convert(image: PIL.Image) -> bytes:
+    def _convert(image: PImage) -> bytes:
         rgb_image = image.convert("RGB")
         converted = io.BytesIO()
         rgb_image.save(converted, "JPEG")
@@ -54,5 +48,6 @@ class ImageStore(IImageStore):
         async with aiofiles.open(path, "w+b") as output:
             await output.write(converted)
 
-        stored = Image(self.__config, image_id, image.size, path)
+        width, height = image.size
+        stored = Image(image_id, width * height, path)
         return stored
