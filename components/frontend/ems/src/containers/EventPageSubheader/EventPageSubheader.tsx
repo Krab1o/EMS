@@ -54,7 +54,18 @@ export function EventPageSubheader({ openModal }: EventPageSubheaderProps) {
         mode="horizontal"
         items={items}
       ></Menu>
-      <Button icon={<PlusOutlined />} onClick={openModal} />
+      <Button
+        className={styles.header__button_desktop}
+        icon={<PlusOutlined />}
+        onClick={openModal}
+      />
+      <Button
+        type={'link'}
+        className={styles.header__button_mobile}
+        onClick={openModal}
+      >
+        Добавить
+      </Button>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import Meta from 'antd/es/card/Meta';
 import { validateLenght } from 'shared/utils/validateLength';
 import type { SectionCardProps } from './SectionCard.type';
 import type { ReactNode } from 'react';
+import styles from '../EventCard/EventCard.module.scss';
 
 export function SectionCard({
   initialData,
@@ -24,7 +25,16 @@ export function SectionCard({
   return (
     <Card
       hoverable={true}
-      style={{ width: '20vw' }}
+      style={{ width: '20vw', minWidth: '400px' }}
+      cover={
+        <img
+          className={styles.image}
+          src={
+            'https://habrastorage.org/webt/lc/-6/ef/lc-6efvgqpkky1ohuk8alctjonw.png'
+          }
+          alt={'cover'}
+        />
+      }
       onClick={onCardClick}
       actions={actionsButtons}
     >
