@@ -5,4 +5,26 @@
   width: 100%;
   background-color: white;
   padding-right: 16px;
+
+  &__button_mobile {
+    display: none;
+  }
+
+  &__button_desktop {
+    display: block;
+  }
+}
+
+@media (max-width: 400px) {
+  .header {
+    flex-direction: column;
+    gap: 10px;
+    &__button_mobile {
+      display: block;
+    }
+
+    &__button_desktop {
+      display: none;
+    }
+  }
 }
