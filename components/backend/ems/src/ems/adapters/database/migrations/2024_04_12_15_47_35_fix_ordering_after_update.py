@@ -5,7 +5,7 @@ Revises: 3e3eaf2a7333
 Create Date: 2024-04-12 15:47:35.871249+00:00
 
 """
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import sqlalchemy as sa
 from alembic import op
@@ -19,7 +19,8 @@ from ems.adapters.database.tables import (
 
 # revision identifiers, used by Alembic.
 revision = 'e9bf9acf9cc0'
-down_revision = '3e3eaf2a7333'
+# down_revision = '3e3eaf2a7333'
+down_revision = 'c02ac222320d'
 branch_labels = None
 depends_on = None
 
@@ -46,6 +47,7 @@ user_data = [
         "phone_number": "+79001234567",
         "email": "admin@example.com",
         "password": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+        "created_at": datetime.now(),
     },
     {
         # "id": 2,
@@ -61,6 +63,7 @@ user_data = [
         "phone_number": "+79001333777",
         "email": "user@example.com",
         "password": "04f8996da763b7a969b1028ee3007569eaf3a635486ddab211d512c85b9df8fb",
+        "created_at": datetime.now(),
     }
 ]
 
@@ -92,6 +95,8 @@ event_type_data = [
     },
 ]
 
+d = timedelta(seconds=1)
+created_at = datetime.now() - d * 11 
 event_data = [
     {
         # "id": 1,
@@ -105,7 +110,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 1,
-        "created_at": datetime.now() 
+        "created_at": created_at + d
     },
     {
         # "id": 2,
@@ -119,7 +124,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 2,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 2
     },
     {
         # "id": 3,
@@ -133,7 +138,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 3,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 3 
     },
     {
         # "id": 4,
@@ -147,7 +152,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 4,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 4
     },
     {
         # "id": 5,
@@ -161,7 +166,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 5,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 5
     },
     {
         # "id": 6,
@@ -175,7 +180,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 1,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 6 
     },
     {
         # "id": 7,
@@ -189,7 +194,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 2,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 7
     },
     {
         # "id": 8,
@@ -203,7 +208,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 3,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 8
     },
     {
         # "id": 9,
@@ -217,7 +222,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 4,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 9
     },
     {
         # "id": 10,
@@ -231,7 +236,7 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 5,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 10
     },
     {
         # "id": 11,
@@ -245,10 +250,12 @@ event_data = [
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 1,
-        "created_at": datetime.now()
+        "created_at": created_at + d * 11
     }
 ]
 
+d = timedelta(seconds=1)
+created_at = datetime.now() - d * 5
 club_data = [
     {
         # "id": 1,
@@ -258,7 +265,8 @@ club_data = [
         "vk": "club_programming_vk",
         "youtube": "channel_programming",
         "rutube": "channel_programming_rutube",
-        "tiktok": "club_programming_tiktok"
+        "tiktok": "club_programming_tiktok",
+        "created_at": created_at + d,
     },
     {
         # "id": 2,
@@ -268,7 +276,8 @@ club_data = [
         "vk": "club_robotics_vk",
         "youtube": "channel_robotics",
         "rutube": "channel_robotics_rutube",
-        "tiktok": "club_robotics_tiktok"
+        "tiktok": "club_robotics_tiktok",
+        "created_at": created_at + d * 2,
     },
     {
         # "id": 3,
@@ -278,7 +287,8 @@ club_data = [
         "vk": "club_art_design_vk",
         "youtube": "channel_art_design",
         "rutube": "channel_art_design_rutube",
-        "tiktok": "club_art_design_tiktok"
+        "tiktok": "club_art_design_tiktok",
+        "created_at": created_at + d * 3,
     },
     {
         # "id": 4,
@@ -288,7 +298,8 @@ club_data = [
         "vk": "club_science_research_vk",
         "youtube": "channel_science_research",
         "rutube": "channel_science_research_rutube",
-        "tiktok": "club_science_research_tiktok"
+        "tiktok": "club_science_research_tiktok",
+        "created_at": created_at + d * 4,
     },
     {
         # "id": 5,
@@ -298,7 +309,8 @@ club_data = [
         "vk": "club_ecology_vk",
         "youtube": "channel_ecology",
         "rutube": "channel_ecology_rutube",
-        "tiktok": "club_ecology_tiktok"
+        "tiktok": "club_ecology_tiktok",
+        "created_at": created_at + d * 5,
     }
 ]
 
@@ -311,6 +323,4 @@ def upgrade():
 
 
 def downgrade():
-    # ### commands auto generated by Alembic - please adjust! ###
     pass
-    # ### end Alembic commands ###

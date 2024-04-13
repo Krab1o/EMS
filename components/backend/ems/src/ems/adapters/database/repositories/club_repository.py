@@ -1,14 +1,14 @@
+from datetime import datetime
 from typing import Optional
 
 from attr import dataclass
 from ems.application import dto, entities
-from ems.application.interfaces import IClubRepository
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 
 @dataclass
-class ClubRepository(IClubRepository):
+class ClubRepository:
     async_session_maker: async_sessionmaker
 
     async def get_by_id(self, id_: int) -> Optional[entities.Club]:
@@ -18,15 +18,24 @@ class ClubRepository(IClubRepository):
         return res
 
     async def get_list(self, page: int, size: int) -> list[entities.Club]:
-        query = select(entities.Club).offset(page * size).limit(size)
+        query = (
+            select(entities.Club)
+            .order_by(entities.User.created_at)
+            .offset(page * size)
+            .limit(size)
+        )
         async with self.async_session_maker() as session:
             res = await session.execute(query)
         return res.scalars().all()
 
     async def add_one(self, data: dto.ClubCreateRequest) -> Optional[int]:
+        to_insert = {
+            **data.model_dump(),
+            "created_at": datetime.now(),
+        }
         query = (
             insert(entities.Club)
-            .values(**data.model_dump())
+            .values(to_insert)
             .returning(entities.Club.id)
         )
         async with self.async_session_maker() as session:

@@ -87,6 +87,13 @@ users = Table(
         nullable=False,
         comment="Версия записи об объекте",
     ),
+    Column(
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        index=True,
+        comment="Дата и время, когда была создана запись",
+    ),
     comment="Пользователи",
 )
 
@@ -117,7 +124,8 @@ users_voted_events = Table(
         "created_at",
         DateTime(timezone=True),
         nullable=False,
-        comment="Время создания записи",
+        index=True,
+        comment="Дата и время, когда была создана запись",
     ),
     comment="Оцененные пользователями события (ассоциативная таблица)",
 )
@@ -203,7 +211,7 @@ events = Table(
         "created_at",
         DateTime(timezone=True),
         nullable=False,
-        default=datetime.now(),
+        index=True,
         comment="Дата и время, когда была создана запись",
     ),
     Column(
@@ -280,6 +288,13 @@ clubs = Table(
     ),
     Column(
         "tiktok", String(256), nullable=True, default=None, comment="TikTok"
+    ),
+    Column(
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        index=True,
+        comment="Дата и время, когда была создана запись",
     ),
     comment="Секции (кружки)",
 )

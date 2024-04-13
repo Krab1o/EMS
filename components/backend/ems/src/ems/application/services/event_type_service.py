@@ -2,8 +2,8 @@ from enum import IntEnum, auto
 from typing import Optional
 
 from attr import dataclass
+from ems.adapters.database.repositories import EventTypeRepository
 from ems.application import dto, entities
-from ems.application.interfaces import IEventTypeRepository
 
 
 class EventTypeCreateStatus(IntEnum):
@@ -26,7 +26,7 @@ class EventTypeDeleteStatus(IntEnum):
 
 @dataclass
 class EventTypeService:
-    event_type_repository: IEventTypeRepository
+    event_type_repository: EventTypeRepository
 
     async def get_list(
         self,

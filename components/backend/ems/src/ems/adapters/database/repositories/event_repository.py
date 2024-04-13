@@ -1,16 +1,16 @@
+from datetime import datetime
 from typing import Optional
 
 from attr import dataclass
 from ems.application import dto, entities
 from ems.application.enum import EventStatus
-from ems.application.interfaces import IEventRepository
 from sqlalchemy import delete, func, insert, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
 
 @dataclass
-class EventRepository(IEventRepository):
+class EventRepository:
     async_session_maker: async_sessionmaker
 
     async def get_list(
@@ -26,7 +26,9 @@ class EventRepository(IEventRepository):
         if status is not None:
             query = query.where(entities.Event.status.in_(status))
         query = (
-            query.offset(page * size)
+            query
+            .order_by(entities.Event.created_at)
+            .offset(page * size)
             .limit(size)
             .options(joinedload(entities.Event.cover))
         )
@@ -74,6 +76,7 @@ class EventRepository(IEventRepository):
                 **event_data.model_dump(),
                 "status": EventStatus.ON_REVIEW,
                 "creator_id": creator_id,
+                "created_at": datetime.now(),
             }
             insert_query = (
                 insert(entities.Event)

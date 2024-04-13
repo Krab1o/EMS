@@ -2,13 +2,12 @@ from typing import Optional
 
 from attr import dataclass
 from ems.application import dto, entities
-from ems.application.interfaces import IEventTypeRepository
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 
 @dataclass
-class EventTypeRepository(IEventTypeRepository):
+class EventTypeRepository:
     async_session_maker: async_sessionmaker
 
     async def get_by_id(self, id_: int) -> Optional[entities.EventType]:

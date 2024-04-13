@@ -3,13 +3,12 @@ from typing import Optional
 from attr import dataclass
 from ems.application import entities
 from ems.application.entities import Cover
-from ems.application.interfaces import ICoverRepository
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker
 
 
 @dataclass
-class CoverRepository(ICoverRepository):
+class CoverRepository:
     async_session_maker: async_sessionmaker
 
     async def get_by_id(self, cover_id: int) -> Optional[entities.Cover]:
