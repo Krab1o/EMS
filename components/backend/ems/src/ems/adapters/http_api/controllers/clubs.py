@@ -12,6 +12,7 @@ from ems.application.services import AuthService, ClubService
 from ems.application.services.club_service import (
     ClubCreateStatus,
     ClubDeleteStatus,
+    ClubFavoriteStatus,
     ClubUpdateStatus,
 )
 from fastapi import (
@@ -34,16 +35,18 @@ router = APIRouter(prefix="/clubs", tags=["Секции"])
     },
 )
 async def get_list(
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    club_service: Annotated[ClubService, Depends(get_club_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    pagination: Annotated[dto.PaginationParams, Depends()],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        pagination: Annotated[dto.PaginationParams, Depends()],
 ):
-    role = await get_user_role(auth_service, auth_claims.get("user_id", None))
+    user_id = auth_claims.get("user_id", None)
+    role = await get_user_role(auth_service, user_id)
     match role:
         case UserRole.ADMIN | UserRole.USER:
             return await club_service.get_list(
                 params=pagination,
+                user_id=user_id,
             )
         case _:
             raise HTTPException(
@@ -61,18 +64,19 @@ async def get_list(
     },
 )
 async def get_one(
-    club_id: Annotated[int, Gt(0)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    club_service: Annotated[ClubService, Depends(get_club_service)],
+        club_id: Annotated[int, Gt(0)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
 ):
-    role = await get_user_role(auth_service, auth_claims.get("user_id", None))
+    user_id = auth_claims.get("user_id", None)
+    role = await get_user_role(auth_service, user_id)
     match role:
         case UserRole.ADMIN | UserRole.USER:
             club = await club_service.get_by_id(
                 club_id=club_id,
+                user_id=user_id,
             )
-
             if club is None:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
@@ -96,11 +100,11 @@ async def get_one(
     },
 )
 async def add_one(
-    response: Response,
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    club_service: Annotated[ClubService, Depends(get_club_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    club_data: Annotated[dto.ClubCreateRequest, Body()],
+        response: Response,
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        club_data: Annotated[dto.ClubCreateRequest, Body()],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -125,6 +129,41 @@ async def add_one(
             )
 
 
+@router.post(
+    path="/{club_id}/star",
+    responses={
+        200: {"description": "Секция добавлена в избранное."},
+        404: {"description": "Секция или пользователь не сущетсвует."},
+    },
+)
+async def star(
+        club_id: Annotated[int, Gt(0)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+):
+    user_id = auth_claims.get("user_id", None)
+    match await club_service.star(
+        club_id=club_id, user_id=user_id
+    ):
+        case ClubFavoriteStatus.OK:
+            pass
+        case ClubFavoriteStatus.CLUB_NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No club with such id",
+            )
+        case ClubFavoriteStatus.USER_NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No user with such id",
+            )
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unexpected error",
+            )
+
+
 @router.put(
     path="",
     responses={
@@ -134,10 +173,10 @@ async def add_one(
     },
 )
 async def update_one(
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    club_service: Annotated[ClubService, Depends(get_club_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    data: Annotated[dto.ClubUpdateRequest, Body()],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        data: Annotated[dto.ClubUpdateRequest, Body()],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -175,10 +214,10 @@ async def update_one(
     },
 )
 async def delete_one(
-    club_id: Annotated[int, Gt(0)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    club_service: Annotated[ClubService, Depends(get_club_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        club_id: Annotated[int, Gt(0)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        club_service: Annotated[ClubService, Depends(get_club_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:

@@ -347,3 +347,4 @@ users_favorite_clubs = Table(
     ),
     comment="Пользователи, добавившие секцию в избранное",
 )
+
