@@ -4,7 +4,8 @@ version = "0.1.0"
 description = "Event management system"
 authors = [
     { name = "Evgeny Mangasaryan", email = "mangasaryan.ep@gmail.com" },
-    { name = "Dmitry Mikhailin", email = "aboba@aboba.org"},
+    { name = "Dmitry Mikhailin", email = "mik-dmitry.k@yandex.ru" },
+    { name = "Konstantyn Kirilenko", email = "kirilenko.konstantyn@yandex.ru" }
 ]
 dependencies = [
     "aiofiles>=23.2.1",
@@ -46,7 +47,7 @@ packages = ["src/ems", "src/ems_libs"]
 
 [tool.ruff]
 line-length = 79
-target-version = "py312"
+target-version = "py311"
 exclude = [
     "*__init__.py",
     "tests/"

@@ -1,8 +1,6 @@
-version: "3.8"
-
 services:
   ems:
-    container_name: ems
+    container_name: ems-dev
     build: ./backend/ems
     ports:
       - 3000:3000
@@ -18,12 +16,14 @@ services:
       DATABASE_USER: ${DATABASE_USER:-postgres}
       DATABASE_PASS: ${DATABASE_PASS:-postgres}
       PUBLIC_DIR_PATH: /app/public
-    command: ${FLAGS:-}
+    command: ${FLAGS:-} 
     volumes:
       - ./backend/ems/public/images/covers:/app/public/images/covers
+      # hot reload support
+      - ./backend/ems/src:/app/src
   ems-postgres:
+    container_name: ems-dev-postgres
     image: postgres:16.0
-    container_name: ems-postgres
     restart: always
     ports:
       - 5432:5432
@@ -39,7 +39,7 @@ services:
     volumes:
       - ./backend/ems/db/data:/var/lib/postgresql/data
   client:
-    container_name: ems-client
+    container_name: ems-dev-client
     build:
       context: ./frontend/ems
       dockerfile: Dockerfile
@@ -50,7 +50,7 @@ services:
     ports:
       - '30002:30002'
   redis:
-    container_name: redis
+    container_name: redis-dev
     build:
       context: ./redis
     restart: always
