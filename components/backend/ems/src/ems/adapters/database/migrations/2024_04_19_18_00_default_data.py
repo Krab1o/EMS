@@ -14,13 +14,13 @@ from ems.adapters.database.tables import (
     event_types,
     events,
     institutions,
+    places,
     users,
 )
 
 # revision identifiers, used by Alembic.
 revision = 'e9bf9acf9cc0'
-# down_revision = '3e3eaf2a7333'
-down_revision = 'c02ac222320d'
+down_revision = '2598b8ffc54a'
 branch_labels = None
 depends_on = None
 
@@ -29,7 +29,12 @@ institution_data = [
         # "id": 1,
         "title": "КНиИТ",
         "description": "Факультет компьютерных наук и информационных технологий",
-    }
+    },
+    {
+        # "id": 2,
+        "title": "Психологический факультет",
+        "description": None,
+    },
 ]
 
 user_data = [
@@ -97,19 +102,60 @@ event_type_data = [
 
 d = timedelta(seconds=1)
 created_at = datetime.now() - d * 11 
+place_data = [
+    {
+        # "id": 1,
+        "title": "Аудитория 310",
+        "floor": 3,
+        "institution_id": 1,
+        "created_at": created_at + d,
+    },
+    {
+        # "id": 2,
+        "title": "Аудитория 101",
+        "floor": 1,
+        "institution_id": 2,
+        "created_at": created_at + 2 * d,
+    },
+    {
+        # "id": 3,
+        "title": "Актовый зал X корпуса",
+        "floor": 1,
+        "institution_id": None,
+        "created_at": created_at + 3 * d,
+    },
+    {
+        # "id": 4,
+        "title": 'Природный парк "Кумысная поляна"',
+        "floor": None,
+        "institution_id": None,
+        "created_at": created_at + 4 * d,
+    },
+    {
+        # "id": 5,
+        "title": "Актовый зал XII корпуса",
+        "floor": None,
+        "institution_id": None,
+        "created_at": created_at + 5 * d,
+    },
+]
+
+d = timedelta(seconds=1)
+created_at = datetime.now() - d * 11 
 event_data = [
     {
         # "id": 1,
         "title": "Хакатон",
         "description": "Мероприятие по программированию",
         "cover_id": None,
-        "status": "on_poll",
-        "place": "Аудитория 101",
+        "status": "on_review",
         "datetime": datetime.fromisoformat("2024-05-15 10:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-05-17 18:00:00+04"),
         "creator_id": 1,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 1,
+        "place_id": 1,
         "created_at": created_at + d
     },
     {
@@ -118,12 +164,13 @@ event_data = [
         "description": "Встреча нового учебного года",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Комната 201",
-        "datetime": datetime.fromisoformat("2024-09-01 14:00:00+04"),
+        "datetime": datetime.fromisoformat("2024-09-01 12:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-09-01 20:00:00+04"),
         "creator_id": 2,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 2,
+        "place_id": 3,
         "created_at": created_at + d * 2
     },
     {
@@ -131,13 +178,14 @@ event_data = [
         "title": "Кинопоказ",
         "description": "Проекция фильма для студентов",
         "cover_id": None,
-        "status": "on_poll",
-        "place": "Кинотеатр",
+        "status": "on_review",
         "datetime": datetime.fromisoformat("2024-10-15 20:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-10-15 22:00:00+04"),
         "creator_id": 1,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 3,
+        "place_id": 1,
         "created_at": created_at + d * 3 
     },
     {
@@ -146,12 +194,13 @@ event_data = [
         "description": "Интерактивная игра для новичков",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Комната 301",
-        "datetime": datetime.fromisoformat("2024-09-15 10:00:00+04"),
+        "datetime": datetime.fromisoformat("2024-09-15 18:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-09-15 22:00:00+04"),
         "creator_id": 2,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 4,
+        "place_id": 4,
         "created_at": created_at + d * 4
     },
     {
@@ -160,12 +209,13 @@ event_data = [
         "description": "Празднование дня рождения факультета",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Аудитория 401",
-        "datetime": datetime.fromisoformat("2024-11-15 18:00:00+04"),
+        "datetime": datetime.fromisoformat("2024-11-15 16:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-11-15 20:00:00+04"),
         "creator_id": 1,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 5,
+        "place_id": 3,
         "created_at": created_at + d * 5
     },
     {
@@ -174,12 +224,13 @@ event_data = [
         "description": "Благотворительный проект",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Комната 501",
         "datetime": datetime.fromisoformat("2024-04-15 09:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-04-15 10:00:00+04"),
         "creator_id": 2,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 1,
+        "place_id": 4,
         "created_at": created_at + d * 6 
     },
     {
@@ -188,12 +239,13 @@ event_data = [
         "description": "Серия встреч с представителями компаний",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Конференц-зал",
         "datetime": datetime.fromisoformat("2024-06-15 15:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-06-15 18:00:00+04"),
         "creator_id": 1,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 2,
+        "place_id": 1,
         "created_at": created_at + d * 7
     },
     {
@@ -202,12 +254,13 @@ event_data = [
         "description": "День, когда студенты могут посетить университет",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Весь университет",
         "datetime": datetime.fromisoformat("2024-09-20 10:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-09-20 12:00:00+04"),
         "creator_id": 2,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 3,
+        "place_id": 5,
         "created_at": created_at + d * 8
     },
     {
@@ -216,12 +269,13 @@ event_data = [
         "description": "Соревнования по различным дисциплинам",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Спортзал",
         "datetime": datetime.fromisoformat("2024-12-15 10:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-12-16 12:00:00+04"),
         "creator_id": 1,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 4,
+        "place_id": 1,
         "created_at": created_at + d * 9
     },
     {
@@ -230,12 +284,13 @@ event_data = [
         "description": "Музыкальное мероприятие",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Концертный зал",
-        "datetime": datetime.fromisoformat("2024-11-20 20:00:00+04"),
+        "datetime": datetime.fromisoformat("2024-11-20 16:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-11-20 18:00:00+04"),
         "creator_id": 2,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 5,
+        "place_id": 3,
         "created_at": created_at + d * 10
     },
     {
@@ -244,12 +299,13 @@ event_data = [
         "description": "Подготовка к концерту",
         "cover_id": None,
         "status": "on_poll",
-        "place": "Концертный зал",
         "datetime": datetime.fromisoformat("2024-11-18 18:00:00+04"),
+        "dateend": datetime.fromisoformat("2024-11-18 19:00:00+04"),
         "creator_id": 1,
         "voted_yes": 0,
         "voted_no": 0,
         "type_id": 1,
+        "place_id": 5,
         "created_at": created_at + d * 11
     }
 ]
@@ -318,6 +374,7 @@ def upgrade():
     op.bulk_insert(institutions, institution_data)
     op.bulk_insert(users, user_data)
     op.bulk_insert(event_types, event_type_data)
+    op.bulk_insert(places, place_data)
     op.bulk_insert(events, event_data)
     op.bulk_insert(clubs, club_data)
 

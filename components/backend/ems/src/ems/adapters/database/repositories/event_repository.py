@@ -31,6 +31,11 @@ class EventRepository:
             .offset(page * size)
             .limit(size)
             .options(joinedload(entities.Event.cover))
+            .options(
+                joinedload(entities.Event.place).options(
+                    joinedload(entities.Place.institution)
+                )
+            )
         )
 
         async with self.async_session_maker() as session:
@@ -60,6 +65,11 @@ class EventRepository:
             .options(
                 joinedload(entities.Event.users_voted).options(
                     joinedload(entities.User.institution)
+                )
+            )
+            .options(
+                joinedload(entities.Event.place).options(
+                    joinedload(entities.Place.institution)
                 )
             )
         )

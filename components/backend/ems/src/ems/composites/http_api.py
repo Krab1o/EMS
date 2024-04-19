@@ -1,6 +1,5 @@
 from ems.adapters import database, http_api, log, storage
 from ems.adapters.database import repositories
-from ems.adapters.database.repositories import user_repository
 from ems.adapters.http_api import create_app
 from ems.adapters.http_api.dependencies import Services
 from ems.application import services
@@ -47,6 +46,9 @@ class DB:
     user_favorite_club_repository = repositories.UserFavoriteClubRepository(
         async_session_maker=async_session_maker
     )
+    place_repository = repositories.PlaceRepository(
+        async_session_maker=async_session_maker
+    )
 
 
 class Storage:
@@ -60,6 +62,7 @@ class Application:
         user_voted_event_repository=DB.user_voted_event_repository,
         user_repository=DB.user_repository,
         cover_repository=DB.cover_repository,
+        place_repository=DB.place_repository,
         image_store=Storage.image_store,
     )
     auth_service = services.AuthService(
@@ -78,6 +81,10 @@ class Application:
         user_repository=DB.user_repository,
         user_favorite_club_repository=DB.user_favorite_club_repository,
     )
+    place_service = services.PlaceService(
+        place_repository=DB.place_repository,
+        institution_repository=DB.institution_repository,
+    )
 
 
 def init_security():
@@ -93,6 +100,7 @@ def init_services():
     Services.event_type = Application.event_type_service
     Services.user = Application.user_service
     Services.club = Application.club_service
+    Services.place = Application.place_service
 
 
 def initial_app():

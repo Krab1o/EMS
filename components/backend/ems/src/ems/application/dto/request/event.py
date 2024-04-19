@@ -14,8 +14,8 @@ class EventCreateRequest(BaseModel):
         min_length=1,
         description="Описание мероприятия",
     )
-    place: str = Field(
-        description="Место проведения",
+    place_id: int = Field(
+        description="Идентификатор места проведения",
     )
     datetime: dt = Field(
         description="Дата и время проведения",
@@ -48,8 +48,8 @@ class EventUpdateRequest(BaseModel):
         default=None,
         description="Идентификатор обложки мероприятия",
     )
-    place: str = Field(
-        description="Место проведения",
+    place_id: int = Field(
+        description="Идентификатор места проведения",
     )
     datetime: dt = Field(
         description="Дата и время проведения",

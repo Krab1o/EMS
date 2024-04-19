@@ -209,8 +209,9 @@ async def add_one(
     path="",
     responses={
         200: {"description": "Мероприятие обновлено успешно."},
+        400: {"description": "Место проведения или обложка не найдены."},
         403: {"description": "Недостаточно прав для выполнения действия."},
-        404: {"description": "Мероприятие или обложка не найдены."},
+        404: {"description": "Мероприятие с таким ID не найдено."},
         409: {"description": "При обновлении произошел конфликт версий."},
     },
 )
@@ -234,8 +235,13 @@ async def update_one(
             )
         case EventUpdateStatus.COVER_NOT_FOUND:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=status.HTTP_400_NOT_FOUND,
                 detail="No cover with such id",
+            )
+        case EventUpdateStatus.PLACE_NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_400_NOT_FOUND,
+                detail="No place with such id",
             )
         case EventUpdateStatus.FORBIDDEN:
             raise HTTPException(
