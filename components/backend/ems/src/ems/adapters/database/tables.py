@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from sqlalchemy import (
     Boolean,
     Column,
@@ -155,7 +153,7 @@ events = Table(
     "events",
     metadata,
     Column(
-        "id", Integer, primary_key=True, comment="Уникальный идентификатор"
+        "id", Integer, primary_key=True, nullable=False, comment="Уникальный идентификатор"
     ),
     Column("title", String(256), nullable=False, comment="Название"),
     Column(
@@ -173,13 +171,26 @@ events = Table(
         comment="Идентификатор обложки мероприятия",
     ),
     Column("status", String(64), nullable=False, comment="Статус"),
-    Column("place", String(1024), nullable=False, comment="Место проведения"),
+    Column(
+        "place_id",
+        ForeignKey("places.id", ondelete="CASCADE"),
+        primary_key=True,
+        nullable=False,
+        comment="Идентификатор аудитории",
+    ),
     Column(
         "datetime",
         DateTime(timezone=True),
         index=True,
         nullable=False,
-        comment="Дата и время проведения",
+        comment="Дата и время начала мероприятия",
+    ),
+    Column(
+        "dateend",
+        DateTime(timezone=True),
+        index=True,
+        nullable=False,
+        comment="Дата и время конца мероприятия",
     ),
     Column(
         "creator_id",
@@ -262,6 +273,32 @@ institutions = Table(
         comment="Версия записи об объекте",
     ),
     comment="Организации (факультеты и институты)",
+)
+
+
+places = Table(
+    "places",
+    metadata,
+    Column(
+        "id", Integer, primary_key=True, comment="Уникальный идентификатор"
+    ),
+    Column("title", String(256), nullable=False, comment="Наименование"),
+    Column("floor", Integer, nullable=True, comment="Этаж"),
+    Column(
+        "institution_id",
+        ForeignKey("institutions.id", ondelete="CASCADE"),
+        nullable=True,
+        default=None,
+        comment="Идентификатор факультета/института, к которому относится аудитория",
+    ),
+    Column(
+        "created_at",
+        DateTime(timezone=True),
+        nullable=False,
+        index=True,
+        comment="Дата и время, когда была создана запись",
+    ),
+    comment="Место проведения (аудитории и прочее)",
 )
 
 clubs = Table(

@@ -11,6 +11,7 @@ from ems.adapters.database.repositories import (
     UserRepository,
     UserVotedEventRepository,
 )
+from ems.adapters.database.repositories.place_repository import PlaceRepository
 from ems.adapters.storage import ImageStore
 from ems.application import dto, entities
 from ems.application.entities import Cover
@@ -30,6 +31,7 @@ class EventUpdateStatus(IntEnum):
     OK = auto()
     EVENT_NOT_FOUND = auto()
     COVER_NOT_FOUND = auto()
+    PLACE_NOT_FOUND = auto()
     FORBIDDEN = auto()
     UNEXPECTED_ERROR = auto()
     CONFLICT = auto()
@@ -62,6 +64,7 @@ class EventService:
     user_voted_event_repository: UserVotedEventRepository
     user_repository: UserRepository
     cover_repository: CoverRepository
+    place_repository: PlaceRepository
     image_store: ImageStore
 
     MAX_COVER_WIDTH: Final[int] = 1920
@@ -190,6 +193,11 @@ class EventService:
             db_cover = await self.cover_repository.get_by_id(data.cover_id)
             if db_cover is None:
                 return EventUpdateStatus.COVER_NOT_FOUND
+
+        if data.place_id is not None:
+            db_place = await self.place_repository.get_by_id(data.place_id)
+            if db_place is None:
+                return EventUpdateStatus.PLACE_NOT_FOUND
 
         if user_role != UserRole.ADMIN and db_event.creator_id != user_id:
             return EventUpdateStatus.FORBIDDEN

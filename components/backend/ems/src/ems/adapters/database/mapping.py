@@ -32,6 +32,18 @@ mapper.map_imperatively(
 )
 
 mapper.map_imperatively(
+    entities.Place,
+    tables.places,
+    properties={
+        "institution": relationship(
+            entities.Institution,
+            foreign_keys=[tables.places.c.institution_id],
+            lazy="select",
+        ),
+    }
+)
+
+mapper.map_imperatively(
     entities.Event,
     tables.events,
     properties={
@@ -56,6 +68,11 @@ mapper.map_imperatively(
             foreign_keys=[tables.events.c.cover_id],
             lazy="select",
         ),
+        "place": relationship(
+            entities.Place,
+            foreign_keys=[tables.events.c.place_id],
+            lazy="select",
+        )
     },
 )
 

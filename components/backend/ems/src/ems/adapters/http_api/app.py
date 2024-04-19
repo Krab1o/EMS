@@ -25,6 +25,7 @@ def create_app(
     app.include_router(controllers.cover_router)
     app.include_router(controllers.user_router)
     app.include_router(controllers.club_router)
+    app.include_router(controllers.place_router)
 
     if is_dev:
         app.add_middleware(

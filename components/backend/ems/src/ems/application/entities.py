@@ -47,6 +47,16 @@ class EventType:
 
 
 @dataclass
+class Place:
+    id: int = None
+    title: str = None
+    floor: Optional[int] = None
+    institution_id: Optional[int] = None
+    institution: Optional[Institution] = None
+    created_at: dt = None
+
+
+@dataclass
 class Event:
     id: int = None
     title: str = None
@@ -54,8 +64,10 @@ class Event:
     cover_id: Optional[int] = None
     cover: Optional["Cover"] = None
     status: EventStatus = None
-    place: str = None
+    place: Place = None
+    place_id: int = None
     datetime: dt = None
+    dateend: dt = None
     creator_id: int = None
     creator: User = None
     voted_yes: int = None

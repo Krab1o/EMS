@@ -6,6 +6,7 @@ from ems.application.dto.response import (
     EventTypeResponse,
     UserResponse,
 )
+from ems.application.dto.response.place import PlaceResponse
 from pydantic import BaseModel, Field, RootModel
 
 
@@ -19,8 +20,9 @@ class EventListElement(BaseModel):
     cover: Optional[CoverResponse] = Field(
         default=None, description="Обложка мероприятия"
     )
+    place_id: int = Field(description="Идентификатор места проведения")
+    place: PlaceResponse = Field(description="Место проведения")
     status: str = Field(description="Статус")
-    place: str = Field(description="Место проведения")
     datetime: dt = Field(description="Дата и время проведения")
     voted_yes: int = Field(
         ge=0, description="Количество пользователей, проголосовавших ЗА"
@@ -47,7 +49,8 @@ class EventResponse(BaseModel):
         default=None, description="Обложка мероприятия"
     )
     status: str = Field(description="Статус")
-    place: str = Field(description="Место проведения")
+    place_id: int = Field(description="Идентификатор места проведения")
+    place: PlaceResponse = Field(description="Место проведения")
     datetime: dt = Field(description="Дата и время проведения")
     creator: UserResponse = Field(
         description="Информация о пользователе, создавшем мероприятие"
