@@ -108,7 +108,7 @@ export function EventCard({
       <Typography.Text
         style={{ color: '#006eff', marginBottom: '10px', display: 'block' }}
       >
-        {initialData.place + ' • ' + convertDate(initialData.date)}
+        {initialData.place.title + ' • ' + convertDate(initialData.date)}
       </Typography.Text>
       <Meta
         title={initialData.title}

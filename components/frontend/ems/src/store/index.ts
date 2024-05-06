@@ -4,6 +4,7 @@ import eventsSlice from 'store/events';
 import authSlice from 'store/auth';
 import appSlice from 'store/app';
 import sectionsSlice from './sections';
+import usersSlice from './users';
 
 type RootState = ReturnType<typeof store.getState>;
 type AppDispatch = typeof store.dispatch;
@@ -14,6 +15,7 @@ const store = configureStore({
     auth: authSlice.reducer,
     app: appSlice.reducer,
     sections: sectionsSlice.reducer,
+    users: usersSlice.reducer,
   },
   devTools: process.env.REACT_APP_ENV === 'dev',
 });
