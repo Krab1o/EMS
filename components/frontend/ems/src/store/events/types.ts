@@ -1,4 +1,7 @@
-import { EventStatusEnum } from 'services/api/events/eventsApi.type';
+import {
+  EventStatusEnum,
+  IInstitution,
+} from 'services/api/events/eventsApi.type';
 
 export type EventType = {
   id: number;
@@ -8,11 +11,19 @@ export type EventType = {
     uri: string;
   } | null;
   status: EventStatusEnum;
-  place: string;
+  place: PlaceType;
   date: Date;
   votedYes: number;
   votedNo: number;
   version: number;
   description: string;
   userVote: boolean;
+};
+
+export type PlaceType = {
+  id: 0;
+  title: string;
+  floor: 0;
+  institutionId: 0;
+  institution: IInstitution;
 };

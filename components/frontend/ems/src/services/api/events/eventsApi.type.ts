@@ -6,13 +6,28 @@ export interface IEvent {
     uri: string;
   } | null;
   status: EventStatusEnum;
-  place: string;
+  place?: IPlace;
   datetime: string;
   voted_yes: number;
   voted_no: number;
   version: number;
   description: string;
   user_vote: boolean;
+}
+
+export interface IPlace {
+  id: 0;
+  title: string;
+  floor: 0;
+  institution_id: 0;
+  institution: IInstitution;
+}
+
+export interface IInstitution {
+  id: 0;
+  title: string;
+  description: string;
+  version: 0;
 }
 
 export interface IEventType {
