@@ -98,7 +98,7 @@ async def register(
             )
 
 
-@router.get("/auth/me")
+@router.get("/me")
 async def get_me(
     auth_service: Annotated[AuthService, Depends(get_auth_service)],
     auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
