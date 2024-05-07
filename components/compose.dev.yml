@@ -16,7 +16,7 @@ services:
       DATABASE_USER: ${DATABASE_USER:-postgres}
       DATABASE_PASS: ${DATABASE_PASS:-postgres}
       PUBLIC_DIR_PATH: /app/public
-    command: ${FLAGS:-} 
+    command: ${FLAGS:---reload} 
     volumes:
       - ./backend/ems/public/images/covers:/app/public/images/covers
       # hot reload support

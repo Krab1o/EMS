@@ -1,5 +1,6 @@
-from typing import Annotated
+from typing import Annotated, Any
 
+from ems.adapters.http_api.auth import get_auth_payload, get_user_role
 from ems.adapters.http_api.dependencies import get_auth_service
 from ems.application import dto
 from ems.application.services import AuthService
@@ -95,3 +96,14 @@ async def register(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Unexpected error",
             )
+
+
+@router.get("/auth/me")
+async def get_me(
+    auth_service: Annotated[AuthService, Depends(get_auth_service)],
+    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+):
+    user_id = auth_claims.get("user_id", None)
+    return {
+        "role": await get_user_role(auth_service, user_id)
+    }
