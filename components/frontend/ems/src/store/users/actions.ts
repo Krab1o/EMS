@@ -1,3 +1,3 @@
 import usersSlice from './slice';
 
-export const sectionsActions = usersSlice.actions;
+export const userActions = usersSlice.actions;
