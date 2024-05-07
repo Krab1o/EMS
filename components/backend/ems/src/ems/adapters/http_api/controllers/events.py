@@ -159,8 +159,9 @@ async def add_one(
     event_service: Annotated[EventService, Depends(get_event_service)],
     auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
     title: Annotated[str, Form()],
-    place: Annotated[str, Form()],
+    place_id: Annotated[int, Form()],
     datetime: Annotated[dt, Form()],
+    dateend: Annotated[dt, Form()],
     type_id: Annotated[int, Gt(0), Form()],
     description: Annotated[str, Form()] = None,
     cover: Annotated[UploadFile, File()] = None,
@@ -168,8 +169,9 @@ async def add_one(
     # спасибо FastAPI, очень удобно сделали!
     event_data = dto.EventCreateRequest(
         title=title,
-        place=place,
+        place_id=place_id,
         datetime=datetime,
+        dateend=dateend,
         type_id=type_id,
         description=description,
     )
@@ -212,7 +214,6 @@ async def add_one(
         400: {"description": "Место проведения или обложка не найдены."},
         403: {"description": "Недостаточно прав для выполнения действия."},
         404: {"description": "Мероприятие с таким ID не найдено."},
-        409: {"description": "При обновлении произошел конфликт версий."},
     },
 )
 async def update_one(
@@ -247,11 +248,6 @@ async def update_one(
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Regular users are only able to update their own events. Administrators may update any.",
-            )
-        case EventUpdateStatus.CONFLICT:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="The resource was updated by a third-party. Try re-fetching the data and repeat the operation.",
             )
         case EventUpdateStatus.OK:
             response.headers["Location"] = f"/events/{data.id}"

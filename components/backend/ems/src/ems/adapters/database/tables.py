@@ -225,13 +225,6 @@ events = Table(
         index=True,
         comment="Дата и время, когда была создана запись",
     ),
-    Column(
-        "version",
-        Integer,
-        default=0,
-        nullable=False,
-        comment="Версия записи об объекте",
-    ),
     comment="Мероприятия",
 )
 

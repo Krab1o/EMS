@@ -23,7 +23,8 @@ class EventListElement(BaseModel):
     place_id: int = Field(description="Идентификатор места проведения")
     place: PlaceResponse = Field(description="Место проведения")
     status: str = Field(description="Статус")
-    datetime: dt = Field(description="Дата и время проведения")
+    datetime: dt = Field(description="Дата и время начала мероприятия")
+    dateend: dt = Field(description="Дата и время конца мероприятия")
     voted_yes: int = Field(
         ge=0, description="Количество пользователей, проголосовавших ЗА"
     )
@@ -34,7 +35,6 @@ class EventListElement(BaseModel):
         default=None,
         description="Оценка, которую текущий пользователь поставил мероприятию",
     )
-    version: int = Field(description="Версия записи в базе данных")
 
 
 class EventListResponse(RootModel[list[EventListElement]]):
@@ -51,7 +51,8 @@ class EventResponse(BaseModel):
     status: str = Field(description="Статус")
     place_id: int = Field(description="Идентификатор места проведения")
     place: PlaceResponse = Field(description="Место проведения")
-    datetime: dt = Field(description="Дата и время проведения")
+    datetime: dt = Field(description="Дата и время начала мероприятия")
+    dateend: dt = Field(description="Дата и время конца мероприятия")
     creator: UserResponse = Field(
         description="Информация о пользователе, создавшем мероприятие"
     )
@@ -69,4 +70,3 @@ class EventResponse(BaseModel):
         default=None,
         description="Оценка, которую текущий пользователь поставил мероприятию",
     )
-    version: int = Field(description="Версия записи в базе данных")

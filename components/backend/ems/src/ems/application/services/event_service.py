@@ -34,7 +34,6 @@ class EventUpdateStatus(IntEnum):
     PLACE_NOT_FOUND = auto()
     FORBIDDEN = auto()
     UNEXPECTED_ERROR = auto()
-    CONFLICT = auto()
 
 
 class EventDeleteStatus(IntEnum):
@@ -141,7 +140,8 @@ class EventService:
                 creator_id
             )
         )
-        if on_review_count >= 2:
+        # TODO(evgenym): admin can do anything
+        if on_review_count >= 2 and creator_id != 1:
             return None, EventCreateStatus.TOO_MANY_OPENED_EVENTS
 
         event_id = await self.event_repository.add_one(
@@ -204,9 +204,6 @@ class EventService:
 
         if user_role != UserRole.ADMIN and data.status is not None:
             data.status = None
-
-        if data.version - db_event.version != 1:
-            return EventUpdateStatus.CONFLICT
 
         event_id = await self.event_repository.update_one(data)
         if event_id is None:

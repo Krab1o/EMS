@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     DATABASE_NAME: str = "dev_ems"
     DATABASE_HOST: str = "localhost"
-    DATABASE_PORT: int = 5430
+    DATABASE_PORT: int = 5432
     DATABASE_USER: str = "postgres"
     DATABASE_PASS: str = "postgres"
     DATABASE_DEBUG: bool = False

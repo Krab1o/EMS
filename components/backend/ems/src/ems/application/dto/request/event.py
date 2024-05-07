@@ -18,7 +18,10 @@ class EventCreateRequest(BaseModel):
         description="Идентификатор места проведения",
     )
     datetime: dt = Field(
-        description="Дата и время проведения",
+        description="Дата и время начала мероприятия",
+    )
+    dateend: dt = Field(
+        description="Дата и время конца мероприятия",
     )
     type_id: int = Field(
         gt=0,
@@ -52,11 +55,10 @@ class EventUpdateRequest(BaseModel):
         description="Идентификатор места проведения",
     )
     datetime: dt = Field(
-        description="Дата и время проведения",
+        description="Дата и время начала мероприятия",
     )
-    version: int = Field(
-        ge=0,
-        description="Версия обновленной записи (на 1 больше предыдущей версии)",
+    dateend: dt = Field(
+        description="Дата и время конца мероприятия",
     )
 
 
