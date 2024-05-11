@@ -49,7 +49,7 @@ export function EventCardContainer({ initialData }: EventCardContainerProps) {
         cover: initialData.cover,
         datetime: initialData.date.toISOString(),
         description: initialData.description,
-        place: initialData.place,
+        // place: initialData.place,
         title: initialData.title,
         user_vote: initialData.userVote,
         version: initialData.version + 1,

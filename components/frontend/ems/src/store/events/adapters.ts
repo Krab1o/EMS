@@ -8,7 +8,7 @@ function getEventsAdapter(data: Array<IEvent>): Array<EventType> {
       title: event.title,
       cover: event.cover,
       status: event.status,
-      place: event.place,
+      place: { ...event.place, institutionId: event.place?.institution_id },
       date: new Date(event.datetime),
       votedYes: event.voted_yes,
       votedNo: event.voted_no,

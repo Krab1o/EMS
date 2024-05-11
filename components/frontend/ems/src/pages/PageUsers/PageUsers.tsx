@@ -1,22 +1,33 @@
-/* eslint-disable no-console */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useAppDispatch } from 'store';
 import { appActions } from 'store/app';
-
+import {
+  deleteUser,
+  getUsers,
+  selectCurrentUser,
+  selectPage,
+  selectUsers,
+  userActions,
+} from 'store/users';
 import { Button, Modal, Space, Table, Input } from 'antd';
 import CommonFormModalContainer from 'containers/CommonFormModalContainer';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-
 import { ModalType } from 'shared/types/types';
-import { columns, data } from './PageUsers.constants';
-import type { IUser } from './PageUsers.type';
+import { columns } from './PageUsers.constants';
 import type { ColumnsType } from 'antd/es/table';
+import type { UserType } from 'store/users/types';
+
 import styles from './PageUsers.module.scss';
 
 export default function PageUsers() {
-  const [deletedUser, setDeletedUser] = useState<IUser | null>(null);
   const dispatch = useAppDispatch();
-  const columnsWithActions: ColumnsType<IUser> = [
+  const usersData = useSelector(selectUsers);
+  const currentPage = useSelector(selectPage);
+  const currentUser = useSelector(selectCurrentUser);
+  // const modalState = useSelector(selectModalState);
+
+  const columnsWithActions: ColumnsType<UserType> = [
     ...columns,
     {
       title: 'Действия',
@@ -33,7 +44,7 @@ export default function PageUsers() {
               handleModalOpen(
                 ModalType.UPDATE,
                 record,
-                `Редактирование пользователя ${record.username}`,
+                `Редактирование пользователя ${record.firstName} ${record.lastName}`,
               )
             }
           >
@@ -45,13 +56,13 @@ export default function PageUsers() {
               handleModalOpen(
                 ModalType.VIEWING,
                 record,
-                `Просмотр пользователя ${record.username}`,
+                `Просмотр пользователя ${record.firstName} ${record.lastName}`,
               )
             }
           >
             <EyeOutlined />
           </Button>
-          <Button onClick={() => setDeletedUser(record)} type={'link'} danger>
+          <Button type={'link'} danger>
             <DeleteOutlined />
           </Button>
         </Space>
@@ -60,7 +71,11 @@ export default function PageUsers() {
   ];
 
   const handleModalOpen = useCallback(
-    (modalType: ModalType | null, initialData: IUser | null, title: string) => {
+    (
+      modalType: ModalType | null,
+      initialData: UserType | null,
+      title: string,
+    ) => {
       dispatch(
         appActions.setIsModalOpen({
           isOpen: true,
@@ -74,9 +89,25 @@ export default function PageUsers() {
   );
 
   function onDeleteUser() {
-    console.log('delete', deletedUser);
-    setDeletedUser(null);
+    if (currentUser) {
+      dispatch(deleteUser({ id: currentUser.id, page: currentPage }));
+      dispatch(userActions.setCurrentUser(null));
+    }
   }
+
+  function onCloseModal() {
+    dispatch(userActions.setCurrentUser(null));
+  }
+
+  // function onSubmitForm(data: UserType) {
+  //   if (modalState.modalType === ModalType.CREATE) {
+  //     dispatch(createUser({ page: currentPage, data: {} }));
+  //   }
+  // }
+
+  useEffect(() => {
+    dispatch(getUsers(currentPage));
+  }, [currentPage, dispatch]);
 
   return (
     <div className={styles.table_block}>
@@ -95,12 +126,12 @@ export default function PageUsers() {
         />
       </div>
 
-      <Table columns={columnsWithActions} dataSource={data} />
+      <Table columns={columnsWithActions} dataSource={usersData} />
       <Modal
         title="Удаления пользователя"
-        open={deletedUser !== null}
+        open={currentUser !== null}
         onOk={onDeleteUser}
-        onCancel={() => setDeletedUser(null)}
+        onCancel={onCloseModal}
         cancelText={'Отмена'}
         okText={'Да'}
         okButtonProps={{
@@ -110,11 +141,14 @@ export default function PageUsers() {
           type: 'primary',
         }}
       >
-        Вы уверены, что хотите удалить пользователя {deletedUser?.username}?
+        Вы уверены, что хотите удалить пользователя ?
       </Modal>
       <CommonFormModalContainer
         columns={columns}
-        onSubmit={(data) => console.log(data)}
+        onSubmit={
+          /* eslint-disable-next-line no-console */
+          (data) => console.log(data)
+        }
       />
     </div>
   );
