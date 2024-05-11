@@ -11,5 +11,6 @@ export interface ICreateEventField {
   cover: File;
   place: string;
   datetime: Date;
+  time: Date;
   typeId: IOption;
 }

@@ -2,7 +2,15 @@ import { useAppDispatch } from 'store';
 import { EventsApi } from 'services/api/events/eventsApi';
 import { postEvent } from 'store/events';
 
-import { Button, DatePicker, Drawer, Form, Input, Upload } from 'antd';
+import {
+  Button,
+  DatePicker,
+  Drawer,
+  Form,
+  Input,
+  TimePicker,
+  Upload,
+} from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import TextArea from 'antd/es/input/TextArea';
 import AsyncSelect from 'components/AsyncSelect';
@@ -94,12 +102,21 @@ export function CreateEventModalContainer({
           </Form.Item>
 
           <Form.Item<ICreateEventField>
-            label="Дата и время"
+            label="Дата"
             name="datetime"
             style={{ width: 600 }}
             rules={[{ required: true }]}
           >
             <DatePicker placeholder={''} style={{ width: 350 }} />
+          </Form.Item>
+
+          <Form.Item<ICreateEventField>
+            label="Время"
+            name="time"
+            style={{ width: 600 }}
+            rules={[{ required: true }]}
+          >
+            <TimePicker format={'HH:mm'} style={{ width: 350 }} />
           </Form.Item>
 
           <Form.Item<ICreateEventField>
