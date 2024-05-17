@@ -29,8 +29,6 @@ charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via typer
-colorama==0.4.6
-    # via click
 fastapi==0.110.1
     # via botbysvinarevea-0-0-1
 frozenlist==1.4.1

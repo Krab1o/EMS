@@ -6,10 +6,11 @@ from ems.adapters.http_api.auth import get_auth_payload, get_user_role
 from ems.adapters.http_api.dependencies import (
     get_auth_service,
     get_event_service,
+    get_user_service
 )
 from ems.application import dto
 from ems.application.enum import EventStatus, UserRole
-from ems.application.services import AuthService, EventService
+from ems.application.services import AuthService, EventService, UserService
 from ems.application.services.event_service import (
     EventCreateStatus,
     EventDeleteStatus,
@@ -41,12 +42,12 @@ router = APIRouter(prefix="/events", tags=["Мероприятия"])
     },
 )
 async def get_list(
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    pagination: Annotated[dto.PaginationParams, Depends()],
-    event_type: Annotated[list[int], Query()] = None,
-    event_status: Annotated[list[EventStatus], Query()] = None,
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        pagination: Annotated[dto.PaginationParams, Depends()],
+        event_type: Annotated[list[int], Query()] = None,
+        event_status: Annotated[list[EventStatus], Query()] = None,
 ):
     user_id = auth_claims.get("user_id", None)
     role = await get_user_role(auth_service, user_id)
@@ -67,7 +68,7 @@ async def get_list(
                         s
                         for s in event_status
                         if s
-                        not in (EventStatus.REJECTED, EventStatus.ON_REVIEW)
+                           not in (EventStatus.REJECTED, EventStatus.ON_REVIEW)
                     ]
                     if event_status is not None
                     else [
@@ -103,10 +104,10 @@ async def get_list(
     },
 )
 async def get_one(
-    event_id: Annotated[int, Gt(0)],
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        event_id: Annotated[int, Gt(0)],
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
     user_id = auth_claims.get("user_id", None)
     role = await get_user_role(auth_service, user_id)
@@ -155,16 +156,16 @@ async def get_one(
     },
 )
 async def add_one(
-    response: Response,
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    title: Annotated[str, Form()],
-    place_id: Annotated[int, Form()],
-    datetime: Annotated[dt, Form()],
-    dateend: Annotated[dt, Form()],
-    type_id: Annotated[int, Gt(0), Form()],
-    description: Annotated[str, Form()] = None,
-    cover: Annotated[UploadFile, File()] = None,
+        response: Response,
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        title: Annotated[str, Form()],
+        place_id: Annotated[int, Form()],
+        datetime: Annotated[dt, Form()],
+        dateend: Annotated[dt, Form()],
+        type_id: Annotated[int, Gt(0), Form()],
+        description: Annotated[str, Form()] = None,
+        cover: Annotated[UploadFile, File()] = None,
 ):
     # спасибо FastAPI, очень удобно сделали!
     event_data = dto.EventCreateRequest(
@@ -207,6 +208,38 @@ async def add_one(
             )
 
 
+@router.post(
+    path="/check_date",
+    status_code=201,
+    responses={
+        201: {"description": "Мероприятие создано успешно."},
+        404: {"description": "Тип мероприятия или обложка не найдены."},
+        403: {"description": "Недостаточно прав для действия."},
+        409: {
+            "description": "Слишком много событий находятся еще на рассмотрении."
+        },
+    },
+)
+async def check(
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        pagination: Annotated[dto.PaginationParams, Depends()],
+        datestart: dt,
+        dateend: dt,
+        place_id: int
+
+):
+    users = await user_service.get_list(params=pagination)
+    for user in users:
+        events = await event_service.get_list(
+            params=pagination,
+            user_id=user.id,
+            place_id=[place_id])
+        for event in events:
+            if event.datetime < datestart < event.dateend or event.datetime < dateend < event.dateend:
+                return False
+    return True
+
 @router.put(
     path="",
     responses={
@@ -217,11 +250,11 @@ async def add_one(
     },
 )
 async def update_one(
-    response: Response,
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    data: Annotated[dto.EventUpdateRequest, Body()],
+        response: Response,
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        data: Annotated[dto.EventUpdateRequest, Body()],
 ):
     # TODO: обновление обложки
     user_id = auth_claims.get("user_id", None)
@@ -266,10 +299,10 @@ async def update_one(
     },
 )
 async def delete_one(
-    event_id: Annotated[int, Gt(0)],
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        event_id: Annotated[int, Gt(0)],
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
     user_id = auth_claims.get("user_id", None)
     role = await get_user_role(auth_service, user_id)
@@ -304,10 +337,10 @@ async def delete_one(
     },
 )
 async def vote(
-    event_id: Annotated[int, Gt(0)],
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    vote_data: Annotated[dto.EventVoteRequest, Body()],
+        event_id: Annotated[int, Gt(0)],
+        event_service: Annotated[EventService, Depends(get_event_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        vote_data: Annotated[dto.EventVoteRequest, Body()],
 ):
     user_id = auth_claims.get("user_id", None)
     match await event_service.vote(
