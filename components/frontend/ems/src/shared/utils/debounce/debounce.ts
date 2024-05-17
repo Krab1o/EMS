@@ -1,5 +1,6 @@
 export default function debounce(
-  loadData: () => void,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  loadData: (...args: any) => void,
   debounceTimeout: number,
 ) {
   let timeOut: NodeJS.Timeout | null = null;

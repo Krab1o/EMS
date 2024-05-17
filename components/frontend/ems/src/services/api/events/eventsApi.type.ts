@@ -61,3 +61,9 @@ export interface IVoteEvent {
   eventId: number;
   like: boolean;
 }
+
+export interface ICheckFree {
+  datetime: string;
+  dateend: string;
+  place_id: number;
+}

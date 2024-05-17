@@ -5,6 +5,7 @@ const eventsInitialState = {
   events: null as null | Array<EventType>,
   currentEvent: null as null | EventType,
   currentEventsStatus: 'on_poll' as EventStatusEnum,
+  isPlaceFree: true,
 };
 
 export default eventsInitialState;

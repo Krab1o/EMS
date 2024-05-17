@@ -19,6 +19,7 @@ import AlertWrapperContainer from 'containers/AlertWrapperContainer';
 import { ConfigProvider } from 'antd';
 
 import { LoaderState } from 'components/Loader/Loader.type';
+
 import styles from './App.module.scss';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -40,10 +41,9 @@ function App() {
     dispatch(authActions.setIsInit(true));
   }, [dispatch]);
 
-  if (!isInit || role === null)
-    return <Loader loadingState={LoaderState.LOADING} />;
+  if (!isInit) return <Loader loadingState={LoaderState.LOADING} />;
 
-  if (isAuth)
+  if (isAuth && role)
     return (
       <div className={styles.app}>
         <AppHeaderContainer />
@@ -53,7 +53,8 @@ function App() {
       </div>
     );
 
-  return <PageLogin />;
+  if (!isAuth) return <PageLogin />;
+  return null;
 }
 
 function AppContainer() {
