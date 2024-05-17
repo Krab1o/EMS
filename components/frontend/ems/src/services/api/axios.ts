@@ -1,5 +1,4 @@
 import axios from 'axios';
-import * as process from 'node:process';
 
 const baseUrl = process.env.REACT_APP_BASE_URL;
 
