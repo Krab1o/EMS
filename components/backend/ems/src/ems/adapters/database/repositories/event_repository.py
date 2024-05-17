@@ -18,13 +18,16 @@ class EventRepository:
         page: int,
         size: int,
         event_type: Optional[list[int]] = None,
-        status: Optional[list[int]] = None,
+        status: Optional[list[EventStatus]] = None,
+        place_id: Optional[list[int]] = None,
     ) -> list[entities.Event]:
         query = select(entities.Event)
         if event_type is not None:
             query = query.where(entities.Event.type_id.in_(event_type))
         if status is not None:
             query = query.where(entities.Event.status.in_(status))
+        if place_id is not None:
+            query = query.where(entities.Event.place_id.in_(place_id))
         query = (
             query
             .order_by(entities.Event.created_at)

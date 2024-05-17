@@ -76,12 +76,14 @@ class EventService:
         user_id: int,
         event_type: Optional[list[int]] = None,
         status: Optional[list[EventStatus]] = None,
+        place_id: Optional[list[int]] = None,
     ) -> list[entities.Event]:
         db_events = await self.event_repository.get_list(
             page=params.page,
             size=params.size,
             event_type=event_type,
             status=status,
+            place_id=place_id,
         )
 
         for db_event in db_events:
