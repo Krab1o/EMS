@@ -1,6 +1,7 @@
 import { getClient } from 'services/api/axios';
 import {
   EventStatusEnum,
+  ICheckFree,
   IEvent,
   IEventType,
   IPlace,
@@ -65,15 +66,19 @@ export const EventsApi = {
     return response.data;
   },
 
-  // async changeEventStatus(id: number, status: EventStatusEnum) {
-  //   const response = await getClient().patch(`/events/${id}`, {
-  //     status,
-  //   });
-  //   return response.data;
-  // },
-
   async getEventImage(uri: string) {
     const response = await getClient().get(uri, { responseType: 'blob' });
+    return response.data;
+  },
+
+  async checkIfPlaceFree(data: ICheckFree) {
+    const params = new URLSearchParams();
+    params.append('place_id', String(data.place_id));
+    params.append('dateend', String(data.dateend));
+    params.append('datestart', String(data.datetime));
+    const response = await getClient().post<boolean>(
+      '/events/check_date?' + params,
+    );
     return response.data;
   },
 };

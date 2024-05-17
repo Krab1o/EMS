@@ -1,6 +1,11 @@
 import eventsInitialState from './initialState';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { deleteEvent, getAllEvents, updateEvent } from './requests';
+import {
+  checkIfPlaceFree,
+  deleteEvent,
+  getAllEvents,
+  updateEvent,
+} from './requests';
 import { EventType } from './types';
 import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
@@ -27,6 +32,12 @@ const eventsSlice = createSlice({
     });
     builder.addCase(updateEvent.fulfilled, (state) => {
       state.currentEvent = null;
+    });
+    builder.addCase(checkIfPlaceFree.fulfilled, (state, action) => {
+      state.isPlaceFree = action.payload;
+    });
+    builder.addCase(checkIfPlaceFree.rejected, (state) => {
+      state.isPlaceFree = false;
     });
   },
 });

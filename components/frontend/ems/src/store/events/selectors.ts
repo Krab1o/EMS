@@ -12,4 +12,13 @@ function selectCurrentEventsStatus(state: RootState) {
   return state.events.currentEventsStatus;
 }
 
-export { selectEvents, selectCurrentEvent, selectCurrentEventsStatus };
+function selectIsPlaceFree(state: RootState) {
+  return state.events.isPlaceFree;
+}
+
+export {
+  selectEvents,
+  selectCurrentEvent,
+  selectCurrentEventsStatus,
+  selectIsPlaceFree,
+};

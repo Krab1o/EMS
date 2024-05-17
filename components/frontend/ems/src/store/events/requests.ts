@@ -4,6 +4,7 @@ import { getEventsAdapter } from './adapters';
 import { eventsActions } from 'store/events/actions';
 import {
   EventStatusEnum,
+  ICheckFree,
   IEvent,
   IPostEvent,
   IVoteEvent,
@@ -81,4 +82,26 @@ const updateEvent = createAsyncThunk(
   },
 );
 
-export { getAllEvents, postEvent, voteEvent, deleteEvent, updateEvent };
+const checkIfPlaceFree = createAsyncThunk(
+  'events/checkIfPlaceFree',
+  async (data: ICheckFree, { dispatch }) => {
+    const response = await EventsApi.checkIfPlaceFree(data);
+    if (!response)
+      dispatch(
+        appActions.setAlert({
+          message: 'Данное место занято на это время',
+          isError: true,
+        }),
+      );
+    return response;
+  },
+);
+
+export {
+  getAllEvents,
+  postEvent,
+  voteEvent,
+  deleteEvent,
+  updateEvent,
+  checkIfPlaceFree,
+};

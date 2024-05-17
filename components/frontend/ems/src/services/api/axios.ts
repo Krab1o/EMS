@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'http://dev.evgenym.com:3000';
+const baseUrl = 'http://api.evgenym.com';
 
 export const getClient = () => {
   const client = axios.create({
