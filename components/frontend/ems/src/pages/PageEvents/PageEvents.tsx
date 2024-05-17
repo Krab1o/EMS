@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch } from 'store';
 import { getAllEvents, selectEvents } from 'store/events';
 import { useSelector } from 'react-redux';
+import { selectRole } from 'store/auth';
 import { Flex } from 'antd';
 import EventCardContainer from 'containers/EventCardContainer';
 import EventPageSubheader from 'containers/EventPageSubheader';
@@ -11,6 +12,7 @@ import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 export function PageEvents() {
   const dispatch = useAppDispatch();
   const events = useSelector(selectEvents);
+  const role = useSelector(selectRole);
 
   const [isCreateEventModalOpen, setIsCreateModalOpen] =
     useState<boolean>(false);
@@ -25,7 +27,7 @@ export function PageEvents() {
 
   return (
     <div style={{ height: '100%' }}>
-      <EventPageSubheader openModal={openModal} />
+      <EventPageSubheader openModal={openModal} role={role} />
       <CreateEventModalContainer
         open={isCreateEventModalOpen}
         onClose={() => setIsCreateModalOpen(false)}

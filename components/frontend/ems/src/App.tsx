@@ -1,7 +1,13 @@
 import { StrictMode, useEffect } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import store, { useAppDispatch } from 'store';
-import { authActions, selectIsAuth, selectIsInit } from 'store/auth';
+import {
+  authActions,
+  authMe,
+  selectIsAuth,
+  selectIsInit,
+  selectRole,
+} from 'store/auth';
 import { BrowserRouter } from 'react-router-dom';
 
 import Router from 'routes';
@@ -16,16 +22,19 @@ function App() {
   const isAuth = useSelector(selectIsAuth);
   const isInit = useSelector(selectIsInit);
   const dispatch = useAppDispatch();
+  const role = useSelector(selectRole);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       dispatch(authActions.setIsAuth(true));
+      dispatch(authMe());
     }
     dispatch(authActions.setIsInit(true));
   }, [dispatch]);
 
-  if (!isInit) return <Loader loadingState={LoaderState.LOADING} />;
+  if (!isInit || role === null)
+    return <Loader loadingState={LoaderState.LOADING} />;
 
   if (isAuth)
     return (

@@ -9,4 +9,9 @@ export const authApi = {
     });
     return response.data;
   },
+
+  async authMe() {
+    const response = await getClient().get<{ role: string }>('auth/me/');
+    return response.data;
+  },
 };

@@ -27,6 +27,7 @@ export default function AppHeader({
   activeMenuItem,
   historyPush,
   logout,
+  role,
 }: AppHeaderProps) {
   return (
     <header className={styles.app_header}>
@@ -43,11 +44,15 @@ export default function AppHeader({
             value={activeMenuItem}
             isWithoutDivider
           >
-            {MENU_CONSTANTS.map((el) => (
-              <ToggleButton key={el.value} value={el.value}>
-                {el.label}
-              </ToggleButton>
-            ))}
+            {MENU_CONSTANTS.map((el) => {
+              if ((el.admin && role === 'admin') || !el.admin)
+                return (
+                  <ToggleButton key={el.value} value={el.value}>
+                    {el.label}
+                  </ToggleButton>
+                );
+              return null;
+            })}
           </ToggleButtonGroup>
         </div>
       </div>

@@ -10,6 +10,7 @@ export const MENU_CONSTANTS = [
   {
     label: 'Пользователи',
     value: 'users',
+    admin: true,
   },
 ];
 
