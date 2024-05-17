@@ -10,14 +10,15 @@ class Settings(BaseSettings):
     APP_TITLE: str = "EMS"
     APP_LOGGING_LEVEL: str = "INFO"
 
-    # SECURITY
-
     # openssl rand -hex 32
     APP_SECRET_KEY: str = (
         "52f2e5c5beaeca1b342d4eca7c40bacd6ab7b641e370a12acd98dccf5c59682c"
     )
     # один день
     APP_TOKEN_EXPIRE_MINUTES: int = 1440
+
+    GOOGLE_OAUTH_SECRET: str
+    GOOGLE_OAUTH_CLIENT_ID: str
 
     @property
     def LOGGING_CONFIG(self):

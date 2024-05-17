@@ -22,7 +22,7 @@ class User:
     last_name: str = None
     first_name: str = None
     middle_name: Optional[str] = None
-    institution_id: int = None
+    institution_id: Optional[int] = None
     institution: Institution = None
     course: Optional[int] = None
     group: Optional[int] = None

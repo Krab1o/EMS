@@ -34,6 +34,12 @@ class UserService:
     user_repository: UserRepository
     institution_repository: InstitutionRepository
 
+    async def get_by_email(
+        self,
+        email: str,
+    ) -> Optional[entities.User]:
+        return await self.user_repository.get_by_email(email)
+
     async def get_list(
         self,
         params: dto.PaginationParams,

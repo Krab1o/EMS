@@ -1,3 +1,5 @@
+import aiohttp
+from ems.adapters.http_api.settings import Settings as HttpSettings
 from ems.application import services
 
 
@@ -8,6 +10,14 @@ class Services:
     user: services.UserService
     club: services.ClubService
     place: services.PlaceService
+
+
+class Sessions:
+    http_session: aiohttp.ClientSession
+
+
+class Settings:
+    http_settings: HttpSettings
 
 
 def get_event_service():
@@ -32,3 +42,10 @@ def get_club_service():
 
 def get_place_service():
     return Services.place
+
+
+def get_http_session():
+    return Sessions.http_session
+
+def get_http_settings():
+    return Settings.http_settings

@@ -5,3 +5,4 @@ from .covers import router as cover_router
 from .users import router as user_router
 from .clubs import router as club_router
 from .place import router as place_router
+from .googleauth import router as googleauth_router

@@ -1,7 +1,9 @@
+import aiohttp
 from ems.adapters import database, http_api, log, storage
 from ems.adapters.database import repositories
 from ems.adapters.http_api import create_app
-from ems.adapters.http_api.dependencies import Services
+from ems.adapters.http_api.dependencies import Services, Sessions
+from ems.adapters.http_api.dependencies import Settings as DepSettings
 from ems.application import services
 from ems_libs.security import jwt
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
@@ -101,6 +103,8 @@ def init_services():
     Services.user = Application.user_service
     Services.club = Application.club_service
     Services.place = Application.place_service
+    Sessions.http_session = aiohttp.ClientSession()
+    DepSettings.http_settings = Settings.http_api
 
 
 def initial_app():

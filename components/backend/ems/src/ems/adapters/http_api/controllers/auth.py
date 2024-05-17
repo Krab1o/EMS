@@ -16,13 +16,13 @@ router = APIRouter(prefix="/auth", tags=["Авторизация"])
 
 @router.post(
     path="/login",
+    response_model=dto.TokenResp,
     responses={
         200: {"description": "Пользователь авторизован."},
         404: {"description": "Пользователь не найден или неверный пароль."},
     },
 )
 async def login(
-    response: Response,
     security_service: Annotated[AuthService, Depends(get_auth_service)],
     body: Annotated[dto.LoginRequest, Body()],
 ):
@@ -38,7 +38,6 @@ async def login(
                     "user_id": user.id,
                 }
             )
-
             return {"token": token}
         case _:
             raise HTTPException(
@@ -59,7 +58,6 @@ async def login(
     },
 )
 async def register(
-    response: Response,
     security_service: Annotated[AuthService, Depends(get_auth_service)],
     body: Annotated[dto.UserCreateRequest, Body()],
 ):
@@ -83,14 +81,8 @@ async def register(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="An error occurred when tried to insert a new record",
             )
-        case user, RegistrationStatus.OK:
-            token = jwt.create_access_token(
-                payload={
-                    "user_id": user.id,
-                }
-            )
-            response.set_cookie(key="token", value=token)
-            response.headers.append("Location", f"/users/{user.id}")
+        case _, RegistrationStatus.OK:
+            pass
         case _:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

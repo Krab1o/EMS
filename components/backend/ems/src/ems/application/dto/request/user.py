@@ -17,16 +17,19 @@ class UserCreateRequest(BaseModel):
         default=None,
         description="Отчество",
     )
-    institution_id: int = Field(
+    institution_id: Optional[int] = Field(
         gt=0,
+        default=None,
         description="Идентификатор института (факультета)",
     )
-    course: int = Field(
+    course: Optional[int] = Field(
         gt=0,
+        default=None,
         description="Курс",
     )
-    group: int = Field(
+    group: Optional[int] = Field(
         gt=0,
+        default=None,
         description="Номер учебной группы",
     )
     telegram: Optional[str] = Field(
@@ -63,16 +66,19 @@ class UserUpdateRequest(BaseModel):
         default=None,
         description="Отчество",
     )
-    institution_id: int = Field(
+    institution_id: Optional[int] = Field(
         gt=0,
+        default=None,
         description="Идентификатор института (факультета)",
     )
-    course: int = Field(
+    course: Optional[int] = Field(
         gt=0,
+        default=None,
         description="Курс",
     )
-    group: int = Field(
+    group: Optional[int] = Field(
         gt=0,
+        default=None,
         description="Номер учебной группы",
     )
     telegram: Optional[str] = Field(

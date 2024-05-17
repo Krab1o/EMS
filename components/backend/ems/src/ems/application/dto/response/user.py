@@ -20,7 +20,8 @@ class UserResponse(BaseModel):
         default=None,
         description="Отчество",
     )
-    institution: InstitutionResponse = Field(
+    institution: Optional[InstitutionResponse] = Field(
+        default=None,
         description="Институт (факультет)"
     )
     course: Optional[int] = Field(

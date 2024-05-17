@@ -37,8 +37,9 @@ users = Table(
     ),
     Column(
         "institution_id",
-        ForeignKey("institutions.id", ondelete="CASCADE"),
-        nullable=False,
+        ForeignKey("institutions.id", ondelete="SET NULL"),
+        nullable=True,
+        default=None,
         comment="Идентификатор факультета/института, к которому относится пользователь",
     ),
     Column(

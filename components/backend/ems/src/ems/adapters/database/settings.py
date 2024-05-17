@@ -32,6 +32,11 @@ class Settings(BaseSettings):
                     "handlers": ["default"],
                     "level": self.LOGGING_LEVEL,
                     "propagate": False,
+                },
+                "ems": {
+                    "handlers": ["default"],
+                    "level": self.LOGGING_LEVEL,
+                    "propagate": False,
                 }
             }
         }

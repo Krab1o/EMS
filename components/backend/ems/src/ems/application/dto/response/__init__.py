@@ -6,3 +6,4 @@ from .event_type import EventTypeResponse, EventTypeListResponse
 from .event import EventListResponse, EventResponse
 from .club import ClubListResponse, ClubResponse
 from .place import PlaceResponse, PlaceListResponse
+from .auth import TokenResp
