@@ -7,8 +7,13 @@ function selectIsAuth(state: RootState) {
 function selectIsInit(state: RootState) {
   return state.auth.isInit;
 }
+
 function selectFetchStatus(state: RootState) {
   return state.auth.fetchStatus;
 }
 
-export { selectIsAuth, selectFetchStatus, selectIsInit };
+function selectRole(state: RootState) {
+  return state.auth.role;
+}
+
+export { selectIsAuth, selectFetchStatus, selectIsInit, selectRole };

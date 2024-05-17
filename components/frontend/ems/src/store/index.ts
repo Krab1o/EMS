@@ -17,7 +17,9 @@ const store = configureStore({
     sections: sectionsSlice.reducer,
     users: usersSlice.reducer,
   },
-  devTools: process.env.REACT_APP_ENV === 'dev',
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({ serializableCheck: false }),
+  devTools: true,
 });
 
 const useAppDispatch = () => useDispatch<AppDispatch>();

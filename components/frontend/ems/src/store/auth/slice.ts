@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { postLoginData } from './requests';
+import { authMe, postLoginData } from './requests';
 import authInitialState from './initialState';
 
 const authSlice = createSlice({
@@ -30,6 +30,27 @@ const authSlice = createSlice({
         state.isInit = true;
       })
       .addCase(postLoginData.rejected, (state, { error }) => {
+        state.isAuth = false;
+        state.fetchStatus = {
+          isLoading: false,
+          error: String(error.message),
+        };
+      });
+    builder
+      .addCase(authMe.pending, (state) => {
+        state.fetchStatus = {
+          isLoading: true,
+          error: '',
+        };
+      })
+      .addCase(authMe.fulfilled, (state, action: PayloadAction<string>) => {
+        state.fetchStatus = {
+          isLoading: false,
+          error: '',
+        };
+        state.role = action.payload;
+      })
+      .addCase(authMe.rejected, (state, { error }) => {
         state.isAuth = false;
         state.fetchStatus = {
           isLoading: false,

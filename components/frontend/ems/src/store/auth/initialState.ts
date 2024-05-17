@@ -5,6 +5,7 @@ const authInitialState = {
   },
   isAuth: false,
   isInit: false,
+  role: null as null | string,
 };
 
 export default authInitialState;

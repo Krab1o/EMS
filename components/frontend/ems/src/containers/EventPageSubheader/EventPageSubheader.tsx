@@ -19,25 +19,10 @@ import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 import styles from './EventPageSubheader.module.scss';
 
-const items: MenuProps['items'] = [
-  {
-    label: 'Запланированные',
-    key: 'planned',
-    icon: <ClockCircleOutlined />,
-  },
-  {
-    label: 'Голосование',
-    key: 'on_poll',
-    icon: <FireOutlined />,
-  },
-  {
-    label: 'Рассмотрение',
-    key: 'on_review',
-    icon: <QuestionCircleOutlined />,
-  },
-];
-
-export function EventPageSubheader({ openModal }: EventPageSubheaderProps) {
+export function EventPageSubheader({
+  openModal,
+  role,
+}: EventPageSubheaderProps) {
   const dispatch = useAppDispatch();
   const currentStatus = useSelector(selectCurrentEventsStatus);
 
@@ -46,13 +31,35 @@ export function EventPageSubheader({ openModal }: EventPageSubheaderProps) {
     dispatch(getAllEvents(e.key as EventStatusEnum));
   };
 
+  const getItems = (role: string | null) => {
+    const items: MenuProps['items'] = [
+      {
+        label: 'Запланированные',
+        key: 'planned',
+        icon: <ClockCircleOutlined />,
+      },
+      {
+        label: 'Голосование',
+        key: 'on_poll',
+        icon: <FireOutlined />,
+      },
+    ];
+    if (role === 'admin')
+      items.push({
+        label: 'Рассмотрение',
+        key: 'on_review',
+        icon: <QuestionCircleOutlined />,
+      });
+    return items;
+  };
+
   return (
     <div className={styles.header}>
       <Menu
         onClick={onClick}
         selectedKeys={[currentStatus]}
         mode="horizontal"
-        items={items}
+        items={getItems(role)}
       ></Menu>
       <Button
         className={styles.header__button_desktop}
