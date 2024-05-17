@@ -13,6 +13,7 @@ export type EventType = {
   status: EventStatusEnum;
   place: PlaceType;
   date: Date;
+  dateEnd: Date;
   votedYes: number;
   votedNo: number;
   version: number;
@@ -21,9 +22,9 @@ export type EventType = {
 };
 
 export type PlaceType = {
-  id: 0;
+  id: number;
   title: string;
-  floor: 0;
-  institutionId: 0;
+  floor: number;
+  institutionId: number;
   institution: IInstitution;
 };

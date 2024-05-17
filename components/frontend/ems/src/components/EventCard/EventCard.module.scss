@@ -1,3 +1,12 @@
 .image {
   height: 250px;
 }
+
+.skeleton_image {
+  width: 400px;
+  height: 250px;
+  background: grey;
+  opacity: 0.3;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}

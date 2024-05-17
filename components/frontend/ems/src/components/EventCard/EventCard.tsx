@@ -1,6 +1,5 @@
 import { Button, Card, Typography } from 'antd';
 import {
-  CheckOutlined,
   DeleteOutlined,
   DislikeOutlined,
   LikeOutlined,
@@ -18,6 +17,8 @@ function convertDate(date: Date) {
     year: 'numeric',
     day: 'numeric',
     month: 'short',
+    hour: 'numeric',
+    minute: 'numeric',
   });
 }
 
@@ -27,7 +28,6 @@ export function EventCard({
   onCardClick,
   onActionsClick,
   onDelete,
-  onApprove,
 }: EventCardProps) {
   let actionsButtons: Array<ReactNode> = [];
   switch (initialData.status) {
@@ -40,15 +40,6 @@ export function EventCard({
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
-          }}
-        />,
-        <Button
-          shape={'round'}
-          icon={<CheckOutlined />}
-          style={{ border: 'none' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onApprove();
           }}
         />,
       ];
@@ -74,15 +65,6 @@ export function EventCard({
         </Button>,
         <Button
           shape={'round'}
-          icon={<DeleteOutlined />}
-          style={{ border: 'none' }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-        />,
-        <Button
-          shape={'round'}
           icon={<LikeOutlined />}
           style={{ border: 'none' }}
           type={initialData.userVote ? 'primary' : 'text'}
@@ -101,14 +83,24 @@ export function EventCard({
     <Card
       hoverable={true}
       style={{ width: '20vw', minWidth: '400px' }}
-      cover={<img className={styles.image} src={image} alt={'cover'} />}
+      cover={
+        image ? (
+          <img className={styles.image} src={image} alt={'cover'} />
+        ) : (
+          <div className={styles.skeleton_image} />
+        )
+      }
       onClick={onCardClick}
       actions={actionsButtons}
     >
       <Typography.Text
         style={{ color: '#006eff', marginBottom: '10px', display: 'block' }}
       >
-        {initialData.place.title + ' • ' + convertDate(initialData.date)}
+        {initialData.place.title +
+          ' • ' +
+          `${convertDate(initialData.date)} - ${convertDate(
+            initialData.dateEnd,
+          )}`}
       </Typography.Text>
       <Meta
         title={initialData.title}

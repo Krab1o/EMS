@@ -7,7 +7,9 @@ export interface IEvent {
   } | null;
   status: EventStatusEnum;
   place?: IPlace;
+  place_id: number;
   datetime: string;
+  dateend: string;
   voted_yes: number;
   voted_no: number;
   version: number;
@@ -16,10 +18,10 @@ export interface IEvent {
 }
 
 export interface IPlace {
-  id: 0;
+  id: number;
   title: string;
-  floor: 0;
-  institution_id: 0;
+  floor: number;
+  institution_id: number;
   institution: IInstitution;
 }
 
@@ -49,9 +51,10 @@ export interface IPostEvent {
   title: string;
   description: string;
   cover: File;
-  place: string;
   datetime: string;
   type_id: number;
+  dateend: string;
+  place_id: number;
 }
 
 export interface IVoteEvent {

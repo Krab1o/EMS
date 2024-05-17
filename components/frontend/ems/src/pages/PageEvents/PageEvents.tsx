@@ -8,6 +8,7 @@ import EventCardContainer from 'containers/EventCardContainer';
 import EventPageSubheader from 'containers/EventPageSubheader';
 import CreateEventModalContainer from 'containers/CreateEventModalContainer';
 import { EventStatusEnum } from 'services/api/events/eventsApi.type';
+import { AdminEvents } from 'components/AdminEvents/AdminEvents';
 
 export function PageEvents() {
   const dispatch = useAppDispatch();
@@ -32,14 +33,19 @@ export function PageEvents() {
         open={isCreateEventModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
-      <Flex
-        wrap={'wrap'}
-        gap={'middle'}
-        justify={'center'}
-        style={{ marginTop: '3%', height: '100%' }}
-      >
-        {events && events.map((el) => <EventCardContainer initialData={el} />)}
-      </Flex>
+      {role === 'admin' ? (
+        <AdminEvents events={events} />
+      ) : (
+        <Flex
+          wrap={'wrap'}
+          gap={'middle'}
+          justify={'center'}
+          style={{ marginTop: '3%', height: '100%' }}
+        >
+          {events &&
+            events.map((el) => <EventCardContainer initialData={el} />)}
+        </Flex>
+      )}
     </div>
   );
 }

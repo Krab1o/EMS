@@ -7,6 +7,10 @@ const appInitialState = {
     initialData: null,
     title: '',
   } as IModalState,
+  alert: {
+    message: '',
+    isError: false,
+  },
 };
 
 export default appInitialState;

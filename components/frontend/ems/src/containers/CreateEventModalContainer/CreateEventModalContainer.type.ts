@@ -9,8 +9,9 @@ export interface ICreateEventField {
   title: string;
   description: string;
   cover: File;
-  place: string;
+  placeId: IOption;
   datetime: Date;
+  dateend: Date;
   time: Date;
   typeId: IOption;
 }

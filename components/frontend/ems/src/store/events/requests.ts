@@ -8,12 +8,22 @@ import {
   IPostEvent,
   IVoteEvent,
 } from 'services/api/events/eventsApi.type';
+import { RootState } from 'store/index';
+import { appActions } from 'store/app';
 
 const getAllEvents = createAsyncThunk(
   'events/getAllEvents',
-  async (status?: EventStatusEnum) => {
-    const response = await EventsApi.getAllEvents(status);
-    return getEventsAdapter(response);
+  async (status: EventStatusEnum | undefined = undefined, { getState }) => {
+    const { auth } = getState() as RootState;
+    const newStatus =
+      auth.role !== 'admin' && status === EventStatusEnum.OnReview
+        ? EventStatusEnum.OnPoll
+        : status;
+    const response = await EventsApi.getAllEvents(newStatus);
+    return {
+      data: getEventsAdapter(response),
+      status: newStatus,
+    };
   },
 );
 
@@ -23,6 +33,12 @@ const postEvent = createAsyncThunk(
     await EventsApi.postEvent(data);
     dispatch(getAllEvents(EventStatusEnum.OnReview));
     dispatch(eventsActions.setCurrentEventsStatus(EventStatusEnum.OnReview));
+    dispatch(
+      appActions.setAlert({
+        message: 'Мероприятие создано и отправлено на проверку',
+        isError: false,
+      }),
+    );
   },
 );
 
@@ -42,6 +58,12 @@ const deleteEvent = createAsyncThunk(
   ) => {
     await EventsApi.deleteEvent(id);
     dispatch(getAllEvents(status));
+    dispatch(
+      appActions.setAlert({
+        message: 'Мероприятие удалено',
+        isError: false,
+      }),
+    );
   },
 );
 
@@ -49,19 +71,14 @@ const updateEvent = createAsyncThunk(
   'events/updateEvent',
   async (event: IEvent, { dispatch }) => {
     await EventsApi.updateEvent(event);
+    dispatch(
+      appActions.setAlert({
+        message: 'Мероприятие успешно изменено',
+        isError: false,
+      }),
+    );
     dispatch(getAllEvents(event.status));
   },
 );
-
-// const changeEventStatus = createAsyncThunk(
-//   'events/approveEvent',
-//   async (
-//     { id, status }: { id: number; status: EventStatusEnum },
-//     { dispatch },
-//   ) => {
-//     await EventsApi.changeEventStatus(id, status);
-//     dispatch(getAllEvents(status));
-//   },
-// );
 
 export { getAllEvents, postEvent, voteEvent, deleteEvent, updateEvent };

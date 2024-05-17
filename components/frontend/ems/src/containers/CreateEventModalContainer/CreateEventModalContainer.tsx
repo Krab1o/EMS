@@ -2,18 +2,13 @@ import { useAppDispatch } from 'store';
 import { EventsApi } from 'services/api/events/eventsApi';
 import { postEvent } from 'store/events';
 
-import {
-  Button,
-  DatePicker,
-  Drawer,
-  Form,
-  Input,
-  TimePicker,
-  Upload,
-} from 'antd';
+import { Button, DatePicker, Drawer, Form, Input, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import TextArea from 'antd/es/input/TextArea';
 import AsyncSelect from 'components/AsyncSelect';
+import dateFnsGenerateConfig from 'rc-picker/lib/generate/dateFns';
+
+const MyDatePicker = DatePicker.generatePicker<Date>(dateFnsGenerateConfig);
 
 import type {
   CreateEventModalContainerProps,
@@ -31,11 +26,13 @@ export function CreateEventModalContainer({
         cover: data.cover,
         datetime: data.datetime.toISOString(),
         title: data.title,
-        place: data.place,
+        place_id: Number(data.placeId.value),
         type_id: Number(data.typeId.value),
         description: data.description,
+        dateend: data.dateend.toISOString(),
       }),
     );
+    onClose();
   };
   const getFile = (e: { fileList: Array<{ originFileObj: File }> }) => {
     return e && e.fileList.length !== 0 && e.fileList[0].originFileObj;
@@ -94,29 +91,41 @@ export function CreateEventModalContainer({
         <div>
           <Form.Item<ICreateEventField>
             label="Место проведения"
-            name="place"
+            name="placeId"
             style={{ width: 600 }}
             rules={[{ required: true }]}
           >
-            <Input />
+            <AsyncSelect allowClear fetchOptions={EventsApi.getEventPlaces} />
           </Form.Item>
 
           <Form.Item<ICreateEventField>
-            label="Дата"
+            label="Дата и время"
             name="datetime"
             style={{ width: 600 }}
             rules={[{ required: true }]}
           >
-            <DatePicker placeholder={''} style={{ width: 350 }} />
+            <MyDatePicker
+              showTime
+              showSecond={false}
+              placeholder={''}
+              format={'dd.MM.yyyy HH:mm'}
+              style={{ width: 350 }}
+            />
           </Form.Item>
 
           <Form.Item<ICreateEventField>
-            label="Время"
-            name="time"
+            label="Дата и время окончания"
+            name="dateend"
             style={{ width: 600 }}
             rules={[{ required: true }]}
           >
-            <TimePicker format={'HH:mm'} style={{ width: 350 }} />
+            <MyDatePicker
+              showSecond={false}
+              format={'dd.MM.yyyy HH:mm'}
+              showTime
+              placeholder={''}
+              style={{ width: 350 }}
+            />
           </Form.Item>
 
           <Form.Item<ICreateEventField>

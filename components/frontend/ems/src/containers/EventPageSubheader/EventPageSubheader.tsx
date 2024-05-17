@@ -12,6 +12,7 @@ import {
   FireOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
+  CalculatorFilled,
 } from '@ant-design/icons';
 
 import type { EventPageSubheaderProps } from './EventPageSubheader.type';
@@ -44,12 +45,19 @@ export function EventPageSubheader({
         icon: <FireOutlined />,
       },
     ];
-    if (role === 'admin')
+    if (role === 'admin') {
       items.push({
         label: 'Рассмотрение',
         key: 'on_review',
         icon: <QuestionCircleOutlined />,
       });
+      items.push({
+        label: 'Завершенные',
+        key: 'ended',
+        icon: <CalculatorFilled />,
+      });
+    }
+
     return items;
   };
 
