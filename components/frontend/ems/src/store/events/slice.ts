@@ -1,6 +1,6 @@
 import eventsInitialState from './initialState';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { getAllEvents } from './requests';
+import { deleteEvent, getAllEvents, updateEvent } from './requests';
 import { EventType } from './types';
 import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
@@ -13,11 +13,20 @@ const eventsSlice = createSlice({
     },
     setCurrentEventsStatus: (state, action: PayloadAction<EventStatusEnum>) => {
       state.currentEventsStatus = action.payload;
+      state.currentEvent = null;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(getAllEvents.fulfilled, (state, action) => {
-      state.events = action.payload;
+      state.events = action.payload.data;
+      if (action.payload.status)
+        state.currentEventsStatus = action.payload.status;
+    });
+    builder.addCase(deleteEvent.fulfilled, (state) => {
+      state.currentEvent = null;
+    });
+    builder.addCase(updateEvent.fulfilled, (state) => {
+      state.currentEvent = null;
     });
   },
 });

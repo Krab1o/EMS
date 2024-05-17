@@ -27,6 +27,7 @@ export function CreateSectionModalContainer({
         vk: data.vk,
       }),
     );
+    onClose();
   };
 
   return (

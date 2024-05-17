@@ -4,4 +4,8 @@ function selectModalState(state: RootState) {
   return state.app.modalState;
 }
 
-export { selectModalState };
+function selectAlert(state: RootState) {
+  return state.app.alert;
+}
+
+export { selectModalState, selectAlert };

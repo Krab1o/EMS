@@ -15,6 +15,7 @@ function getEventsAdapter(data: Array<IEvent>): Array<EventType> {
       version: event.version,
       description: event.description,
       userVote: event.user_vote,
+      dateEnd: new Date(event.dateend),
     };
   }) as Array<EventType>;
 }

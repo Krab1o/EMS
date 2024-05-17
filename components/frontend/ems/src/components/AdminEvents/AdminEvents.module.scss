@@ -1,0 +1,34 @@
+.description_block {
+  width: 50vw;
+  height: 80vh;
+  overflow-y: scroll;
+  .event_photo_block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+  }
+  .text {
+    font-weight: 900;
+    bottom: 120px;
+    left: 40px;
+    font-size: 40px;
+    padding: 10px;
+    word-break: break-word;
+  }
+  .event_text_block {
+    line-height: 30px;
+    font-size: 20px;
+    padding: 10px;
+  }
+  .actions {
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+}
+
+.table {
+  width: 40vw;
+}

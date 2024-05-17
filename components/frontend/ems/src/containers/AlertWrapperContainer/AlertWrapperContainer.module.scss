@@ -1,0 +1,13 @@
+.alert {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  height: 50px;
+  z-index: 2;
+  min-width: 300px;
+  transition: all 300ms ease;
+
+  &_unvisible {
+    right: -600px;
+  }
+}

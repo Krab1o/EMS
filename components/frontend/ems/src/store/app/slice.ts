@@ -9,6 +9,12 @@ const appSlice = createSlice({
     setIsModalOpen: (state, action: PayloadAction<IModalState>) => {
       state.modalState = action.payload;
     },
+    setAlert: (
+      state,
+      action: PayloadAction<{ message: string; isError: boolean }>,
+    ) => {
+      state.alert = action.payload;
+    },
   },
 });
 
