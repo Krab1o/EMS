@@ -179,8 +179,8 @@ class EventRepository:
             res = await session.execute(query)
         return res.scalar()
 
-    async def get_list(self, range: EventRange) -> list[entities.Event]:
-        match range:
+    async def get_list_by_range(self, _range: EventRange) -> list[entities.Event]:
+        match _range:
             case EventRange.WEEK:
                 delta = datetime.now() + timedelta(days = 7)
             case EventRange.MONTH:

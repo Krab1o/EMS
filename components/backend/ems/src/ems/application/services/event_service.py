@@ -324,6 +324,6 @@ class EventService:
 
     async def get_list_by_range(
         self,
-        range: EventRange
+        _range: EventRange
     ):
-        return await self.event_repository.get_list(range)
+        return await self.event_repository.get_list_by_range(_range)

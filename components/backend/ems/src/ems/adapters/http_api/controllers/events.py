@@ -378,9 +378,9 @@ async def vote(
 )
 async def get_list_tg(
     event_service: Annotated[EventService, Depends(get_event_service)],
-    range: Annotated[EventRange, Query()]
+    _range: Annotated[EventRange, Query(alias="range")]
 ):
-    events = await event_service.get_list_by_range(range = range)
+    events = await event_service.get_list_by_range(_range)
 
     json_events = []
     for e in events:
