@@ -20,7 +20,7 @@ from ems.adapters.database.tables import (
 
 # revision identifiers, used by Alembic.
 revision = 'e9bf9acf9cc0'
-down_revision = '2598b8ffc54a'
+down_revision = '2da3d92a1fba'
 branch_labels = None
 depends_on = None
 
