@@ -2,12 +2,13 @@ from datetime import datetime
 from typing import Optional
 
 from attr import dataclass
-from ems.application import dto, entities
-from ems.application.enum import UserRole
-from ems_libs.security import Hasher
 from sqlalchemy import delete, insert, or_, select, update
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
+
+from ems.application import dto, entities
+from ems.application.enum import UserRole
+from ems_libs.security import Hasher
 
 
 @dataclass
@@ -61,9 +62,9 @@ class UserRepository:
         return new_id
 
     async def get_list(
-        self,
-        page: int,
-        size: int,
+            self,
+            page: int,
+            size: int,
     ) -> list[entities.User]:
         query = (
             select(entities.User)
@@ -91,6 +92,18 @@ class UserRepository:
             await session.commit()
         return user_id
 
+    async def update_telegram(self, data: dto.UserTelegramCredentialsUpdateRequest) -> Optional[int]:
+        query = (
+            update(entities.User.telegram_id)
+            .where(entities.User.id == data.id)
+            .values(data.telegram_id)
+            .returning(entities.User.id)
+        )
+        async with self.async_session_maker() as session:
+            user_id = await session.scalar(query)
+            await session.commit()
+        return user_id
+
     async def delete_one(self, user_id: int):
         query = delete(entities.User).where(entities.User.id == user_id)
         async with self.async_session_maker() as session:
@@ -98,17 +111,17 @@ class UserRepository:
             await session.commit()
 
     async def find(
-        self,
-        page: int | None = None,
-        size: int | None = None,
-        name_search: str | None = None,
-        email_search: str | None = None
+            self,
+            page: int | None = None,
+            size: int | None = None,
+            name_search: str | None = None,
+            email_search: str | None = None
     ) -> list[entities.User]:
         query = (
             select(entities.User)
-                .options(joinedload(entities.User.institution))
-                .options(joinedload(entities.User.enrolled_in_events))
-                .options(joinedload(entities.User.created_events))
+            .options(joinedload(entities.User.institution))
+            .options(joinedload(entities.User.enrolled_in_events))
+            .options(joinedload(entities.User.created_events))
         )
         if name_search is not None:
             query = query.where(

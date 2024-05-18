@@ -13,3 +13,7 @@ class EventStatus(StrEnum):
     PLANNED = auto()
     CANCELLED = auto()
     ENDED = auto()
+
+class EventRange(StrEnum):
+    WEEK = auto()
+    MONTH = auto()

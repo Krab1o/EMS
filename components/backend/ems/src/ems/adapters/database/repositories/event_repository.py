@@ -1,10 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from attr import dataclass
 from ems.application import dto, entities
-from ems.application.enum import EventStatus
-from sqlalchemy import delete, func, insert, select, update
+from ems.application.enum import EventStatus, EventRange
+from sqlalchemy import delete, func, insert, select, update, and_
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.orm import joinedload
 
@@ -178,3 +178,31 @@ class EventRepository:
         async with self.async_session_maker() as session:
             res = await session.execute(query)
         return res.scalar()
+
+    async def get_list(self, range: EventRange) -> list[entities.Event]:
+        match range:
+            case EventRange.WEEK:
+                delta = datetime.now() + timedelta(days = 7)
+            case EventRange.MONTH:
+                delta = datetime.now() + timedelta(days=30)
+
+        query = (
+            select(entities.Event)
+            .filter(
+                and_(
+                    entities.Event.datetime <= delta,
+                    entities.Event.datetime >= datetime.now()
+                )
+            )
+            .order_by(entities.Event.created_at)
+            .options(joinedload(entities.Event.cover))
+            .options(
+                joinedload(entities.Event.place).options(
+                    joinedload(entities.Place.institution)
+                )
+            )
+        )
+
+        async with self.async_session_maker() as session:
+            res = await session.execute(query)
+        return res.scalars().all()
