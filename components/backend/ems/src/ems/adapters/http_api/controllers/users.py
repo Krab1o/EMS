@@ -207,18 +207,18 @@ async def update_telegram(
             password=data.password
         )
     ):
-        case _, LoginResult.OK:
+        case db_user, LoginResult.OK:
             logger.debug("User credentials are correct")
             match await user_service.update_telegram(data):
-                case _, UserUpdateStatus.USER_NOT_FOUND:
+                case UserUpdateStatus.USER_NOT_FOUND:
                     logger.debug("User wasn't found")
                     raise HTTPException(
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail="No user with such id",
                     )
-                case user_id, UserUpdateStatus.OK:
-                    logger.debug(f"Successfully updated Telegram ID for user {user_id}")
-                    return { "user_id": user_id }
+                case UserUpdateStatus.OK:
+                    logger.debug(f"Successfully updated Telegram ID for user {db_user.id}")
+                    return { "user_id": db_user.id }
                 case _:
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

@@ -83,26 +83,24 @@ class UserRepository:
     async def update_one(self, data: dto.UserUpdateRequest) -> Optional[int]:
         query = (
             update(entities.User)
-            .where(entities.User.id == data.id)
-            .values(data.model_dump(exclude={"id"}))
-            .returning(entities.User.id)
+                .where(entities.User.id == data.id)
+                .values(data.model_dump(exclude={"id"}))
+                .returning(entities.User.id)
         )
         async with self.async_session_maker() as session:
             user_id = await session.scalar(query)
             await session.commit()
         return user_id
 
-    async def update_telegram(self, data: dto.UserTelegramCredentialsUpdateRequest) -> Optional[int]:
+    async def update_telegram(self, user_id: int, data: dto.UserTelegramCredentialsUpdateRequest):
         query = (
-            update(entities.User.telegram_id)
-            .where(entities.User.id == data.id)
-            .values(data.telegram_id)
-            .returning(entities.User.id)
+            update(entities.User)
+                .where(entities.User.id == user_id)
+                .values({ "telegram_id": data.telegram_id})
         )
         async with self.async_session_maker() as session:
-            user_id = await session.scalar(query)
+            await session.execute(query)
             await session.commit()
-        return user_id
 
     async def delete_one(self, user_id: int):
         query = delete(entities.User).where(entities.User.id == user_id)

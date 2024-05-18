@@ -124,11 +124,9 @@ class UserService:
     async def update_telegram(
         self,
         data: dto.UserTelegramCredentialsUpdateRequest
-    ) -> tuple[Optional[int], UserUpdateStatus]:
+    ) -> UserUpdateStatus:
         db_user = await self.user_repository.get_by_email(data.email)
         if db_user is None:
-            return None, UserUpdateStatus.USER_NOT_FOUND
-        user_id = await self.user_repository.update_telegram(data)
-        if user_id is None:
-            return None, UserUpdateStatus.UNEXPECTED_ERROR
-        return user_id, UserUpdateStatus.OK
+            return UserUpdateStatus.USER_NOT_FOUND
+        await self.user_repository.update_telegram(db_user.id, data)
+        return UserUpdateStatus.OK
