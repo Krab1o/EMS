@@ -207,7 +207,7 @@ async def update_telegram(
             password=data.password
         )
     ):
-        case LoginResult.OK:
+        case _, LoginResult.OK:
             logger.debug("User credentials are correct")
             match await user_service.update_telegram(data):
                 case _, UserUpdateStatus.USER_NOT_FOUND:
@@ -224,15 +224,20 @@ async def update_telegram(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                         detail="Unexpected error",
                     )
-        case LoginResult.WRONG_PASSWORD:
+        case _, LoginResult.WRONG_PASSWORD:
             raise HTTPException(
                 status_code=status.HTTP_403_NOT_FOUND,
                 detail="Invalid e-mail/password pair",
             )
-        case LoginResult.NOT_FOUND:
+        case _, LoginResult.NOT_FOUND:
             raise HTTPException(
                 status_code=status.HTTP_403_NOT_FOUND,
                 detail="Invalid e-mail/password pair",
+            )
+        case _:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Unexpected error",
             )
 
 @router.put(
