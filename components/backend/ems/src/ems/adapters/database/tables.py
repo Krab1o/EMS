@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     Column,
     DateTime,
@@ -58,6 +59,7 @@ users = Table(
     ),
     Column(
         "telegram_id",
+        Integer,
         nullable=True,
         default=None,
         comment="Идентификатор телеграма",
@@ -87,7 +89,7 @@ users = Table(
     ),
     Column(
         "version",
-        Integer,
+        BigInteger,
         default=0,
         nullable=False,
         comment="Версия записи об объекте",
