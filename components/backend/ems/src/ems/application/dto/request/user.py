@@ -36,6 +36,10 @@ class UserCreateRequest(BaseModel):
         default=None,
         description="Имя пользователя Telegram",
     )
+    telegram_id: int = Field(
+        gt=0,
+        description="ID телеграма",
+    )
     vk: Optional[str] = Field(
         default=None,
         description="ID ВКонтакте",
@@ -98,4 +102,18 @@ class UserUpdateRequest(BaseModel):
     version: int = Field(
         ge=0,
         description="Версия обновленной записи (на 1 больше предыдущей версии)",
+    )
+
+class UserTelegramCredentialsUpdateRequest(BaseModel):
+    telegram_id: int = Field(
+        gt=0,
+        description="Идентификатор telegram",
+    )
+    email: str = Field(
+        min_length=1,
+        description="Электронная почта",
+    )
+    password: str = Field(
+        min_length=1,
+        description="Пароль",
     )

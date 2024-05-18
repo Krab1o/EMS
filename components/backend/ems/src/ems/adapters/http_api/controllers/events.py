@@ -9,7 +9,7 @@ from ems.adapters.http_api.dependencies import (
     get_user_service
 )
 from ems.application import dto
-from ems.application.enum import EventStatus, UserRole
+from ems.application.enum import EventStatus, UserRole, EventRange
 from ems.application.services import AuthService, EventService, UserService
 from ems.application.services.event_service import (
     EventCreateStatus,
@@ -368,3 +368,24 @@ async def vote(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Unexpected error",
             )
+
+@router.get(
+    path="/tg",
+    response_model=dto.EventListResponse,
+    responses={
+        200: {"description": "Список мероприятий."},
+    },
+)
+async def get_list_tg(
+    event_service: Annotated[EventService, Depends(get_event_service)],
+    range: Annotated[EventRange, Query()]
+):
+    events = await event_service.get_list_by_range(range = range)
+
+    json_events = []
+    for e in events:
+        json_event = jsonable_encoder(e)
+        if e.cover_id is not None:
+            json_event["cover"]["uri"] = f"/covers/{e.cover_id}"
+        json_events.append(json_event)
+    return json_events

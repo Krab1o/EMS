@@ -57,6 +57,12 @@ users = Table(
         comment="Ссылка на Telegram",
     ),
     Column(
+        "telegram_id",
+        nullable=True,
+        default=None,
+        comment="Идентификатор телеграма",
+    ),
+    Column(
         "vk", String(128), nullable=True, default=None, comment="Ссылка на VK"
     ),
     Column(

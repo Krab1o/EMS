@@ -28,6 +28,7 @@ class User:
     group: Optional[int] = None
     role: UserRole = None
     telegram: Optional[str] = None
+    telegram_id: Optional[int] = None
     vk: Optional[str] = None
     phone_number: Optional[str] = None
     email: str = None

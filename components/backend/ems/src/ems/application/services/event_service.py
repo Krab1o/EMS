@@ -15,7 +15,7 @@ from ems.adapters.database.repositories.place_repository import PlaceRepository
 from ems.adapters.storage import ImageStore
 from ems.application import dto, entities
 from ems.application.entities import Cover
-from ems.application.enum import EventStatus, UserRole
+from ems.application.enum import EventStatus, UserRole, EventRange
 from fastapi import UploadFile
 
 
@@ -321,3 +321,9 @@ class EventService:
             res = await img.read()
 
         return res, CoverDownloadStatus.OK
+
+    async def get_list_by_range(
+        self,
+        range: EventRange
+    ):
+        return await self.event_repository.get_list(range)

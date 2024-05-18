@@ -9,6 +9,7 @@ from ems.adapters.http_api.dependencies import (
 from ems.application import dto
 from ems.application.enum import UserRole
 from ems.application.services import AuthService, UserService
+from ems.application.services.auth_service import LoginResult
 from ems.application.services.user_service import (
     UserCreateStatus,
     UserDeleteStatus,
@@ -36,10 +37,10 @@ router = APIRouter(prefix="/users", tags=["Пользователи"])
     },
 )
 async def get_list(
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    pagination: Annotated[dto.PaginationParams, Depends()],
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        pagination: Annotated[dto.PaginationParams, Depends()],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -70,12 +71,12 @@ async def get_list(
     },
 )
 async def search(
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    pagination: Annotated[dto.PaginationParams, Depends()],
-    name: Annotated[str, Query()] = None,
-    email: Annotated[str, Query()] = None,
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        pagination: Annotated[dto.PaginationParams, Depends()],
+        name: Annotated[str, Query()] = None,
+        email: Annotated[str, Query()] = None,
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -102,7 +103,6 @@ async def search(
             )
 
 
-
 @router.get(
     path="/{user_id}",
     response_model=dto.UserResponse,
@@ -112,10 +112,10 @@ async def search(
     },
 )
 async def get_one(
-    user_id: Annotated[int, Gt(0)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        user_id: Annotated[int, Gt(0)],
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -148,11 +148,11 @@ async def get_one(
     },
 )
 async def add_one(
-    response: Response,
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    data: Annotated[dto.UserCreateRequest, Body()],
+        response: Response,
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        data: Annotated[dto.UserCreateRequest, Body()],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
@@ -184,6 +184,52 @@ async def add_one(
             )
 
 
+@router.post(
+    path="/tg/link",
+    responses={
+        200: {"description": "Telegram_id пользователя обновлен успешно."},
+        403: {"description": "Недостаточно прав для выполнения действия."},
+        404: {"description": "Пользователь не найден."},
+        500: {"description": "Неизвестная ошибка"}
+    },
+)
+async def update_telegram(
+        response: Response,
+        data: Annotated[dto.UserTelegramCredentialsUpdateRequest, Body()],
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+):
+    match await auth_service.login(
+        dto.LoginRequest(
+            email=dto.email,
+            password=dto.password
+        )
+    ):
+        case LoginResult.OK:
+            match await user_service.update_telegram():
+                case UserUpdateStatus.USER_NOT_FOUND:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail="No user with such id",
+                    )
+                case UserUpdateStatus.OK:
+                    response.headers["Location"] = f"/users/{data.id}"
+                case _:
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="Unexpected error",
+                    )
+        case LoginResult.WRONG_PASSWORD:
+            raise HTTPException(
+                status_code=status.HTTP_403_NOT_FOUND,
+                detail="Invalid e-mail/password pair",
+            )
+        case LoginResult.NOT_FOUND:
+            raise HTTPException(
+                status_code=status.HTTP_403_NOT_FOUND,
+                detail="Invalid e-mail/password pair",
+            )
+
 @router.put(
     path="",
     responses={
@@ -194,11 +240,11 @@ async def add_one(
     },
 )
 async def update_one(
-    response: Response,
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
-    data: Annotated[dto.UserUpdateRequest, Body()],
+        response: Response,
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        data: Annotated[dto.UserUpdateRequest, Body()],
 ):
     _ = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match await user_service.update_one(data):
@@ -234,10 +280,10 @@ async def update_one(
     },
 )
 async def delete_one(
-    user_id: Annotated[int, Gt(0)],
-    user_service: Annotated[UserService, Depends(get_user_service)],
-    auth_service: Annotated[AuthService, Depends(get_auth_service)],
-    auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
+        user_id: Annotated[int, Gt(0)],
+        user_service: Annotated[UserService, Depends(get_user_service)],
+        auth_service: Annotated[AuthService, Depends(get_auth_service)],
+        auth_claims: Annotated[dict[str, Any], Depends(get_auth_payload)],
 ):
     role = await get_user_role(auth_service, auth_claims.get("user_id", None))
     match role:
