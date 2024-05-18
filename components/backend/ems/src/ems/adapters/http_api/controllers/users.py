@@ -213,7 +213,7 @@ async def update_telegram(
                         detail="No user with such id",
                     )
                 case user_id, UserUpdateStatus.OK:
-                    response.headers["Location"] = f"/users/{user_id}"
+                    return { "user_id": user_id }
                 case _:
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
