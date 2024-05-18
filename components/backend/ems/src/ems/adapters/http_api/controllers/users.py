@@ -201,19 +201,19 @@ async def update_telegram(
 ):
     match await auth_service.login(
         dto.LoginRequest(
-            email=dto.email,
-            password=dto.password
+            email=data.email,
+            password=data.password
         )
     ):
         case LoginResult.OK:
-            match await user_service.update_telegram():
-                case UserUpdateStatus.USER_NOT_FOUND:
+            match await user_service.update_telegram(data):
+                case _, UserUpdateStatus.USER_NOT_FOUND:
                     raise HTTPException(
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail="No user with such id",
                     )
-                case UserUpdateStatus.OK:
-                    response.headers["Location"] = f"/users/{data.id}"
+                case user_id, UserUpdateStatus.OK:
+                    response.headers["Location"] = f"/users/{user_id}"
                 case _:
                     raise HTTPException(
                         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
