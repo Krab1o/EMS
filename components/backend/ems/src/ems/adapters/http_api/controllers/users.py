@@ -1,3 +1,4 @@
+import logging
 from typing import Annotated, Any
 
 from annotated_types import Gt
@@ -26,6 +27,7 @@ from fastapi import (
 )
 from fastapi.encoders import jsonable_encoder
 
+logger = logging.getLogger("ems")
 router = APIRouter(prefix="/users", tags=["Пользователи"])
 
 
@@ -194,11 +196,11 @@ async def add_one(
     },
 )
 async def update_telegram(
-        response: Response,
         data: Annotated[dto.UserTelegramCredentialsUpdateRequest, Body()],
         user_service: Annotated[UserService, Depends(get_user_service)],
         auth_service: Annotated[AuthService, Depends(get_auth_service)],
 ):
+    logger.debug("Checking user credentials")
     match await auth_service.login(
         dto.LoginRequest(
             email=data.email,
@@ -206,13 +208,16 @@ async def update_telegram(
         )
     ):
         case LoginResult.OK:
+            logger.debug("User credentials are correct")
             match await user_service.update_telegram(data):
                 case _, UserUpdateStatus.USER_NOT_FOUND:
+                    logger.debug("User wasn't found")
                     raise HTTPException(
                         status_code=status.HTTP_404_NOT_FOUND,
                         detail="No user with such id",
                     )
                 case user_id, UserUpdateStatus.OK:
+                    logger.debug(f"Successfully updated Telegram ID for user {user_id}")
                     return { "user_id": user_id }
                 case _:
                     raise HTTPException(
