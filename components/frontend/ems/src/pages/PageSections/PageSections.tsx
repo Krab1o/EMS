@@ -6,6 +6,7 @@ import SectionCardContainer from 'containers/SectionCardContainer';
 import CreateSectionModalContainer from 'containers/CreateSectionModalContainer';
 import { PlusOutlined } from '@ant-design/icons';
 import { getAllSections, selectSections } from 'store/sections';
+import styles from './PageSections.module.scss';
 
 export function PageSections() {
   const dispatch = useAppDispatch();
@@ -23,8 +24,11 @@ export function PageSections() {
   };
 
   return (
-    <div style={{ height: '100%' }}>
-      <Button icon={<PlusOutlined />} onClick={openModal} />
+    <div style={{ padding: '0 0 5% 0' }}>
+      <div className={styles.header}>
+        <div></div>
+        <Button icon={<PlusOutlined />} onClick={openModal} />
+      </div>
       <CreateSectionModalContainer
         open={isCreateSectionModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -32,8 +36,9 @@ export function PageSections() {
       <Flex
         wrap={'wrap'}
         gap={'middle'}
-        justify={'center'}
-        style={{ marginTop: '3%', height: '100%' }}
+        justify={'start'}
+        className={styles.content}
+        style={{ marginTop: '3%', height: '100%', padding: '0 3%' }}
       >
         {sections &&
           sections.map((el) => <SectionCardContainer initialData={el} />)}

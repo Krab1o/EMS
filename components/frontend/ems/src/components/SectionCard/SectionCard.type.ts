@@ -4,4 +4,5 @@ export type SectionCardProps = {
   initialData: SectionType;
   onCardClick: () => void;
   onDelete: () => void;
+  role: string | null;
 };
