@@ -35,6 +35,28 @@ router = APIRouter(prefix="/events", tags=["Мероприятия"])
 
 
 @router.get(
+    path="/tg",
+    response_model=dto.EventListResponse,
+    responses={
+        200: {"description": "Список мероприятий."},
+    },
+)
+async def get_list_tg(
+    event_service: Annotated[EventService, Depends(get_event_service)],
+    _range: Annotated[EventRange, Query(alias="range")]
+):
+    events = await event_service.get_list_by_range(_range)
+
+    json_events = []
+    for e in events:
+        json_event = jsonable_encoder(e)
+        if e.cover_id is not None:
+            json_event["cover"]["uri"] = f"/covers/{e.cover_id}"
+        json_events.append(json_event)
+    return json_events
+
+
+@router.get(
     path="",
     response_model=dto.EventListResponse,
     responses={
@@ -368,24 +390,3 @@ async def vote(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Unexpected error",
             )
-
-@router.get(
-    path="/tg",
-    response_model=dto.EventListResponse,
-    responses={
-        200: {"description": "Список мероприятий."},
-    },
-)
-async def get_list_tg(
-    event_service: Annotated[EventService, Depends(get_event_service)],
-    _range: Annotated[EventRange, Query(alias="range")]
-):
-    events = await event_service.get_list_by_range(_range)
-
-    json_events = []
-    for e in events:
-        json_event = jsonable_encoder(e)
-        if e.cover_id is not None:
-            json_event["cover"]["uri"] = f"/covers/{e.cover_id}"
-        json_events.append(json_event)
-    return json_events
