@@ -10,6 +10,7 @@ export function SectionCard({
   initialData,
   onCardClick,
   onDelete,
+  role,
 }: SectionCardProps) {
   const actionsButtons: Array<ReactNode> = [
     <Button
@@ -36,7 +37,7 @@ export function SectionCard({
         />
       }
       onClick={onCardClick}
-      actions={actionsButtons}
+      actions={role === 'admin' ? actionsButtons : undefined}
     >
       <Typography.Text
         style={{ color: '#006eff', marginBottom: '10px', display: 'block' }}

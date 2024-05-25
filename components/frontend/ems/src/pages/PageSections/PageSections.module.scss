@@ -1,3 +1,4 @@
+
 .header{
   display: flex;
   justify-content: space-between;
@@ -16,15 +17,7 @@
 }
 
 @media (max-width: 400px) {
-  .header {
-    flex-direction: column;
-    gap: 10px;
-    &__button_mobile {
-      display: block;
-    }
-
-    &__button_desktop {
-      display: none;
-    }
+  .content{
+    justify-content: center;
   }
 }

@@ -9,6 +9,8 @@ import type {
   ICreateSectionField,
 } from './CreateSectionModalContainer.type';
 
+import styles from './CreateSectionModalContainer.module.scss';
+
 export function CreateSectionModalContainer({
   open,
   onClose,
@@ -46,6 +48,7 @@ export function CreateSectionModalContainer({
           display: 'flex',
           justifyContent: 'space-around',
         }}
+        className={styles.form}
         initialValues={{ remember: true }}
         onFinish={submitSection}
         autoComplete="off"
@@ -54,7 +57,7 @@ export function CreateSectionModalContainer({
           <Form.Item<ICreateSectionField>
             label="Название"
             name="title"
-            style={{ width: 600 }}
+            className={styles.form_item}
             rules={[{ required: true }]}
           >
             <Input />
@@ -63,6 +66,7 @@ export function CreateSectionModalContainer({
           <Form.Item<ICreateSectionField>
             label="Описание"
             name="description"
+            className={styles.form_item}
             rules={[{ required: true }]}
           >
             <TextArea />
@@ -73,7 +77,7 @@ export function CreateSectionModalContainer({
           <Form.Item<ICreateSectionField>
             label="Telegram"
             name="telegram"
-            style={{ width: 600 }}
+            className={styles.form_item}
           >
             <Input />
           </Form.Item>
@@ -81,31 +85,31 @@ export function CreateSectionModalContainer({
           <Form.Item<ICreateSectionField>
             label="VK"
             name="vk"
-            style={{ width: 600 }}
+            className={styles.form_item}
           >
             <Input />
           </Form.Item>
 
           <Form.Item<ICreateSectionField>
-            style={{ width: 600 }}
             label="Youtube"
             name="youtube"
+            className={styles.form_item}
           >
             <Input />
           </Form.Item>
 
           <Form.Item<ICreateSectionField>
-            style={{ width: 600 }}
             label="Rutube"
             name="rutube"
+            className={styles.form_item}
           >
             <Input />
           </Form.Item>
 
           <Form.Item<ICreateSectionField>
-            style={{ width: 600 }}
             label="TikTok"
             name="tiktok"
+            className={styles.form_item}
           >
             <Input />
           </Form.Item>

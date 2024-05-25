@@ -27,7 +27,7 @@ export function PageEvents() {
   };
 
   return (
-    <div style={{ height: '100%' }}>
+    <div style={{ padding: '0 0 5% 0' }}>
       <EventPageSubheader openModal={openModal} role={role} />
       <CreateEventModalContainer
         open={isCreateEventModalOpen}
