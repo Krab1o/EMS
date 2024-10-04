@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     DATABASE_HOST: str = "localhost"
     DATABASE_PORT: int = 5432
     DATABASE_USER: str = "postgres"
-    DATABASE_PASS: str = "postgres"
+    DATABASE_PASS: str = "secret_password"
     DATABASE_DEBUG: bool = False
 
     ALEMBIC_SCRIPT_LOCATION: str = "ems.adapters.database:alembic"
