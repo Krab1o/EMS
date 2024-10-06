@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = process.env.REACT_APP_BASE_URL ?? 'http://api.evgenym.com';
+const baseUrl = process.env.REACT_APP_BASE_URL ?? 'http://localhost:3000';
 
 export const getClient = () => {
   const client = axios.create({

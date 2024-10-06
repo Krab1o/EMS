@@ -2,6 +2,12 @@ from ems.adapters.http_api import controllers
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
 
 def create_app(
     version: str,
@@ -28,12 +34,13 @@ def create_app(
     app.include_router(controllers.place_router)
     app.include_router(controllers.googleauth_router)
 
-    if is_dev:
-        app.add_middleware(
-            CORSMiddleware,
-            allow_origins=["*"],
-            allow_methods=["*"],
-            allow_headers=["*"],
-        )
+    # if is_dev:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        # allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     return app
