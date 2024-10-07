@@ -1,9 +1,12 @@
+version: '3.8'
+
 services:
+  # Backend service (unchanged)
   ems:
     container_name: ems-dev
     build: ./backend/ems
     ports:
-      - 3000:3000
+      - "3000:3000"
     depends_on:
       ems-postgres:
         condition: service_healthy
@@ -12,8 +15,6 @@ services:
       APP_IS_DEV: ${APP_IS_DEV:-True}
       APP_LOGGING_LEVEL: ${APP_LOGGING_LEVEL:-DEBUG}
       LOGGING_LEVEL: ${LOGGING_LEVEL:-DEBUG}
-      # GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET?please set}
-      # GOOGLE_OAUTH_CLIENT_ID: ${GOOGLE_OAUTH_CLIENT_ID?plase set}
       DATABASE_NAME: ${DATABASE_NAME:-dev_ems}
       DATABASE_HOST: ${DATABASE_HOST:-ems-postgres}
       DATABASE_PORT: ${DATABASE_PORT:-5432}
@@ -23,14 +24,15 @@ services:
     command: ${FLAGS:---reload} 
     volumes:
       - ./backend/ems/public/images/covers:/app/public/images/covers
-      # hot reload support
       - ./backend/ems/src:/app/src
+
+  # PostgreSQL service (unchanged)
   ems-postgres:
     container_name: ems-dev-postgres
     image: postgres:16.0
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_USER: ${DATABASE_USER:-postgres}
       POSTGRES_PASSWORD: ${DATABASE_PASS:-postgres}
@@ -42,17 +44,25 @@ services:
       retries: 5
     volumes:
       - ./backend/ems/db/data:/var/lib/postgresql/data
+
+  # Frontend React client with hot-reload
   client:
     container_name: ems-dev-client
     build:
       context: ./frontend/ems
-      dockerfile: Dockerfile
-      args:
-        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL:-http://localhost:3000}
-        REACT_APP_ENV: ${REACT_APP_ENV:-dev}
-    restart: always
+      dockerfile: Dockerfile  # Use the development Dockerfile for hot-reload
     ports:
-      - '30002:30002'
+      - "30002:30002"  # React dev server port
+    environment:
+      - PORT=30002
+      - REACT_APP_BASE_URL=${REACT_APP_BASE_URL:-http://localhost:3000}
+      - REACT_APP_ENV=${REACT_APP_ENV:-dev}
+    volumes:
+      - ./frontend/ems/src:/app/src  # Mount source code for hot-reload
+      - /app/node_modules  # Prevent node_modules from being overwritten
+    restart: always
+
+  # Redis service (unchanged)
   redis:
     container_name: redis-dev
     build:
@@ -62,7 +72,7 @@ services:
       - "6379:6379"
       - "8080:8001"
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli", "raw", "incr", "ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
