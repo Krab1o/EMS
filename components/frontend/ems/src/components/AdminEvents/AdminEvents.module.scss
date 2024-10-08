@@ -1,26 +1,28 @@
 .description_block {
   width: 50vw;
   height: 80vh;
-  overflow-y: scroll;
+  overflow-y: auto;
+  
   .event_photo_block {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 300px;
   }
+  
   .text {
     font-weight: 900;
-    bottom: 120px;
-    left: 40px;
     font-size: 40px;
     padding: 10px;
     word-break: break-word;
   }
+
   .event_text_block {
     line-height: 30px;
     font-size: 20px;
     padding: 10px;
   }
+
   .actions {
     padding: 10px;
     display: flex;
@@ -31,4 +33,65 @@
 
 .table {
   width: 40vw;
+}
+
+/* Адаптация для экранов шириной до 1024px */
+@media (max-width: 1024px) {
+  .description_block {
+    width: 70vw;  /* Увеличиваем ширину для лучшего отображения */
+    height: 70vh;
+  }
+
+  .table {
+    width: 100%; /* Таблица на всю ширину экрана */
+  }
+}
+
+/* Адаптация для мобильных устройств (до 768px) */
+@media (max-width: 768px) {
+  .description_block {
+    width: 100%;   /* Ширина блока описания на 100% */
+    height: auto;  /* Автоматическая высота */
+  }
+
+  .text {
+    font-size: 28px;  /* Уменьшаем размер текста */
+  }
+
+  .event_text_block {
+    font-size: 18px;
+  }
+
+  .actions {
+    flex-direction: column;  /* Вертикальное расположение кнопок */
+    gap: 10px;
+  }
+  
+  .table {
+    width: 100%;  /* Таблица на всю ширину */
+  }
+}
+
+/* Адаптация для маленьких мобильных устройств (до 480px) */
+@media (max-width: 480px) {
+  .description_block {
+    padding: 10px;
+  }
+
+  .text {
+    font-size: 24px;  /* Ещё уменьшаем текст */
+  }
+
+  .event_text_block {
+    font-size: 16px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .table {
+    font-size: 14px;  /* Уменьшаем размер шрифта в таблице */
+  }
 }
