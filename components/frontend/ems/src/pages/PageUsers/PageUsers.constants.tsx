@@ -68,15 +68,28 @@ export const columns: Array<ColumnType<UserType> & IField> = [
           required: true,
           message: 'Обязательное поле',
         },
-        {
-          max: 256,
-          message: 'Максимальное количество символов - 256',
-        },
+        // {
+        //   max: 256,
+        //   message: 'Максимальное количество символов - 256',
+        // },
       ],
     },
   },
   {
     title: 'Институт',
     dataIndex: 'ins',
+    key: 'institution',
+    formField: {
+      fieldType: 'input',
+      rules: [
+        {
+          required: false,
+        },
+        {
+          max: 256,
+          message: 'Максимальное количество символов - 256',
+        },
+      ],
+    },
   },
 ];

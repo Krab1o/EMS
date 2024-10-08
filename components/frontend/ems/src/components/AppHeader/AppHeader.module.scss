@@ -1,102 +1,67 @@
-@import 'src/styles/colors';
-
 .app_header {
   height: 64px;
   background: #2196f3;
   display: flex;
-  font-weight: 500;
-  font-size: 17px;
-  line-height: 16px;
-  color: #525252;
   align-items: center;
-  justify-content: space-between;
-  gap: 40px;
+  justify-content: space-between; /* Выравнивание элементов в строке */
   position: relative;
+  padding: 0 20px;
   box-shadow: 0 0 5px 5px rgba(34, 60, 80, 0.04);
   width: 100%;
-  overflow: hidden;
   border-bottom: solid 1px #e6e3e3;
 
   &__logo {
-    padding-left: 2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute; /* Для центрирования на мобильных */
+    left: 50%;
+    transform: translateX(-50%); /* Центрирование логотипа на мобильных */
+    
+    @media (min-width: 769px) {
+      position: static; /* Вернуться в стандартное положение на десктопе */
+      left: auto;
+      transform: none; /* Убираем трансформацию на десктопе */
+    }
+
+    svg {
+      width: 100px; /* Подберите нужный размер */
+    }
   }
+
   &__bar {
     display: flex;
     align-items: center;
     gap: 6vw;
-  }
 
-  &__navigation {
-    height: 100%;
-    display: flex;
-    gap: 6vw;
-
-    &__hidden_last {
-      > div {
-        :last-child {
-          display: none;
-        }
-      }
+    @media (max-width: 768px) {
+      display: none; /* Скрываем навигацию на мобильных */
     }
   }
 
   &__info {
     display: flex;
-    justify-self: right;
     align-items: center;
-    padding-right: 2vw;
-    float: right;
-
-    .user {
-      display: flex;
-      gap: 5px;
-
-      button {
-        font-size: 17px;
-      }
-
-      &__lang {
-        button {
-          text-transform: uppercase;
-        }
-      }
-
-      &__logout {
-        cursor: pointer;
-      }
-    }
+    gap: 20px;
+    margin-left: auto;
+    padding-right: 20px;
   }
 }
 
-.lang_select {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 10px;
-}
+.burger_container {
+  display: none; /* Скрываем бургер-меню по умолчанию */
 
-@media (max-width: 1500px) {
-  .app_header {
-    &__bar {
-      gap: 1vw;
-    }
+  @media (max-width: 768px) {
+    display: block; /* Отображаем бургер-меню на мобильных устройствах */
   }
 }
 
-@media (max-width: 1400px) {
-  .app_header {
-    font-size: 90%;
-  }
+/* Стили для кнопки бургера */
+.burger_button {
+  font-size: 24px; /* Размер иконки */
 }
 
-@media (max-width: 400px) {
-  .app_header {
-    &__logo {
-      display: none;
-    }
-    &__navigation {
-      gap: 0vw;
-    }
-  }
+/* Отображение меню при открытии */
+.drawer_logout {
+  margin-top: auto; /* Перемещение кнопки выхода вниз */
 }
