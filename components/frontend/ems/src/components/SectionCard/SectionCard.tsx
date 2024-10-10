@@ -4,7 +4,7 @@ import Meta from 'antd/es/card/Meta';
 import { validateLenght } from 'shared/utils/validateLength';
 import type { SectionCardProps } from './SectionCard.type';
 import type { ReactNode } from 'react';
-import styles from '../EventCard/EventCard.module.scss';
+import styles from './SectionCard.module.scss';
 
 export function SectionCard({
   initialData,
@@ -26,7 +26,7 @@ export function SectionCard({
   return (
     <Card
       hoverable={true}
-      style={{ width: '20vw', minWidth: '400px' }}
+      style={{ width: '20vw', minWidth: '350px' }}
       cover={
         <img
           className={styles.image}

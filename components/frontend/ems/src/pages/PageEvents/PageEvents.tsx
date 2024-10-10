@@ -3,12 +3,15 @@ import { useAppDispatch } from 'store';
 import { getAllEvents, selectEvents } from 'store/events';
 import { useSelector } from 'react-redux';
 import { selectRole } from 'store/auth';
-import { Flex } from 'antd';
 import EventCardContainer from 'containers/EventCardContainer';
 import EventPageSubheader from 'containers/EventPageSubheader';
 import CreateEventModalContainer from 'containers/CreateEventModalContainer';
 import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 import { AdminEvents } from 'components/AdminEvents/AdminEvents';
+import { Row, Col } from 'antd';
+
+// Импортируем стили
+import styles from './PageEvents.module.scss';
 
 export function PageEvents() {
   const dispatch = useAppDispatch();
@@ -27,25 +30,31 @@ export function PageEvents() {
   };
 
   return (
-    <div style={{ padding: '0 0 5% 0' }}>
-      <EventPageSubheader openModal={openModal} role={role} />
+    <div>
+      {/* Используем адаптированные стили для заголовка */}
+      <div className={styles.header}>
+        <EventPageSubheader openModal={openModal} role={role} />
+      </div>
+
       <CreateEventModalContainer
         open={isCreateEventModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
       />
-      {role === 'admin' ? (
-        <AdminEvents events={events} />
-      ) : (
-        <Flex
-          wrap={'wrap'}
-          gap={'middle'}
-          justify={'center'}
-          style={{ marginTop: '3%', height: '100%' }}
-        >
-          {events &&
-            events.map((el) => <EventCardContainer initialData={el} />)}
-        </Flex>
-      )}
+
+      <div className={styles.content}>
+        {role === 'admin' ? (
+          <AdminEvents events={events} />
+        ) : (
+          <Row gutter={[16, 16]} justify="center" style={{ marginTop: '5%' }}>
+            {events &&
+              events.map((el) => (
+                <Col key={el.id}>
+                  <EventCardContainer initialData={el} />
+                </Col>
+              ))}
+          </Row>
+        )}
+      </div>
     </div>
   );
 }

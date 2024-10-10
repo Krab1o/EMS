@@ -1,24 +1,25 @@
-.event_photo_block {
+// .event_photo_block {
 
-  position: relative;
-  .image {
-    width: 100vw;
-    height: 590px;
-  }
-  .text {
-    position: absolute;
-    font-weight: 900;
-    color: white;
-    bottom: 120px;
-    left: 40px;
-    font-size: 90px;
-    width: 500px;
-    line-height: 80px;
-  }
-}
+//   position: relative;
+//   .image {
+//     width: 100vw;
+//     height: 590px;
+//   }
+//   .text {
+//     position: absolute;
+//     font-weight: 900;
+//     color: white;
+//     bottom: 120px;
+//     left: 40px;
+//     font-size: 90px;
+//     width: 500px;
+//     line-height: 80px;
+//   }
+// }
 
 .event_text_block {
-  padding: 60px 100px;
+  text-align: center;
+  padding: 60px 60px;
   line-height: 30px;
   font-size: 20px;
 }

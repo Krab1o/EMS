@@ -6,7 +6,7 @@ import {
   selectCurrentEventsStatus,
 } from 'store/events';
 
-import { Button, Menu, MenuProps } from 'antd';
+import { Button, Menu, Select } from 'antd';
 import {
   ClockCircleOutlined,
   FireOutlined,
@@ -19,6 +19,7 @@ import type { EventPageSubheaderProps } from './EventPageSubheader.type';
 import { EventStatusEnum } from 'services/api/events/eventsApi.type';
 
 import styles from './EventPageSubheader.module.scss';
+import { useEffect, useState } from 'react';
 
 export function EventPageSubheader({
   openModal,
@@ -26,34 +27,42 @@ export function EventPageSubheader({
 }: EventPageSubheaderProps) {
   const dispatch = useAppDispatch();
   const currentStatus = useSelector(selectCurrentEventsStatus);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
-  const onClick: MenuProps['onClick'] = (e) => {
-    dispatch(eventsActions.setCurrentEventsStatus(e.key as EventStatusEnum));
-    dispatch(getAllEvents(e.key as EventStatusEnum));
+  // Обновляем состояние при изменении размера экрана
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const onClick = (key: EventStatusEnum) => {
+    dispatch(eventsActions.setCurrentEventsStatus(key));
+    dispatch(getAllEvents(key));
   };
 
   const getItems = (role: string | null) => {
-    const items: MenuProps['items'] = [
+    const items = [
       {
         label: 'Запланированные',
-        key: 'planned',
+        key: EventStatusEnum.Planned,
         icon: <ClockCircleOutlined />,
       },
       {
         label: 'Голосование',
-        key: 'on_poll',
+        key: EventStatusEnum.OnPoll,
         icon: <FireOutlined />,
       },
     ];
     if (role === 'admin') {
       items.push({
         label: 'Рассмотрение',
-        key: 'on_review',
+        key: EventStatusEnum.OnReview,
         icon: <QuestionCircleOutlined />,
       });
       items.push({
         label: 'Завершенные',
-        key: 'ended',
+        key: EventStatusEnum.Ended,
         icon: <CalculatorFilled />,
       });
     }
@@ -61,26 +70,37 @@ export function EventPageSubheader({
     return items;
   };
 
+  const items = getItems(role).map((item) => ({
+    label: item.label,
+    value: item.key,
+  }));
+
   return (
     <div className={styles.header}>
-      <Menu
-        onClick={onClick}
-        selectedKeys={[currentStatus]}
-        mode="horizontal"
-        items={getItems(role)}
-      ></Menu>
+      {/* Горизонтальное меню для десктопной версии */}
+      {!isMobile ? (
+        <Menu
+          disabledOverflow={true}
+          onClick={(e) => onClick(e.key as EventStatusEnum)}
+          selectedKeys={[currentStatus]}
+          mode="horizontal"
+          items={getItems(role)}
+        />
+      ) : (
+        // Выпадающий список для мобильной версии
+        <Select
+          defaultValue={currentStatus}
+          onChange={onClick}
+          options={items}
+          className={styles.dropdown_mobile}
+        />
+      )}
+
       <Button
         className={styles.header__button_desktop}
         icon={<PlusOutlined />}
         onClick={openModal}
       />
-      <Button
-        type={'link'}
-        className={styles.header__button_mobile}
-        onClick={openModal}
-      >
-        Добавить
-      </Button>
     </div>
   );
 }

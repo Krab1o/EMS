@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  // padding: 0 0px;
+  padding: 0 20px;
   height: 64px;
   background-color: #2196f3;
   box-shadow: 0 0 5px 5px rgba(34, 60, 80, 0.04);
@@ -19,7 +19,7 @@
       width: 120px;
     }
 
-    @media (min-width: 768px) {
+    @media (min-width: 769px) {
       justify-content: flex-start; /* Логотип слева на десктопе */
       position: static;
       transform: none;
@@ -41,16 +41,22 @@
     align-items: center;
     gap: 10px;
     margin-left: auto;
+
+    @media (max-width: 768px) {
+      display: block; /* Скрываем информацию о пользователе на мобильных */
+    }
   }
 }
 
 .burger_container {
-  display: none; /* Скрываем бургер на десктопе */
+  /* Скрыть бургер на десктопе */
+  @media (min-width: 768px) {
+    display: none;
+  }
 
+  /* Показать бургер на мобильных */
   @media (max-width: 768px) {
-    display: block; /* Показываем бургер на мобильных */
-    position: relative;
-    z-index: 10;
+    display: block;
   }
 }
 
@@ -74,18 +80,12 @@
   padding: 15px 0;
   font-size: 18px;
   text-align: left;
-  color: #333;  // Основной цвет текста для обычных вкладок
-  background-color: transparent;  // Обычный фон для вкладок
-  
-  &:hover {
-    background-color: #f0f0f0;  // Цвет фона при наведении
-  }
 
-  /* Стили для активной вкладки */
+  /* Стили для обычного состояния вкладки */
   &.active_tab {
-    background-color: #1890ff;  // Темно-синий фон для активной вкладки
-    color: #fff;  // Белый текст для контраста с темным фоном
-    font-weight: bold;
+    background-color: #f0f0f0; /* Пример фона для активной вкладки */
+    font-weight: bold;         /* Сделаем активную вкладку жирной */
+    color: #1890ff;            /* Пример цвета текста для активной вкладки */
   }
 }
 
@@ -94,11 +94,3 @@
   text-align: left;
   margin-top: auto;
 }
-
-/* Скрываем кнопку Logout в мобильной версии */
-@media (max-width: 768px) {
-  .drawer_logout {
-    display: none;
-  }
-}
-

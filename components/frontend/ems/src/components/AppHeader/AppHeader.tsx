@@ -38,31 +38,8 @@ export default function AppHeader({
     setIsDrawerVisible(false);
   };
 
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-
-  const showDrawer = () => {
-    setIsDrawerVisible(true);
-  };
-
-  const closeDrawer = () => {
-    setIsDrawerVisible(false);
-  };
-
   return (
     <header className={styles.app_header}>
-      {/* Бургер-меню для мобильных устройств */}
-      <div className={styles.burger_container}>
-        <Button
-          className={styles.burger_button}
-          type="text"
-          icon={<MenuOutlined />} // иконка бургера
-          onClick={showDrawer}
-        />
-      </div>
-
-      {/* Логотип, отображаемый слева на десктопе и по центру на мобильных */}
-      <div className={styles.app_header__logo}>
-        <ESMUMLogo />
       {/* Бургер-меню для мобильных устройств */}
       <div className={styles.burger_container}>
         <Button
@@ -88,7 +65,7 @@ export default function AppHeader({
       >
         <ToggleButtonGroup
           onChange={historyPush}
-          value={activeMenuItem}
+          value={activeMenuItem} // Передаем активный элемент в бургер-меню
           isWithoutDivider
           className={styles.drawer_toggle_group}
         >
@@ -98,7 +75,9 @@ export default function AppHeader({
                 <ToggleButton
                   key={el.value}
                   value={el.value}
-                  className={styles.drawer_toggle_button}
+                  className={`${styles.drawer_toggle_button} ${
+                    activeMenuItem === el.value ? styles.active_tab : ''
+                  }`}
                 >
                   {el.label}
                 </ToggleButton>
@@ -108,11 +87,11 @@ export default function AppHeader({
         </ToggleButtonGroup>
 
         {/* Дополнительные элементы, такие как кнопка выхода */}
-        <div className={styles.drawer_logout}>
+        {/* <div className={styles.drawer_logout}>
           <Button onClick={logout} icon={<LogoutOutlined />}>
             Logout
           </Button>
-        </div>
+        </div> */}
       </Drawer>
 
       {/* Оригинальная навигация (только для десктопа) */}
@@ -137,23 +116,12 @@ export default function AppHeader({
       </div>
 
       {/* Оригинальная информация (только для десктопа) */}
-      {/* Оригинальная информация (только для десктопа) */}
       <div className={styles.app_header__info}>
         <Button type="text" data-testid="profileButton">
           <UserOutlined />
         </Button>
-        <Popover
-          content={() => renderLogout(logout)}
-          title={LOGOUT_TEXT}
-          trigger="click"
-        >
-          <Button type="text" data-testid="logoutPopoverButton">
-            <LogoutOutlined />
-          </Button>
-        </Popover>
-        <Button type="text" data-testid="profileButton">
-          <UserOutlined />
-        </Button>
+      </div>
+      <div>
         <Popover
           content={() => renderLogout(logout)}
           title={LOGOUT_TEXT}

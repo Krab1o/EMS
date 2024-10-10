@@ -50,16 +50,16 @@ services:
     container_name: ems-dev-client
     build:
       context: ./frontend/ems
-      dockerfile: Dockerfile  # Use the development Dockerfile for hot-reload
+      dockerfile: Dockerfile
     ports:
-      - "30002:30002"  # React dev server port
+      - "30002:30002"  
     environment:
       - PORT=30002
       - REACT_APP_BASE_URL=${REACT_APP_BASE_URL:-http://localhost:3000}
       - REACT_APP_ENV=${REACT_APP_ENV:-dev}
     volumes:
       - ./frontend/ems/src:/app/src  # Mount source code for hot-reload
-      - /app/node_modules  # Prevent node_modules from being overwritten
+      - /app/node_modules 
     restart: always
 
   # Redis service (unchanged)

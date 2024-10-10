@@ -1,14 +1,53 @@
-.table_block {
-  padding: 20px;
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  // margin-top: 16px;
+  padding-top: 32px;
+}
 
-  .btns {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 5px;
+.tableContainer {
+  width: 100%;
+  max-width: 1200px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column; /* Вертикальное расположение элементов внутри контейнера */
+  align-items: center; /* Центрируем содержимое внутри таблицы */
 
-    .search {
-      width: 300px;
+  @media (min-width: 768px) {
+    transform: scale(1.1);
+  }
+
+  @media (min-width: 1024px) {
+    transform: scale(1.2);
+  }
+
+  .ant-table {
+    width: 100%;
+    min-width: 600px; // Минимальная ширина на больших экранах
+    overflow-x: auto;
+  }
+
+  .ant-pagination {
+    margin-top: 16px;
+    text-align: center;
+  }
+}
+
+.pagination {
+  margin-top: 16px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .tableContainer {
+    padding: 8px;
+
+    .ant-table {
+      min-width: unset; // На мобильных убираем минимальную ширину, чтобы таблица была адаптивной
     }
   }
 }
