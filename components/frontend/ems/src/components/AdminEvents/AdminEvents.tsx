@@ -19,6 +19,7 @@ import {
   Spin,
   Table,
   TableProps,
+  Modal,
 } from 'antd';
 
 import type { AdminEventsProps } from 'components/AdminEvents/AdminEvents.type';
@@ -32,6 +33,19 @@ export function AdminEvents({ events }: AdminEventsProps) {
   const currentEvent = useSelector(selectCurrentEvent);
   const currentEventStatus = useSelector(selectCurrentEventsStatus);
   const [image, setImage] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (currentEvent && currentEvent.cover)
@@ -43,6 +57,9 @@ export function AdminEvents({ events }: AdminEventsProps) {
   const onCardClick = (data: EventType) => {
     dispatch(eventsActions.setCurrentEvent(data));
     setImage('');
+    if (isMobile) {
+      setIsModalVisible(true); // Открываем модальное окно на мобильных устройствах
+    }
   };
 
   const onDelete = () => {
@@ -50,6 +67,9 @@ export function AdminEvents({ events }: AdminEventsProps) {
       dispatch(
         deleteEvent({ id: currentEvent.id, status: currentEventStatus }),
       );
+    if (isMobile) {
+      setIsModalVisible(false); // Закрываем модальное окно после удаления на мобильных устройствах
+    }
   };
 
   const onChangesStatus = (status: EventStatusEnum) => {
@@ -79,6 +99,10 @@ export function AdminEvents({ events }: AdminEventsProps) {
       );
   };
 
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
+
   const columns: TableProps<EventType>['columns'] = [
     {
       title: 'ID',
@@ -104,6 +128,81 @@ export function AdminEvents({ events }: AdminEventsProps) {
     },
   ];
 
+  const eventDetails = (
+    <div className={styles.description_block}>
+      <div className={styles.event_photo_block}>
+        {image ? (
+          <Image preview={false} className={styles.image} src={image} />
+        ) : (
+          <Spin />
+        )}
+      </div>
+      <h4 className={styles.text}>{currentEvent?.title}</h4>
+      <div className={styles.event_text_block}>{currentEvent?.description}</div>
+      <Descriptions
+        style={{ padding: '10px' }}
+        title={'Дополнительная информация'}
+        layout="vertical"
+        bordered
+        items={[
+          {
+            key: '2',
+            label: 'Дата проведения',
+            children: currentEvent?.date.toLocaleDateString(),
+          },
+          {
+            key: '3',
+            label: 'Голосов за',
+            children: currentEvent?.votedYes,
+          },
+          {
+            key: '3',
+            label: 'Голосов против',
+            children: currentEvent?.votedNo,
+          },
+          {
+            key: '1',
+            label: 'Место проведения',
+            children: currentEvent?.place.title,
+          },
+        ]}
+      />
+      <div className={styles.actions}>
+        <Button onClick={onDelete} type={'primary'} danger>
+          Удалить
+        </Button>
+
+        {currentEventStatus === EventStatusEnum.OnPoll && (
+          <Button
+            onClick={() => onChangesStatus(EventStatusEnum.Planned)}
+            type={'primary'}
+          >
+            Запланировать
+          </Button>
+        )}
+
+        {currentEventStatus === EventStatusEnum.OnReview && (
+          <Button
+            onClick={() => onChangesStatus(EventStatusEnum.OnPoll)}
+            type={'primary'}
+          >
+            Одобрить
+          </Button>
+        )}
+
+        {currentEventStatus === EventStatusEnum.Planned && (
+          <Button
+            danger
+            type={'primary'}
+            onClick={() => onChangesStatus(EventStatusEnum.Ended)}
+          >
+            Завершить
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+
   if (events)
     return (
       <Flex
@@ -113,81 +212,19 @@ export function AdminEvents({ events }: AdminEventsProps) {
         style={{ marginTop: '20px' }}
       >
         <Table className={styles.table} columns={columns} dataSource={events} />
-        {currentEvent && (
-          <div className={styles.description_block}>
-            <div className={styles.event_photo_block}>
-              {image ? (
-                <Image preview={false} className={styles.image} src={image} />
-              ) : (
-                <Spin />
-              )}
-            </div>
-            <h4 className={styles.text}>{currentEvent.title}</h4>
-            <div className={styles.event_text_block}>
-              {currentEvent.description}
-            </div>
-            <Descriptions
-              style={{ padding: '10px' }}
-              title={'Дополнительная информация'}
-              layout="vertical"
-              bordered
-              items={[
-                {
-                  key: '2',
-                  label: 'Дата проведения',
-                  children: currentEvent.date.toLocaleDateString(),
-                },
-                {
-                  key: '3',
-                  label: 'Голосов за',
-                  children: currentEvent.votedYes,
-                },
-                {
-                  key: '3',
-                  label: 'Голосов против',
-                  children: currentEvent.votedNo,
-                },
-                {
-                  key: '1',
-                  label: 'Место проведения',
-                  children: currentEvent.place.title,
-                },
-              ]}
-            />
-            <div className={styles.actions}>
-              <Button onClick={onDelete} type={'primary'} danger>
-                Удалить
-              </Button>
 
-              {currentEventStatus === EventStatusEnum.OnPoll && (
-                <Button
-                  onClick={() => onChangesStatus(EventStatusEnum.Planned)}
-                  type={'primary'}
-                >
-                  Запланировать
-                </Button>
-              )}
-
-              {currentEventStatus === EventStatusEnum.OnReview && (
-                <Button
-                  onClick={() => onChangesStatus(EventStatusEnum.OnPoll)}
-                  type={'primary'}
-                >
-                  Одобрить
-                </Button>
-              )}
-
-              {currentEventStatus === EventStatusEnum.Planned && (
-                <Button
-                  danger
-                  type={'primary'}
-                  onClick={() => onChangesStatus(EventStatusEnum.Ended)}
-                >
-                  Завершить
-                </Button>
-              )}
-            </div>
-          </div>
+        {isMobile ? (
+          <Modal
+            visible={isModalVisible}
+            onCancel={closeModal}
+            footer={null}
+            width="100%"
+            bodyStyle={{ padding: 0 }}
+          >
+            {eventDetails}
+          </Modal>
+        ) : (
+          currentEvent && eventDetails
         )}
       </Flex>
     );

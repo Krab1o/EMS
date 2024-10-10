@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     # один день
     APP_TOKEN_EXPIRE_MINUTES: int = 1440
 
-    GOOGLE_OAUTH_SECRET: str
-    GOOGLE_OAUTH_CLIENT_ID: str
+    # GOOGLE_OAUTH_SECRET: str
+    # GOOGLE_OAUTH_CLIENT_ID: str
 
     @property
     def LOGGING_CONFIG(self):

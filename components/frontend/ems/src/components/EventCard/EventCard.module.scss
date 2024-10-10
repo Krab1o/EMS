@@ -1,12 +1,25 @@
 .image {
   height: 250px;
+  width: 100%;
+  object-fit: cover; /* Чтобы изображение сохраняло пропорции и корректно вписывалось */
+  
+  @media (max-width: 768px) {
+    height: 150px; /* Уменьшаем высоту изображения для мобильных устройств */
+    width: 100%;
+  }
 }
 
 .skeleton_image {
-  width: 400px;
+  width: 100%; /* Занимаем всю доступную ширину контейнера */
   height: 250px;
   background: grey;
   opacity: 0.3;
   border-top-right-radius: 5px;
   border-top-left-radius: 5px;
+
+  @media (max-width: 768px) {
+    height: 150px; /* Уменьшаем высоту для мобильных устройств */
+    width: 100%;
+  }
 }
+

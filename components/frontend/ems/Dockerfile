@@ -1,15 +1,20 @@
-FROM node:18.12.1-alpine as build-step
+# Development Dockerfile for React app with hot-reload support
+FROM node:18.12.1-alpine as development
+
 WORKDIR /app
+
+# Add node_modules/.bin to PATH
 ENV PATH /app/node_modules/.bin:$PATH
+
+# Install dependencies (include devDependencies)
 COPY package.json yarn.lock ./
-RUN yarn install --only=prod
+RUN yarn install
+
+# Copy the rest of the app for hot-reload (only for initial build)
 COPY . /app
-ARG REACT_APP_BASE_URL
-ENV REACT_APP_BASE_URL $REACT_APP_BASE_URL
-RUN yarn run build
 
+# Expose the React development server's port
+EXPOSE 30002
 
-# Build step #2: build an nginx container
-FROM nginx:stable-alpine
-COPY --from=build-step /app/build /usr/share/nginx/html
-COPY ./nginx.default.conf /etc/nginx/conf.d/default.conf
+# Start the React app with hot-reload
+CMD ["yarn", "start"]

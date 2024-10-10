@@ -1,102 +1,96 @@
-@import 'src/styles/colors';
-
 .app_header {
-  height: 64px;
-  background: #2196f3;
   display: flex;
-  font-weight: 500;
-  font-size: 17px;
-  line-height: 16px;
-  color: #525252;
-  align-items: center;
   justify-content: space-between;
-  gap: 40px;
-  position: relative;
+  align-items: center;
+  padding: 0 20px;
+  height: 64px;
+  background-color: #2196f3;
   box-shadow: 0 0 5px 5px rgba(34, 60, 80, 0.04);
-  width: 100%;
-  overflow: hidden;
-  border-bottom: solid 1px #e6e3e3;
+  border-bottom: 1px solid #e6e3e3;
 
   &__logo {
-    padding-left: 2vw;
+    display: flex;
+    justify-content: center; /* Центрируем логотип на мобильных */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    svg {
+      width: 120px;
+    }
+
+    @media (min-width: 769px) {
+      justify-content: flex-start; /* Логотип слева на десктопе */
+      position: static;
+      transform: none;
+    }
   }
+
   &__bar {
     display: flex;
     align-items: center;
-    gap: 6vw;
-  }
+    gap: 20px;
 
-  &__navigation {
-    height: 100%;
-    display: flex;
-    gap: 6vw;
-
-    &__hidden_last {
-      > div {
-        :last-child {
-          display: none;
-        }
-      }
+    @media (max-width: 768px) {
+      display: none; /* Скрываем навигацию на мобильных */
     }
   }
 
   &__info {
     display: flex;
-    justify-self: right;
     align-items: center;
-    padding-right: 2vw;
-    float: right;
+    gap: 10px;
+    margin-left: auto;
 
-    .user {
-      display: flex;
-      gap: 5px;
-
-      button {
-        font-size: 17px;
-      }
-
-      &__lang {
-        button {
-          text-transform: uppercase;
-        }
-      }
-
-      &__logout {
-        cursor: pointer;
-      }
+    @media (max-width: 768px) {
+      display: block; /* Скрываем информацию о пользователе на мобильных */
     }
   }
 }
 
-.lang_select {
+.burger_container {
+  /* Скрыть бургер на десктопе */
+  @media (min-width: 768px) {
+    display: none;
+  }
+
+  /* Показать бургер на мобильных */
+  @media (max-width: 768px) {
+    display: block;
+  }
+}
+
+.mobile_menu {
+  .ant-drawer-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+.drawer_toggle_group {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  gap: 10px;
+  padding: 20px;
 }
 
-@media (max-width: 1500px) {
-  .app_header {
-    &__bar {
-      gap: 1vw;
-    }
+.drawer_toggle_button {
+  width: 100%;
+  padding: 15px 0;
+  font-size: 18px;
+  text-align: left;
+
+  /* Стили для обычного состояния вкладки */
+  &.active_tab {
+    background-color: #f0f0f0; /* Пример фона для активной вкладки */
+    font-weight: bold;         /* Сделаем активную вкладку жирной */
+    color: #1890ff;            /* Пример цвета текста для активной вкладки */
   }
 }
 
-@media (max-width: 1400px) {
-  .app_header {
-    font-size: 90%;
-  }
-}
-
-@media (max-width: 400px) {
-  .app_header {
-    &__logo {
-      display: none;
-    }
-    &__navigation {
-      gap: 0vw;
-    }
-  }
+.drawer_logout {
+  padding: 20px;
+  text-align: left;
+  margin-top: auto;
 }

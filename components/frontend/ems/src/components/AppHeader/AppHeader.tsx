@@ -1,16 +1,15 @@
-import cn from 'classnames';
+import { useState } from 'react';
+import { MenuOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Drawer, Button, Popover } from 'antd';
 import { ReactComponent as ESMUMLogo } from 'assets/icons/ESMUM_title.svg';
 import ToggleButton from 'components/ToggleButton';
 import ToggleButtonGroup from 'components/ToggleButtonGroup';
-import { Button, Popover } from 'antd';
-import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import {
   LOGOUT_APPROVE,
   LOGOUT_TEXT,
   MENU_CONSTANTS,
 } from './AppHeader.constants';
 import type { AppHeaderProps } from './AppHeader.type';
-
 import styles from './AppHeader.module.scss';
 
 export function renderLogout(logout: () => void) {
@@ -29,14 +28,73 @@ export default function AppHeader({
   logout,
   role,
 }: AppHeaderProps) {
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+
+  const showDrawer = () => {
+    setIsDrawerVisible(true);
+  };
+
+  const closeDrawer = () => {
+    setIsDrawerVisible(false);
+  };
+
   return (
     <header className={styles.app_header}>
-      <div>
-        <div className={styles.app_header__logo}>
-          <ESMUMLogo />
-        </div>
+      {/* Бургер-меню для мобильных устройств */}
+      <div className={styles.burger_container}>
+        <Button
+          className={styles.burger_button}
+          type="text"
+          icon={<MenuOutlined />} // иконка бургера
+          onClick={showDrawer}
+        />
       </div>
 
+      {/* Логотип, отображаемый слева на десктопе и по центру на мобильных */}
+      <div className={styles.app_header__logo}>
+        <ESMUMLogo />
+      </div>
+
+      {/* Drawer для отображения мобильного меню */}
+      <Drawer
+        title="Menu"
+        placement="left" // Изменяем размещение на 'left'
+        onClose={closeDrawer}
+        open={isDrawerVisible}
+        className={styles.mobile_menu}
+      >
+        <ToggleButtonGroup
+          onChange={historyPush}
+          value={activeMenuItem} // Передаем активный элемент в бургер-меню
+          isWithoutDivider
+          className={styles.drawer_toggle_group}
+        >
+          {MENU_CONSTANTS.map((el) => {
+            if ((el.admin && role === 'admin') || !el.admin)
+              return (
+                <ToggleButton
+                  key={el.value}
+                  value={el.value}
+                  className={`${styles.drawer_toggle_button} ${
+                    activeMenuItem === el.value ? styles.active_tab : ''
+                  }`}
+                >
+                  {el.label}
+                </ToggleButton>
+              );
+            return null;
+          })}
+        </ToggleButtonGroup>
+
+        {/* Дополнительные элементы, такие как кнопка выхода */}
+        {/* <div className={styles.drawer_logout}>
+          <Button onClick={logout} icon={<LogoutOutlined />}>
+            Logout
+          </Button>
+        </div> */}
+      </Drawer>
+
+      {/* Оригинальная навигация (только для десктопа) */}
       <div className={styles.app_header__bar}>
         <div className={styles.app_header__navigation}>
           <ToggleButtonGroup
@@ -57,23 +115,22 @@ export default function AppHeader({
         </div>
       </div>
 
+      {/* Оригинальная информация (только для десктопа) */}
       <div className={styles.app_header__info}>
-        <div className={styles.user}>
-          <Button type={'text'} data-testid={'profileButton'}>
-            <UserOutlined />
+        <Button type="text" data-testid="profileButton">
+          <UserOutlined />
+        </Button>
+      </div>
+      <div>
+        <Popover
+          content={() => renderLogout(logout)}
+          title={LOGOUT_TEXT}
+          trigger="click"
+        >
+          <Button type="text" data-testid="logoutPopoverButton">
+            <LogoutOutlined />
           </Button>
-        </div>
-        <div className={cn(styles.user, styles.user__logout)}>
-          <Popover
-            content={() => renderLogout(logout)}
-            title={LOGOUT_TEXT}
-            trigger="click"
-          >
-            <Button data-testid={'logoutPopoverButton'} type={'text'}>
-              <LogoutOutlined />
-            </Button>
-          </Popover>
-        </div>
+        </Popover>
       </div>
     </header>
   );

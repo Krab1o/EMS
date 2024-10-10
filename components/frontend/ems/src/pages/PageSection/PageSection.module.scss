@@ -1,19 +1,42 @@
 .event_photo_block {
-
   position: relative;
-  .image {
-    width: 100vw;
-    height: 790px;
-  }
+  
   .text {
     position: absolute;
     font-weight: 900;
     color: white;
     bottom: 120px;
     left: 40px;
-    font-size: 90px;
+    font-size: 90px; /* крупный размер текста для больших экранов */
     width: 500px;
     line-height: 80px;
+    
+    /* Адаптация для планшетов */
+    @media (max-width: 1024px) {
+      font-size: 70px;
+      width: 400px;
+      line-height: 70px;
+      bottom: 100px;
+      left: 30px;
+    }
+
+    /* Адаптация для мобильных устройств */
+    @media (max-width: 768px) {
+      font-size: 50px;
+      width: 300px;
+      line-height: 60px;
+      bottom: 80px;
+      left: 20px;
+    }
+
+    /* Адаптация для очень маленьких экранов */
+    @media (max-width: 480px) {
+      font-size: 30px;
+      width: 200px;
+      line-height: 40px;
+      bottom: 50px;
+      left: 10px;
+    }
   }
 }
 
@@ -21,4 +44,25 @@
   padding: 60px 100px;
   line-height: 30px;
   font-size: 20px;
+
+  /* Адаптация для планшетов */
+  @media (max-width: 1024px) {
+    padding: 40px 60px;
+    font-size: 18px;
+    line-height: 28px;
+  }
+
+  /* Адаптация для мобильных устройств */
+  @media (max-width: 768px) {
+    padding: 30px 40px;
+    font-size: 16px;
+    line-height: 26px;
+  }
+
+  /* Адаптация для очень маленьких экранов */
+  @media (max-width: 480px) {
+    padding: 20px 20px;
+    font-size: 14px;
+    line-height: 24px;
+  }
 }

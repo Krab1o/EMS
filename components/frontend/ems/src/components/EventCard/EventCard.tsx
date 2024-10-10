@@ -82,7 +82,7 @@ export function EventCard({
   return (
     <Card
       hoverable={true}
-      style={{ width: '20vw', minWidth: '400px' }}
+      style={{ width: '20vw', minWidth: '350px' }}
       cover={
         image ? (
           <img className={styles.image} src={image} alt={'cover'} />

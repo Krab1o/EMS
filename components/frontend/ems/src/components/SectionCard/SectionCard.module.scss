@@ -1,0 +1,34 @@
+.image {
+  height: 250px;
+  width: 400px; /* Изначальная ширина для больших экранов */
+  object-fit: cover; /* Чтобы изображение корректно вписывалось по ширине */
+
+  @media (max-width: 1200px) {
+    height: 150px;
+    width: 100%; /* Уменьшаем ширину для планшетов */
+  }
+
+  @media (max-width: 768px) {
+    height: 150px;
+    width: 100%; /* Ширина 100% для мобильных устройств, чтобы занять всю доступную ширину экрана */
+  }
+}
+
+.skeleton_image {
+  height: 250px;
+  width: 400px; /* Изначальная ширина для больших экранов */
+  background: grey;
+  opacity: 0.3;
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+
+  @media (max-width: 1200px) {
+    height: 150px;
+    width: 300px; /* Уменьшаем ширину для планшетов */
+  }
+
+  @media (max-width: 768px) {
+    height: 150px;
+    width: 100%; /* Ширина 100% для мобильных устройств */
+  }
+}
